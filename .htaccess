@@ -1,0 +1,64 @@
+#-------------------------------------------------------------------------------------
+# Encoding
+#-------------------------------------------------------------------------------------
+AddDefaultCharset utf-8
+#-------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------
+# Secutirty & Access
+#-------------------------------------------------------------------------------------
+Options -Indexes +ExecCGI
+AddHandler cgi-script .cgi
+<FilesMatch "\.(xml|xsd|xsl|inc\.php|tpl|log|txt)$">
+	Order Deny,Allow
+	Deny From All
+</FilesMatch>
+#-------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------
+# HFU
+#-------------------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+	RewriteOptions MaxRedirects=1
+    RewriteCond %{REQUEST_FILENAME} !\.(ico|gif|jpe?g|png|js|css)$ [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+</IfModule>
+#-------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------
+# Cache & Compression.
+#-------------------------------------------------------------------------------------
+# Enable control of expiration time.
+<IfModule mod_expires.c>
+    ExpiresActive On
+</IfModule>
+<FilesMatch "\.(ico|gif|jpe?g|png|js|css)$">
+    # Append one year to cache time of static files.
+    <IfModule mod_expires.c>
+        ExpiresDefault "access plus 1 year"
+    </IfModule>
+
+    # Set public cache control.
+    <IfModule mod_headers.c>
+        Header append Cache-Control "public"
+    </IfModule>
+
+    # Add deflate compress filter.
+    <IfModule mod_deflate.c>
+        SetOutputFilter DEFLATE
+        Header append Vary User-Agent 
+
+        # Netscape 4.x has some problems...
+        BrowserMatch ^Mozilla/4 gzip-only-text/html
+
+        # Netscape 4.06-4.08 have some more problems.
+        BrowserMatch ^Mozilla/4\.0[678] no-gzip
+
+        # MSIE masquerades as Netscape, but it is fine.
+        BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    </IfModule>
+</FilesMatch>
+#-------------------------------------------------------------------------------------
