@@ -15,6 +15,25 @@
         <UseOutputBuffering>0</UseOutputBuffering>
 	</Kernel>
     <Module>
+        <DataModule>
+            <Connections>
+                <Connection>
+                    <ConnectionName>First</ConnectionName>
+                    <Dsn>mysql:host=localhost;dbname=dbprofclub</Dsn>
+                    <Password>root</Password>
+                    <ProviderClass>PdoDataProvider</ProviderClass>
+                    <User>root</User>
+                </Connection>
+                <Connection>
+                    <ConnectionName>Second</ConnectionName>
+                    <Database>dbprofclub</Database>
+                    <Host>localhost</Host>
+                    <Password>root</Password>
+                    <ProviderClass>MySqlDataProvider</ProviderClass>
+                    <User>root</User>
+                </Connection>
+            </Connections>
+        </DataModule>
         <LogModule>
             <Relations>
                 <Module><Name>A</Name></Module>
@@ -38,22 +57,4 @@
             <LoaderClass>HfuInvarLoader</LoaderClass>
         </InvarModule>
     </Module>
-    <Profile>
-		<Path>
-			<AbsRoot>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\</AbsRoot>
-			<AbsRootWeb>http://darkstar/projects/gveniver/</AbsRootWeb>
-			<AbsScript>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\scripts\</AbsScript>
-			<AbsScriptWeb>http://darkstar/projects/gveniver/profile/Dummy/scripts/</AbsScriptWeb>
-			<AbsStyle>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\styles\</AbsStyle>
-			<AbsStyleWeb>http://darkstar/projects/gveniver/profile/Dummy/styles/</AbsStyleWeb>
-			<AbsImage>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\images\</AbsImage>
-			<AbsImageWeb>http://darkstar/projects/gveniver/profile/Dummy/images/</AbsImageWeb>
-			<AbsUpload>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\upload\</AbsUpload>
-			<AbsUploadWeb>http://darkstar/projects/gveniver/upload/</AbsUploadWeb>
-			<AbsCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\cache\</AbsCache>
-			<AbsCacheWeb>http://darkstar/projects/gveniver/profile/Dummy/cache/</AbsCacheWeb>
-			<AbsExtension>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\src\extension\</AbsExtension>
-			<AbsTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\templates\</AbsTemplate>
-		</Path>
-    </Profile>
 </Configuration>
