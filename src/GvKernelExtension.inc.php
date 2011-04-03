@@ -6,6 +6,14 @@ GvKernelInclude::instance()->includeFile('src/system/extension/ExtensionData.inc
 abstract class GvKernelExtension
 {
     /**
+     * Current kernel of extension.
+     *
+     * @var GvKernel
+     */
+    protected $cKernel;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Data of current extension.
      *
      * @var ExtensionData
@@ -17,9 +25,16 @@ abstract class GvKernelExtension
     /**
      * Base extension constructor.
      * Load extension data with specific logic.
+     *
+     * @param GvKernel $cKernel Current kernel.
+     *
+     * @return void
      */
-    public function __construct()
+    public function __construct(GvKernel $cKernel)
     {
+        // Save current kernel.
+        $this->cKernel = $cKernel;
+        
         // Load extension data.
         $this->cData = $this->loadData();
         if (!$this->cData)

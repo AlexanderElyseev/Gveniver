@@ -60,28 +60,30 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
      * Class constructor.
      * Initialize member fields. Load parameters of template subsystem from configuration.
      *
+     * @param GvKernel $cKernel Current kernel.
+     *
      * @throws GvException
      */
-    public function __construct()
+    public function __construct(GvKernel $cKernel)
     {
         // Execute parent constructor.
-        parent::__construct();
+        parent::__construct($cKernel);
 
         // Template files extension.
-        $sExt = GvKernelConfig::instance()->get('Module/TemplateModule/Ext');
+        $sExt = $this->cKernel->cConfig->get('Module/TemplateModule/Ext');
         if (!$sExt)
             throw new GvException('Extension of template files not loaded from configuration.');
         $this->sTplFileNameExtension = ($sExt[0] != '.') ? '.'.$sExt : $sExt;
 
         // Template files separator.
-        $this->sTplFileNameSeparator = GvKernelConfig::instance()->get(
+        $this->sTplFileNameSeparator = $this->cKernel->cConfig->get(
             array('Module/TemplateModule/Separator')
         );
         if (!$this->sTplFileNameSeparator)
             throw new GvException('Extension of template files not loaded from configuration.');
 
 		// Template folder.
-        $this->sTplFolder = GvKernelConfig::instance()->get('Profile/Path/AbsTemplate');
+        $this->sTplFolder = $this->cKernel->cConfig->get('Profile/Path/AbsTemplate');
         if (!$this->sTplFolder || !file_exists($this->sTplFolder) || !is_dir($this->sTplFolder))
             throw new GvException('Wrong template directory.');
         
@@ -145,7 +147,7 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
 
                 } // End for
 
-                GvKernel::instance()->trace->addLine('[%s] Template ("%s") not found.', __CLASS__, $sStartName);
+                $this->cKernel->trace->addLine('[%s] Template ("%s") not found.', __CLASS__, $sStartName);
 
             } // End else
 

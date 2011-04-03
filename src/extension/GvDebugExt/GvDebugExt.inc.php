@@ -31,7 +31,7 @@ class GvDebugExt extends SimpleExtenson
      */
     public function getTrace()
     {
-        return GvKernel::instance()->trace->getTraceAsString();
+        return $this->cKernel->trace->getTraceAsString();
 
     } // End function
     //-----------------------------------------------------------------------------

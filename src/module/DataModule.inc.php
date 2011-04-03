@@ -31,9 +31,9 @@ class DataModule extends GvKernelModule
      */
     protected function init()
     {
-        GvKernel::instance()->trace->addLine('[%s] Init.', __CLASS__);
+        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
-        GvKernel::instance()->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
         
     } // End function

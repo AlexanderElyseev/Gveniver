@@ -400,7 +400,6 @@ final class GvKernelInclude
         // Include class file, if class is not exists.
         $sClassName = isset($aParams['class']) ? $aParams['class'] : null;
         if (!class_exists($sClassName)) {
-
             // Build path to file by template.
             $sPathTpl = isset($aParams['path']) ? $aParams['path'] : null;
             $sPathTpl = str_replace('%class%', $sClassName, $sPathTpl);
@@ -429,12 +428,12 @@ final class GvKernelInclude
         // Check base class.
         $sBaseClassName = isset($aParams['base']) ? $aParams['base'] : null;
         if ($sBaseClassName) {
-            if (!in_array('GvKernelModule', class_parents($sClassName))) {
+            if (!in_array($sBaseClassName, class_parents($sClassName))) {
                 $nErrorCode = self::ERRROR_WRONG_BASE_CLASS;
                 return null;
             }
         }
-        
+
 		// Create object instance.
         $aArguments = isset($aParams['args']) ? $aParams['args'] : null;
 		try {

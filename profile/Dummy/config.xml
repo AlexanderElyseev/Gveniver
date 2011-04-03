@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Profile>
+		<Path>
+			<AbsRoot>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\</AbsRoot>
+			<AbsRootWeb>http://darkstar/projects/gveniver.github/</AbsRootWeb>
+			<AbsScript>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\scripts\</AbsScript>
+			<AbsScriptWeb>http://darkstar/projects/gveniver.github/profile/Dummy/scripts/</AbsScriptWeb>
+			<AbsStyle>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\styles\</AbsStyle>
+			<AbsStyleWeb>http://darkstar/projects/gveniver.github/profile/Dummy/styles/</AbsStyleWeb>
+			<AbsImage>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\images\</AbsImage>
+			<AbsImageWeb>http://darkstar/projects/gveniver.github/profile/Dummy/images/</AbsImageWeb>
+			<AbsUpload>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\upload\</AbsUpload>
+			<AbsUploadWeb>http://darkstar/projects/gveniver.github/upload/</AbsUploadWeb>
+			<AbsCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\cache\</AbsCache>
+			<AbsCacheWeb>http://darkstar/projects/gveniver.github/profile/Dummy/cache/</AbsCacheWeb>
+			<AbsExtension>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\src\extension\</AbsExtension>
+			<AbsTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\templates\</AbsTemplate>
+		</Path>
+    </Profile>
+    <Module>
+		<TemplateModule>
+            <SmartyDirCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\cache\</SmartyDirCache>
+            <SmartyDirTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\templates\</SmartyDirTemplate>
+            <SmartyDirCompile>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\templates_c\</SmartyDirCompile>
+            <SmartyDirConfig>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\</SmartyDirConfig>
+		</TemplateModule>
+    </Module>
+</Configuration>

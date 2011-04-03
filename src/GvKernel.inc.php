@@ -102,7 +102,7 @@ final class GvKernel
      */
     public function initEnvironment()
     {
-        $this->trace->addLine('[%s] Start init kernel.', __CLASS__);
+        $this->trace->addLine('[%s] Start initialize environement of the kernel.', __CLASS__);
 
         // Error reporting.
         $nErrorReporting = $this->cConfig->get('Kernel/ErrorReporting');

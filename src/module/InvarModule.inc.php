@@ -94,18 +94,18 @@ class InvarModule extends GvKernelModule
      */
     protected function init()
     {
-        GvKernel::instance()->trace->addLine('[%s] Init.', __CLASS__);
+        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
         // Load factory for template subsystem.
         $this->_cLoader = GvKernelInclude::createObject(
             array(
-                 'class' => GvKernelConfig::instance()->get('Module/InvarModule/LoaderClass'),
-                 'path'  => 'src/system/invar/loader/%class%.inc.php'
+                'class' => $this->cKernel->cConfig->get('Module/InvarModule/LoaderClass'),
+                'path'  => 'src/system/invar/loader/%class%.inc.php'
             ),
             $nErrCode
         );
         if (!$this->_cLoader) {
-            GvKernel::instance()->trace->addLine(
+            $this->cKernel->trace->addLine(
                 '[%s] Error in create invar loader, with code: %d.',
                 __CLASS__,
                 $nErrCode
@@ -117,11 +117,11 @@ class InvarModule extends GvKernelModule
         $this->_aGet['request'] = $this->_cLoader->analyzeRequest();
         $this->_aGet['get'] = &$_GET;
         $this->_aGet['checked'] = array();
-        
+
         $this->_aPost['post'] = &$_POST;
         $this->_aPost['checked'] = array();
 
-        GvKernel::instance()->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
 
     } // End function
@@ -143,7 +143,7 @@ class InvarModule extends GvKernelModule
     {
         $bByRef = func_num_args() == 3;
         $mValue = null;
-        
+
         // First, load from GET, then from request.
         if ($nTarget == self::TARGET_FIRST_GET) {
             // Load from GET at first, then load from request.
@@ -177,13 +177,13 @@ class InvarModule extends GvKernelModule
 
             return false;
         }
-        
-        GvKernel::instance()->trace->addLine('[%s] Load invar ("%s") from request (%d).', __CLASS__, $sName, $nTarget);
+
+        $this->cKernel->trace->addLine('[%s] Load invar ("%s") from request (%d).', __CLASS__, $sName, $nTarget);
 
         // Try to load invar value from GET.
         if ($nTarget == self::TARGET_ONLY_GET) {
             if (array_key_exists($sName, $this->_aGet['get'])) {
-                GvKernel::instance()->trace->addLine('[%s] Invar ("%s") loaded from GET.', __CLASS__, $sName);
+                $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from GET.', __CLASS__, $sName);
 
                 if (!$bByRef)
                     return $this->_aGet['get'][$sName];
@@ -191,10 +191,10 @@ class InvarModule extends GvKernelModule
                 $cRef = $this->_aGet['get'][$sName];
                 return true;
             }
-        // Try to load invar value from request.
+            // Try to load invar value from request.
         } elseif ($nTarget == self::TARGET_ONLY_REQUEST) {
             if (array_key_exists($sName, $this->_aGet['request'])) {
-                GvKernel::instance()->trace->addLine('[%s] Invar ("%s") loaded from request.', __CLASS__, $sName);
+                $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from request.', __CLASS__, $sName);
 
                 if (!$bByRef)
                     return $this->_aGet['request'][$sName];
@@ -203,7 +203,7 @@ class InvarModule extends GvKernelModule
                 return true;
             }
         } else {
-            GvKernel::instance()->trace->addLine(
+            $this->cKernel->trace->addLine(
                 '[%s] Invar ("%s") not loaded. Wrong target (%d).',
                 __CLASS__,
                 $sName,
@@ -217,7 +217,7 @@ class InvarModule extends GvKernelModule
         }
 
         // Invar value not loaded.
-        GvKernel::instance()->trace->addLine('[%s] Invar ("%s") not loaded from request.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Invar ("%s") not loaded from request.', __CLASS__, $sName);
 
         if (!$bByRef)
             return null;
@@ -235,7 +235,7 @@ class InvarModule extends GvKernelModule
      * @param array  $aCheck  Array of parameters for checking.
      * @param mixed  &$cRef   Reference variable for loading value.
      * If specified, load result by reference. Return result of operation.
-     * 
+     *
      * @return bool|mixed
      */
     public function getEx($sName, $nTarget = self::TARGET_FIRST_GET, array $aCheck = array(), &$cRef = null)
@@ -244,7 +244,7 @@ class InvarModule extends GvKernelModule
 
         $bByRef = func_num_args() == 4;
         $mValue = null;
-        
+
         // Load value of invar.
         if (!$this->get($sName, $nTarget, $mValue)) {
             if (!$bByRef)
@@ -337,7 +337,7 @@ class InvarModule extends GvKernelModule
 
             return false;
         }
-        
+
         // Check value of invar and return result.
         $bCheckResult = $this->_filter($mValue, $aCheck);
         if (!$bCheckResult) {

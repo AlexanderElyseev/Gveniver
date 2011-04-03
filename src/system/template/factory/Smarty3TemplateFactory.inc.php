@@ -39,12 +39,14 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
     /**
      * Class constructor. Initialize Smarty system.
      *
+     * @param GvKernel $cKernel Current kernel.
+     * 
      * @throws GvException
      */
-    public function __construct()
+    public function __construct(GvKernel $cKernel)
     {
         // Use base constructor.
-        parent::__construct();
+        parent::__construct($cKernel);
 
         // Initialize smarty.
         $this->_cSmarty = new Smarty();
@@ -61,29 +63,29 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
      */
     private function _reinstallSmarty()
     {
-        $sDirTemplate = GvKernelConfig::instance()->get('Module/TemplateModule/SmartyDirTemplate');
+        $sDirTemplate = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirTemplate');
         if (!$this->_createDir($sDirTemplate))
             return false;
         $this->_cSmarty->template_dir = $sDirTemplate;
 
-        $sDirCompile = GvKernelConfig::instance()->get('Module/TemplateModule/SmartyDirCompile');
+        $sDirCompile = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirCompile');
         if (!$this->_createDir($sDirCompile))
             return false;
         $this->_cSmarty->compile_dir = $sDirCompile;
 
-        $sDirCache = GvKernelConfig::instance()->get('Module/TemplateModule/SmartyDirCache');
+        $sDirCache = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirCache');
         if (!$this->_createDir($sDirCache))
             return false;
         $this->_cSmarty->cache_dir = $sDirCache;
 
-        $sDirConfig = GvKernelConfig::instance()->get('Module/TemplateModule/SmartyDirConfig');
+        $sDirConfig = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirConfig');
         if (!$this->_createDir($sDirConfig))
             return false;
         $this->_cSmarty->config_dir = $sDirConfig;
 
-        $this->_cSmarty->left_delimiter = GvKernelConfig::instance()->get('Module/TemplateModule/DelimiterBegin');
-        $this->_cSmarty->right_delimiter = GvKernelConfig::instance()->get('Module/TemplateModule/DelimiterEnd');
-        $this->_cSmarty->registerPlugin('function', 'ext', array('Smarty3TemplateFactory', 'extension'));
+        $this->_cSmarty->left_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterBegin');
+        $this->_cSmarty->right_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterEnd');
+        $this->_cSmarty->registerPlugin('function', 'ext', array($this, 'extension'));
         $this->_cSmarty->registerPlugin('modifier', 'upper', 'strtoupper_ex');
         $this->_cSmarty->registerPlugin('modifier', 'lower', 'strtolower_ex');
         $this->_cSmarty->registerPlugin('modifier', 'substr', 'mb_substr');
@@ -141,11 +143,11 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
      *
      * @return string Result of extension call.
      */
-    public static function extension($aParams, &$cSmarty)
+    public function extension($aParams, &$cSmarty)
     {
-        $cExtModule = GvKernel::instance()->getModule('ExtensionModule');
+        $cExtModule = $this->cKernel->getModule('ExtensionModule');
         if (!$cExtModule) {
-            GvKernel::instance()->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
+            $this->cKernel->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
             return null;
         }
 
@@ -154,14 +156,14 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
         $sExtensionHandlerName = isset($aParams['act']) ? $aParams['act'] : null;
         $sVarName = isset($aParams['var']) ? $aParams['var'] : null;
         if (!$sExtensionName || !$sExtensionHandlerName) {
-            GvKernel::instance()->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
+            $this->cKernel->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
             return null;
         }
 
         // Load extension.
         $cExt = $cExtModule->getExtension($sExtensionName);
         if (!$cExt) {
-            GvKernel::instance()->trace->addLine(
+            $this->cKernel->trace->addLine(
                 '[%s] Extension ("%s") not found for Smarty query.',
                 __CLASS__,
                 $sExtensionName

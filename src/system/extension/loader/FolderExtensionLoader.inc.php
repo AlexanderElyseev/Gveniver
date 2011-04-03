@@ -37,15 +37,17 @@ class FolderExtensionLoader extends ExtensionLoader
      * Class constructor.
      * Initialize member fields.
      *
+     * @param GvKernel $cKernel Current kernel.
+     *
      * @throws GvException
      */
-    public function __construct()
+    public function __construct(GvKernel $cKernel)
     {
         // Execute parent constructor.
-        parent::__construct();
+        parent::__construct($cKernel);
 
         // Load extension folder.
-        $this->sExtensionFolder = (string)GvKernelConfig::instance()->get('Profile/Path/AbsExtension');
+        $this->sExtensionFolder = (string)$this->cKernel->cConfig->get('Profile/Path/AbsExtension');
         if (!$this->sExtensionFolder || !file_exists($this->sExtensionFolder) || !is_dir($this->sExtensionFolder))
             throw new GvException('Wrong extension directory.');
 
@@ -66,7 +68,7 @@ class FolderExtensionLoader extends ExtensionLoader
 		$sExtensionClassName = $sExtensionName;
         $sExtensionFileName = $this->sExtensionFolder.$sExtensionClassName.GV_DS.$sExtensionClassName.'.inc.php';
 
-        GvKernel::instance()->trace->addLine(
+        $this->cKernel->trace->addLine(
             '[%s] Loading extension ("%s") with class name: "%s".',
             __CLASS__,
             $sExtensionName,
@@ -77,12 +79,13 @@ class FolderExtensionLoader extends ExtensionLoader
         $cExt = GvKernelInclude::createObject(
             array(
                 'class' => $sExtensionClassName,
-                'path'  => $sExtensionFileName
+                'path'  => $sExtensionFileName,
+                'args'  => array($this->cKernel)
             ),
             $nErrCode
         );
         if ($cExt) {
-            GvKernel::instance()->trace->addLine(
+            $this->cKernel->trace->addLine(
                 '[%s] Extension ("%s") successfully loaded.',
                 __CLASS__,
                 $sExtensionName
@@ -91,7 +94,7 @@ class FolderExtensionLoader extends ExtensionLoader
             return $cExt;
         }
 
-        GvKernel::instance()->trace->addLine(
+        $this->cKernel->trace->addLine(
             '[%s] Extension ("%s") Not loaded. Error code: %d.',
             __CLASS__,
             $sExtensionName,

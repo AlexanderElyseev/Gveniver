@@ -108,7 +108,7 @@ class TraceModule extends GvKernelModule
 			$sMessage = call_user_func_array('sprintf', $aArgs);
 		}
 
-        echo $sMessage."<br/>\n";
+        //echo $sMessage."<br/>\n";
         
         // Add trace data only in debug state.
         if (!$this->_bDebug)

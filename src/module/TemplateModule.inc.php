@@ -45,7 +45,8 @@ class TemplateModule extends GvKernelModule
         $this->_cFactory = GvKernelInclude::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/TemplateModule/FactoryClass'),
-                'path'  => 'src/system/template/factory/%class%.inc.php'
+                'path'  => 'src/system/template/factory/%class%.inc.php',
+                'args'  => array($this->cKernel)
             ),
             $nErrCode
         );

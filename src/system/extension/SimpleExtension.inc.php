@@ -24,22 +24,22 @@ class SimpleExtenson extends GvKernelExtension
      */
     public function query($sAction, $aParams = array())
     {
-        GvKernel::instance()->trace->addLine('[%s] Executing query: "%s".', __CLASS__, $sAction);
+        $this->cKernel->trace->addLine('[%s] Executing query: "%s".', __CLASS__, $sAction);
 
         // Check existence of method.
         if (!method_exists($this, $sAction)) {
-            GvKernel::instance()->trace->addLine('[%s] Handler for query ("%s") is not found.', __CLASS__, $sAction);
+            $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not found.', __CLASS__, $sAction);
             return null;
         }
 
         // Method must be public.
         $cRefl = new ReflectionMethod($this, $sAction);
         if (!$cRefl->isPublic()) {
-            GvKernel::instance()->trace->addLine('[%s] Handler for query ("%s") is not public.', __CLASS__, $sAction);
+            $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not public.', __CLASS__, $sAction);
             return null;
         }
         
-        GvKernel::instance()->trace->addLine('[%s] Handler found for query: "%s".', __CLASS__, $sAction);
+        $this->cKernel->trace->addLine('[%s] Handler found for query: "%s".', __CLASS__, $sAction);
         
         return call_user_func_array(array($this, $sAction), $aParams);
 

@@ -18,7 +18,7 @@ require_once 'init.inc.php';
 
 $cDummyKernel = new GvKernel('Dummy');
 
-var_dump($cDummyKernel->template);
+$cDummyKernel->template;
 $cDummyKernel->invar;
 $cDummyKernel->data;
 

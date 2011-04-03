@@ -23,6 +23,14 @@
 abstract class BaseTemplateFactory
 {
     /**
+     * Current kernel.
+     * 
+     * @var GvKernel
+     */
+    protected $cKernel;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Cache of loaded templates.
      *
      * @var array
@@ -33,9 +41,16 @@ abstract class BaseTemplateFactory
 
     /**
      * Base constructor.
+     * Initialize member fields.
+     *
+     * @param GvKernel $cKernel Current kernel.
+     *
+     * @return void
      */
-    public function __construct()
+    public function __construct(GvKernel $cKernel)
     {
+        $this->cKernel = $cKernel;
+        
     } // End function
     //-----------------------------------------------------------------------------
 

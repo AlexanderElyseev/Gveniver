@@ -39,18 +39,19 @@ class ExtensionModule extends GvKernelModule
      */
     protected function init()
     {
-        GvKernel::instance()->trace->addLine('[%s] Init.', __CLASS__);
+        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
         // Try to create extension loader.
         $this->_cLoader = GvKernelInclude::createObject(
             array(
                 'class' => 'FolderExtensionLoader',
-                'path'  => 'src/system/extension/loader/%class%.inc.php'
+                'path'  => 'src/system/extension/loader/%class%.inc.php',
+                'args'  => array($this->cKernel)
             ),
             $nErrCode
         );
         if (!$this->_cLoader) {
-             GvKernel::instance()->trace->addLine(
+             $this->cKernel->trace->addLine(
                  '[%s] Error in create extension loader, with code: %d.',
                  __CLASS__,
                  $nErrCode
@@ -58,7 +59,7 @@ class ExtensionModule extends GvKernelModule
             return false;
         }
 
-        GvKernel::instance()->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
         
     } // End function
