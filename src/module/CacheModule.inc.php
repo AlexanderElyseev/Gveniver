@@ -22,10 +22,10 @@ GvKernelInclude::instance()->includeFile('src/GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class DataModule extends GvKernelModule
+class CacheModule extends GvKernelModule
 {
     /**
-     * Array of {@see DataProvider} for access to data.
+     * Array of {@see CacheProvider} for access to cached data.
      *
      * @var array
      */
@@ -33,14 +33,14 @@ class DataModule extends GvKernelModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Array of data for connections.
-     * 
+     * Array of cache providers configurations.
+     *
      * @var array
      */
     private $_aConfiguration;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
-
+    
     /**
      * Full initialization of kernel module.
      *
@@ -53,29 +53,25 @@ class DataModule extends GvKernelModule
         // Clear list of providers.
         $this->_aProviders = array();
 
-		// Load data of providers.
-        $this->_aConfiguration = $this->cKernel->cConfig->get('Module/DataModule/Providers');
+        // Load configuration of cache providers.
+        $this->_aConfiguration = $this->cKernel->cConfig->get('Module/CacheModule/Providers');
 
         $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
-        
+
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns connection to data source.
-     *
-     * @param string $sProviderName Name of provider for load.
-     *
-     * @return mixed|null Returns null if connection with specified name not found or
-     * on connect error.
+     * @param  $sProviderName
+     * @return void
      */
-    public function getConnection($sProviderName = null)
+    public function getProvider($sProviderName = null)
     {
         // Try to load provider from cache.
         $sCacheIndex = $sProviderName ? $sProviderName : 0;
         if (array_key_exists($sCacheIndex, $this->_aProviders)) {
-            $this->cKernel->trace->addLine('[%s] Provider ("%s") loaded from cache.', __CLASS__, $sCacheIndex);
+            $this->cKernel->trace->addLine('[%s] Cache provider ("%s") loaded from cache.', __CLASS__, $sCacheIndex);
             return $this->_aProviders[$sCacheIndex];
         }
 
@@ -105,14 +101,14 @@ class DataModule extends GvKernelModule
                     $this->cKernel->trace->addLine('[%s] Provider ("%s") not loaded.', __CLASS__, $sProviderName);
                     return null;
                 }
-                
+
                 return $this->_aProviders[$sProviderName]->getConnection();
 
             } // End foreach
 
             $this->cKernel->trace->addLine('[%s] Provider ("%s") not exists.', __CLASS__, $sProviderName);
             return null;
-            
+
         } // End if
 
         // Load default (first) configuration, without name.
@@ -141,31 +137,31 @@ class DataModule extends GvKernelModule
         }
 
         return $this->_aProviders[0]->getConnection();
-
+        
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Load data provider by class name.
+     * Load cache provider by class name.
      *
-     * @param string $sClassname Class name of data provider.
+     * @param string $sClassname Class name of cache provider.
      * @param array  $aOptions   Options for provider.
      *
-     * @return DataProvider|null
+     * @return CacheProvider|null
      */
     private function _loadProvider($sClassname, array $aOptions)
     {
         $cProvider = GvKernelInclude::createObject(
             array(
                 'class' => $sClassname,
-                'path'  => 'src/system/data/provider/%class%.inc.php',
+                'path'  => 'src/system/cache/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
             $nErrCode
         );
         if (!$cProvider) {
              $this->cKernel->trace->addLine(
-                 '[%s] Error in create data provider ("%s"), with code: %d.',
+                 '[%s] Error in create cache provider ("%s"), with code: %d.',
                  __CLASS__,
                  $sClassname,
                  $nErrCode

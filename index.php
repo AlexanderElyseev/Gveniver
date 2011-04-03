@@ -17,12 +17,14 @@ $begin = microtime(true);
 require_once 'init.inc.php';
 
 $cDummyKernel = new GvKernel('Dummy');
-
 $cDummyKernel->template;
 $cDummyKernel->invar;
 $cDummyKernel->data;
 $cDummyKernel->trace;
 $cDummyKernel->extension;
+$cDummyKernel->cache;
+$cDummyKernel->cache->getProvider();
+$cDummyKernel->log;
 
 // Start profile and output result content.
 echo $cDummyKernel->getProfile()->start();

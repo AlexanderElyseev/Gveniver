@@ -15,36 +15,46 @@
         <UseOutputBuffering>0</UseOutputBuffering>
 	</Kernel>
     <Module>
+        <CacheModule>
+            <Providers>
+                <Provider>
+                    <ProviderClass>FileCacheProvider</ProviderClass>
+                    <ProviderName>First</ProviderName>
+                </Provider>
+                <Provider>
+                    <ProviderClass>MemoryCacheProvider</ProviderClass>
+                    <ProviderName>Second</ProviderName>
+                </Provider>
+                <Provider>
+                    <ProviderClass>MemcachedCacheProvider</ProviderClass>
+                    <ProviderName>third</ProviderName>
+                </Provider>
+            </Providers>
+        </CacheModule>
         <DataModule>
-            <Connections>
-                <Connection>
-                    <ConnectionName>First</ConnectionName>
+            <Providers>
+                <Provider>
                     <Dsn>mysql:host=localhost;dbname=dbprofclub</Dsn>
                     <Password>root</Password>
                     <ProviderClass>PdoDataProvider</ProviderClass>
+                    <ProviderName>First</ProviderName>
                     <User>root</User>
-                </Connection>
-                <Connection>
-                    <ConnectionName>Second</ConnectionName>
+                </Provider>
+                <Provider>
                     <Database>dbprofclub</Database>
                     <Host>localhost</Host>
                     <Password>root</Password>
                     <ProviderClass>MySqlDataProvider</ProviderClass>
+                    <ProviderName>Second</ProviderName>
                     <User>root</User>
-                </Connection>
-                <Connection>
-                    <ConnectionName>MongoDb</ConnectionName>
+                </Provider>
+                <Provider>
                     <ProviderClass>MongoDbDataProvider</ProviderClass>
-                </Connection>
-            </Connections>
+                    <ProviderName>MongoDb</ProviderName>
+                </Provider>
+            </Providers>
         </DataModule>
         <LogModule>
-            <Relations>
-                <Module><Name>A</Name></Module>
-                <Module><Name>B</Name></Module>
-                <Module><Name>C</Name></Module>
-                <Module><Name>D</Name></Module>
-            </Relations>
         </LogModule>
 		<TemplateModule>
 			<DelimiterBegin>{[</DelimiterBegin>
