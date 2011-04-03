@@ -20,6 +20,12 @@ class MySqliDataProvider extends DataProvider
      */
     protected function connect()
     {
+        // Check for existing MySqli PHP extension.
+        if (!class_exists('mysqli')) {
+            $this->cKernel->trace->addLine('[%s] MySqli PHP extension is not installed.', __CLASS__);
+            return false;
+        }
+
         // Load connection parameters.
         $sHost = isset($this->aOptions['Host']) ? $this->aOptions['Host'] : array();
         $sUser = isset($this->aOptions['User']) ? $this->aOptions['User'] : array();

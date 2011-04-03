@@ -32,6 +32,10 @@
                     <ProviderClass>MySqlDataProvider</ProviderClass>
                     <User>root</User>
                 </Connection>
+                <Connection>
+                    <ConnectionName>MongoDb</ConnectionName>
+                    <ProviderClass>MongoDbDataProvider</ProviderClass>
+                </Connection>
             </Connections>
         </DataModule>
         <LogModule>

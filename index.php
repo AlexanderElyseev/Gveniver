@@ -24,7 +24,6 @@ $cDummyKernel->data;
 $cDummyKernel->trace;
 $cDummyKernel->extension;
 
-
 // Start profile and output result content.
 echo $cDummyKernel->getProfile()->start();
 

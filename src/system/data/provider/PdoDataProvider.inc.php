@@ -20,6 +20,12 @@ class PdoDataProvider extends DataProvider
      */
     protected function connect()
     {
+        // Check for existing PDO PHP extension.
+        if (!function_exists('PDO')) {
+            $this->cKernel->trace->addLine('[%s] PDO PHP extension is not installed.', __CLASS__);
+            return false;
+        }
+
         // Load connection parameters.
         $sDsn = isset($this->aOptions['Dsn']) ? $this->aOptions['Dsn'] : array();
         $sUser = isset($this->aOptions['User']) ? $this->aOptions['User'] : array();

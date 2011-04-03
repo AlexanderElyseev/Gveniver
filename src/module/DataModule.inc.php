@@ -93,7 +93,14 @@ class DataModule extends GvKernelModule
                 if ($sConnectionName != $aConnectionData['ConnectionName'])
                     continue;
 
-                $this->_aProviders[$sConnectionName] = $this->_loadProvider($sConnectionName, $aConnectionData);
+                // Load provider class name.
+                if (!array_key_exists('ProviderClass', $aConnectionData)) {
+                    $this->cKernel->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
+                    return null;
+                }
+
+                $sProviderClass = $aConnectionData['ProviderClass'];
+                $this->_aProviders[$sConnectionName] = $this->_loadProvider($sProviderClass, $aConnectionData);
                 if (!$this->_aProviders[$sConnectionName]) {
                     $this->cKernel->trace->addLine('[%s] Provider ("%s") not loaded.', __CLASS__, $sConnectionName);
                     return null;
