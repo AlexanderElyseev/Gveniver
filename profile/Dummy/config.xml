@@ -2,28 +2,28 @@
 <Configuration>
     <Profile>
 		<Path>
-			<AbsRoot>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\</AbsRoot>
-			<AbsRootWeb>http://darkstar/projects/gveniver.github/</AbsRootWeb>
-			<AbsScript>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\scripts\</AbsScript>
-			<AbsScriptWeb>http://darkstar/projects/gveniver.github/profile/Dummy/scripts/</AbsScriptWeb>
-			<AbsStyle>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\styles\</AbsStyle>
-			<AbsStyleWeb>http://darkstar/projects/gveniver.github/profile/Dummy/styles/</AbsStyleWeb>
-			<AbsImage>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\images\</AbsImage>
-			<AbsImageWeb>http://darkstar/projects/gveniver.github/profile/Dummy/images/</AbsImageWeb>
-			<AbsUpload>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\upload\</AbsUpload>
-			<AbsUploadWeb>http://darkstar/projects/gveniver.github/upload/</AbsUploadWeb>
-			<AbsCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\cache\</AbsCache>
-			<AbsCacheWeb>http://darkstar/projects/gveniver.github/profile/Dummy/cache/</AbsCacheWeb>
-			<AbsExtension>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\src\extension\</AbsExtension>
-			<AbsTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\templates\</AbsTemplate>
+			<AbsRoot>/var/www/gv/</AbsRoot>
+			<AbsRootWeb>http://dc1/gv/</AbsRootWeb>
+			<AbsScript>/var/www/gv/profile/Dummy/scripts/</AbsScript>
+			<AbsScriptWeb>http://dc1/gv/profile/Dummy/scripts/</AbsScriptWeb>
+			<AbsStyle>/var/www/gv/profile/Dummy/styles/</AbsStyle>
+			<AbsStyleWeb>http://dc1/gv/profile/Dummy/styles/</AbsStyleWeb>
+			<AbsImage>/var/www/gv/profile/Dummy/images/</AbsImage>
+			<AbsImageWeb>http://dc1/gv/profile/Dummy/images/</AbsImageWeb>
+			<AbsUpload>/var/www/gv/profile/Dummy/upload/</AbsUpload>
+			<AbsUploadWeb>http://dc1/gv/upload/</AbsUploadWeb>
+			<AbsCache>/var/www/gv/profile/Dummy/cache/</AbsCache>
+			<AbsCacheWeb>http://dc1/gv/profile/Dummy/cache/</AbsCacheWeb>
+			<AbsExtension>/var/www/gv/src/extension/</AbsExtension>
+			<AbsTemplate>/var/www/gv/profile/Dummy/templates/</AbsTemplate>
 		</Path>
     </Profile>
     <Module>
 		<TemplateModule>
-            <SmartyDirCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\cache\</SmartyDirCache>
-            <SmartyDirTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\templates\</SmartyDirTemplate>
-            <SmartyDirCompile>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\templates_c\</SmartyDirCompile>
-            <SmartyDirConfig>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver.github\profile\Dummy\</SmartyDirConfig>
+            <SmartyDirCache>/var/www/gv/profile/Dummy/cache/</SmartyDirCache>
+            <SmartyDirTemplate>/var/www/gv/profile/Dummy/templates/</SmartyDirTemplate>
+            <SmartyDirCompile>/var/www/gv/profile/Dummy/templates_c/</SmartyDirCompile>
+            <SmartyDirConfig>/var/www/gv/profile/Dummy/</SmartyDirConfig>
 		</TemplateModule>
     </Module>
 </Configuration>

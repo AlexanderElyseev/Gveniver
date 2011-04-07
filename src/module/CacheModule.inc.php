@@ -102,7 +102,7 @@ class CacheModule extends GvKernelModule
                     return null;
                 }
 
-                return $this->_aProviders[$sProviderName]->getConnection();
+                return $this->_aProviders[$sProviderName];
 
             } // End foreach
 
@@ -136,7 +136,7 @@ class CacheModule extends GvKernelModule
             return null;
         }
 
-        return $this->_aProviders[0]->getConnection();
+        return $this->_aProviders[0];
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -170,6 +170,85 @@ class CacheModule extends GvKernelModule
         }
 
         return $cProvider;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Load data form cache.
+     *
+     * @param string $sCacheId      Identifier of cache.
+     * @param string $sCacheGroupId Identifier of cache group.
+     * @param mixed  &$cRef         Reference variable for loading cached data.
+     * If specified, then the data loads to variable by refernce and returns
+     * result of operation (boolean). Otherwise, returns data.
+     *
+     * @return mixed|boolean
+     */
+    public function get($sCacheId, $sCacheGroupId = 'Default', &$cRef = null)
+    {
+        // Load default cache provider.
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new GvException('Default cache provider not loaded.');
+
+        // Load data from cache by default provider.
+        $mData = null;
+        $bResult = $cProvider->get($sCacheId, $sCacheGroupId, $mData);
+
+        // Return result by loading type.
+        $bByRef = func_num_args() == 3;
+        if ($bByRef) {
+            if ($bResult)
+                $cRef = $mData;
+
+            return $bResult;
+        }
+
+        return $mData;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Save data to cache.
+     *
+     * @param mixed  $mData         Data to save.
+     * @param strin  $sCacheId      Identifier of cache.
+     * @param string $sCacheGroupId Identifier of cache group.
+     * @param int    $nTtl          Time to live for cache.
+     *
+     * @return boolean True on success.
+     */
+    public function set($mData, $sCacheId, $sCacheGroupId = 'Default', $nTtl = 1200)
+    {
+        // Load default cache provider.
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new GvException('Default cache provider not loaded.');
+
+        // Save data to cache by default provider.
+        return $cProvider->set($mData, $sCacheId, $sCacheGroupId, $nTtl);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Flush cache data.
+     *
+     * @param string $sCacheGroupId Identifier of cache group.
+     *
+     * @return boolean True on success.
+     */
+    public function flush($sCacheGroupId = 'Default')
+    {
+        // Load default cache provider.
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new GvException('Default cache provider not loaded.');
+
+        // Flush cache data by default provider.
+        return $cProvider->flush($sCacheGroupId);
 
     } // End function
     //-----------------------------------------------------------------------------

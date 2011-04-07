@@ -22,7 +22,7 @@
                     <ProviderName>First</ProviderName>
                 </Provider>
                 <Provider>
-                    <ProviderClass>MemoryCacheProvider</ProviderClass>
+                    <ProviderClass>FileMemoryCacheProvider</ProviderClass>
                     <ProviderName>Second</ProviderName>
                 </Provider>
                 <Provider>
