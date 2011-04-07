@@ -443,6 +443,7 @@ final class GvKernelInclude
                 $cObj = new $sClassName;
             }
 		} catch (Exception $cEx) {
+            //echo($cEx->getMessage());
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
 			return null;
 		}

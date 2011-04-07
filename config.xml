@@ -22,12 +22,18 @@
                     <ProviderName>First</ProviderName>
                 </Provider>
                 <Provider>
-                    <ProviderClass>MemoryCacheProvider</ProviderClass>
+                    <ProviderClass>FileMemoryCacheProvider</ProviderClass>
                     <ProviderName>Second</ProviderName>
                 </Provider>
                 <Provider>
                     <ProviderClass>MemcachedCacheProvider</ProviderClass>
                     <ProviderName>third</ProviderName>
+                    <Servers>
+                        <Server>
+                            <Name>localhost</Name>
+                            <Host>127.0.0.1</Host>
+                        </Server>
+                    </Servers>
                 </Provider>
             </Providers>
         </CacheModule>

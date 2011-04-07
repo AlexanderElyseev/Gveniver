@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+GvKernelInclude::instance()->includeFile('src/system/cache/provider/FileCacheProvider.inc.php');
+
 /**
  *
  *
@@ -20,53 +22,51 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class CacheProvider
+class FileMemoryCacheProvider extends FileCacheProvider
 {
     /**
-     * Current kernel.
-     *
-     * @var GvKernel
-     */
-    protected $cKernel;
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Array of options for cache provider.
-     *
+     * Cache of data in memory.
+     * 
      * @var array
      */
-    protected $aOptions;
+    private $_aMemoryData = array();
     //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Base constructor.
-     * Initialize member fields.
-     *
-     * @param GvKernel $cKernel  Current kernel.
-     * @param array    $aOptions Options for cache provider.
-     *
-     * @return void
-     */
-    public function __construct(GvKernel $cKernel, array $aOptions)
-    {
-        $this->cKernel = $cKernel;
-        $this->aOptions = $aOptions;
-
-    } // End function
     //-----------------------------------------------------------------------------
 
     /**
      * Load data form cache.
-     * 
+     *
      * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
      * @param mixed  &$cRef         Reference variable for loading cached data.
      *
      * @return boolean True on success loading
-     * @abstract
      */
-    public abstract function get($sCacheId, $sCacheGroupId, &$cRef);
+    public function get($sCacheId, $sCacheGroupId, &$cRef)
+    {
+        // Try to load from memory.
+        if (array_key_exists($sCacheGroupId, $this->_aMemoryData) && is_array($this->_aMemoryData[$sCacheGroupId])) {
+            if (array_key_exists($sCacheId, $this->_aMemoryData[$sCacheGroupId])) {
+                $cRef = $this->_aMemoryData[$sCacheGroupId][$sCacheId];
+                return true;
+            }
+        }
+
+        // Load data from file cache.
+        $mData = null;
+        $bResult = parent::get($sCacheId, $sCacheGroupId, $mData);
+
+        // Save to memory on success loading.
+        if ($bResult)
+            $this->_aMemoryData[$sCacheGroupId][$sCacheId] = is_object($mData) ? clone $mData : $mData;
+
+        // Return result.
+        if ($bResult)
+            $cRef = $mData;
+
+        return $bResult;
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
@@ -76,11 +76,18 @@ abstract class CacheProvider
      * @param strin  $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
      * @param int    $nTtl          Time to live for cache.
-     * 
+     *
      * @return boolean True on success.
-     * @abstract
      */
-    public abstract function set($mData, $sCacheId, $sCacheGroupId, $nTtl);
+    public function set($mData, $sCacheId, $sCacheGroupId, $nTtl)
+    {
+        // Save to memory.
+        $this->_aMemoryData[$sCacheGroupId][$sCacheId] = is_object($mData) ? clone $mData : $mData;
+
+        // Save to file.
+        return parent::set($mData, $sCacheId, $sCacheGroupId, $nTtl);
+        
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
@@ -89,21 +96,14 @@ abstract class CacheProvider
      * @param string $sCacheGroupId Identifier of cache group.
      *
      * @return boolean True on success.
-     * @abstract
      */
-    public abstract function flush($sCacheGroupId);
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Generator for correct unique cache identifiers by names.
-     *
-     * @param strin $sDataName
-     * 
-     * @return string
-     */
-    public function generateId($sDataName)
+    public function flush($sCacheGroupId)
     {
-        return md5((string)$sDataName);
+        // Flush memory cache.
+        $this->_aMemoryData[$sCacheGroupId] = array();
+
+        // Flush file cache.
+        return parent::flush($sCacheGroupId);
 
     } // End function
     //-----------------------------------------------------------------------------
