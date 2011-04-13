@@ -84,13 +84,17 @@ final class GvKernel
      * Overloaded getter method for non existing class fields.
      * Returns kernel module by field name.
      *
-     * @param string $name Parameter name for reading.
+     * @param string $sName Parameter name for reading.
      *
      * @return GvKernelModule Null on error.
      */
-    public function __get($name)
+    public function __get($sName)
     {
-        return $this->getModule($name);
+        $cModule = $this->getModule($sName);
+        if (!$cModule)
+            throw new GvException(sprintf('Module ("%s") not loaded.', $sName));
+
+        return $cModule;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -279,7 +283,7 @@ final class GvKernel
 
         // If module class is not exists, include module file.
         if (!class_exists($sModuleName))
-            if (!GvKernelInclude::instance()->includeFile('src'.GV_DS.'module'.GV_DS.$sModuleName.'.inc.php'))
+            if (!GvKernelInclude::instance()->includeFile('gveniver'.GV_DS.'module'.GV_DS.$sModuleName.'.inc.php'))
                 return null;
 
         // After including module file, class of module must exists.
