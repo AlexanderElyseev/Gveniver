@@ -14,7 +14,7 @@
 			<AbsUploadWeb>http://dc1/gv/upload/</AbsUploadWeb>
 			<AbsCache>/var/www/gv/profile/Dummy/cache/</AbsCache>
 			<AbsCacheWeb>http://dc1/gv/profile/Dummy/cache/</AbsCacheWeb>
-			<AbsExtension>/var/www/gv/src/extension/</AbsExtension>
+			<AbsExtension>/var/www/gv/profile/Dummy/extension/</AbsExtension>
 			<AbsTemplate>/var/www/gv/profile/Dummy/templates/</AbsTemplate>
 		</Path>
     </Profile>

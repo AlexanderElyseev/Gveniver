@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains class of extension kernel module.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -13,7 +13,7 @@
 GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
- *
+ * Class of extension kernel module.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -44,7 +44,7 @@ class ExtensionModule extends GvKernelModule
         // Try to create extension loader.
         $this->_cLoader = GvKernelInclude::createObject(
             array(
-                'class' => 'FolderExtensionLoader',
+                'class' => 'DirectoryExtensionLoader',
                 'path'  => 'gveniver/system/extension/loader/%class%.inc.php',
                 'args'  => array($this->cKernel)
             ),
