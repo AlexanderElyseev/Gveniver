@@ -1,6 +1,6 @@
 <?php
 
-GvKernelInclude::instance()->includeFile('src/system/extension/ExtensionData.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/system/extension/ExtensionData.inc.php');
 
 
 abstract class GvKernelExtension

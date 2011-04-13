@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/GvKernelModule.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
  *
@@ -45,7 +45,7 @@ class ExtensionModule extends GvKernelModule
         $this->_cLoader = GvKernelInclude::createObject(
             array(
                 'class' => 'FolderExtensionLoader',
-                'path'  => 'src/system/extension/loader/%class%.inc.php',
+                'path'  => 'gveniver/system/extension/loader/%class%.inc.php',
                 'args'  => array($this->cKernel)
             ),
             $nErrCode

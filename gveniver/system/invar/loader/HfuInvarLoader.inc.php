@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/system/invar/loader/InvarLoader.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/system/invar/loader/InvarLoader.inc.php');
 
 /**
  *

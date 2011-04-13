@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/system/template/BaseTemplate.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/system/template/BaseTemplate.inc.php');
 
 /**
  *

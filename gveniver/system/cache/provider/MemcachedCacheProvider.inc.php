@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/system/cache/provider/CacheProvider.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/system/cache/provider/CacheProvider.inc.php');
 
 /**
  *

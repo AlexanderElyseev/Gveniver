@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/GvKernelModule.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
  *
@@ -100,7 +100,7 @@ class InvarModule extends GvKernelModule
         $this->_cLoader = GvKernelInclude::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/InvarModule/LoaderClass'),
-                'path'  => 'src/system/invar/loader/%class%.inc.php'
+                'path'  => 'gveniver/system/invar/loader/%class%.inc.php'
             ),
             $nErrCode
         );

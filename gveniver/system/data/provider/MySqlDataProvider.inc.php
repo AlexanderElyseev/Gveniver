@@ -1,6 +1,6 @@
 <?php
 
-GvKernelInclude::instance()->includeFile('src/system/data/provider/DataProvider.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/system/data/provider/DataProvider.inc.php');
 
 class MySqlDataProvider extends DataProvider
 {

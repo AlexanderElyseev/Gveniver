@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/system/exception/GvException.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/system/exception/GvException.inc.php');
 
 /**
  *

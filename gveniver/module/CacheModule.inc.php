@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/GvKernelModule.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
  *
@@ -154,7 +154,7 @@ class CacheModule extends GvKernelModule
         $cProvider = GvKernelInclude::createObject(
             array(
                 'class' => $sClassname,
-                'path'  => 'src/system/cache/provider/%class%.inc.php',
+                'path'  => 'gveniver/system/cache/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
             $nErrCode

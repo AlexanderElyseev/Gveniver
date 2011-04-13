@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('src/GvKernelModule.inc.php');
+GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
  *
@@ -158,7 +158,7 @@ class DataModule extends GvKernelModule
         $cProvider = GvKernelInclude::createObject(
             array(
                 'class' => $sClassname,
-                'path'  => 'src/system/data/provider/%class%.inc.php',
+                'path'  => 'gveniver/system/data/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
             $nErrCode
