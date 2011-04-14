@@ -61,6 +61,20 @@
             </Providers>
         </DataModule>
         <LogModule>
+            <Level>255</Level>
+            <Providers>
+                <Provider>
+                    <Class>StreamLogProvider</Class>
+                    <StreamName>php://stderr</StreamName>
+                </Provider>
+                <Provider>
+                    <Class>FileLogProvider</Class>
+                    <FileName>log/error.log</FileName>
+                </Provider>
+                <Provider>
+                    <Class>EmailLogProvider</Class>
+                </Provider>
+            </Providers>
         </LogModule>
 		<TemplateModule>
 			<DelimiterBegin>{[</DelimiterBegin>
