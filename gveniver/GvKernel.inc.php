@@ -213,7 +213,7 @@ final class GvKernel
                 $sProfilePhpFile
             );
 
-            GvKernelInclude::instance()->includeFile($sProfilePhpFile);
+            GvInclude::instance()->includeFile($sProfilePhpFile);
             if (!class_exists($cProfileClass)) {
                 $this->trace->addLine(
                     '[%s] Profile class ("%s") is not exists after including file ("%s").',
@@ -283,7 +283,7 @@ final class GvKernel
 
         // If module class is not exists, include module file.
         if (!class_exists($sModuleName))
-            if (!GvKernelInclude::instance()->includeFile('gveniver'.GV_DS.'module'.GV_DS.$sModuleName.'.inc.php'))
+            if (!GvInclude::instance()->includeFile('gveniver'.GV_DS.'module'.GV_DS.$sModuleName.'.inc.php'))
                 return null;
 
         // After including module file, class of module must exists.

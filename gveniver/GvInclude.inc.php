@@ -23,7 +23,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-final class GvKernelInclude
+final class GvInclude
 {
     /**
      * Error code. No errors.
@@ -83,9 +83,9 @@ final class GvKernelInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Singleton instance of {@see GvKernelInclude}.
+     * Singleton instance of {@see GvInclude}.
      *
-     * @var GvKernelInclude
+     * @var GvInclude
      */
     private static $_cInstance;
     //-----------------------------------------------------------------------------
@@ -148,7 +148,7 @@ final class GvKernelInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Private singleton constructor of {@see GvKernelInclude}.
+     * Private singleton constructor of {@see GvInclude}.
      * Initialize member fields.
      *
      * @return void
@@ -182,9 +182,9 @@ final class GvKernelInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns current singleton instance of {@see GvKernelInclude}.
+     * Returns current singleton instance of {@see GvInclude}.
      *
-     * @return GvKernelInclude
+     * @return GvInclude
      * @static
      */
     public static function instance()
@@ -209,7 +209,7 @@ final class GvKernelInclude
         // On first call of this function, try to load data from cache, then change
         // flag of first function call.
         // Do not load the cache in the class constructor. This can lead to recursion in
-        // constructor if the code from cache use {@see GvKernelInclude}.
+        // constructor if the code from cache use {@see GvInclude}.
         if ($this->_bCacheEnabled && $this->_bFirstLoadCache) {
             $this->_bFirstLoadCache = false;
             $this->_loadCache();
@@ -239,7 +239,7 @@ final class GvKernelInclude
 
     /**
      * Add file to skip list.
-     * These files will not be included at {@see GvKernelInclude::includeFile}.
+     * These files will not be included at {@see GvInclude::includeFile}.
      *
      * @param string $sFileName File name for adding to skip list.
      *
@@ -405,7 +405,7 @@ final class GvKernelInclude
             $sPathTpl = str_replace('%class%', $sClassName, $sPathTpl);
 
             // Try to include file by builded path.
-            if (!GvKernelInclude::instance()->includeFile($sPathTpl)) {
+            if (!GvInclude::instance()->includeFile($sPathTpl)) {
                 $nErrorCode = self::ERRROR_FILE_INCLUDE;
                 return null;
             }

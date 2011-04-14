@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
  *
@@ -42,7 +42,7 @@ class TemplateModule extends GvKernelModule
 		$this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
 		// Load factory for template subsystem.
-        $this->_cFactory = GvKernelInclude::createObject(
+        $this->_cFactory = GvInclude::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/TemplateModule/FactoryClass'),
                 'path'  => 'gveniver/system/template/factory/%class%.inc.php',
