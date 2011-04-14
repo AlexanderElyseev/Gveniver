@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains abstract class with system constants.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,9 +11,7 @@
  */
 
 /**
- *
- *
- * Provide Singleton pattern.
+ * Abstract class with system constants.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -22,7 +20,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class GvKernelConst
+abstract class GvConst
 {
     /**
      * Separator of path in configuration tree, used in {@see GvKernelConfig}.

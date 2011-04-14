@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * System initialization file.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -21,24 +21,24 @@ define('GV_OS_WIN', stripos(PHP_OS, 'win') !== false);          // Is Windows.
 define('GV_CLI', stripos(php_sapi_name(), 'cli') !== false);    // CLI.
 define('GV_EOL', GV_CLI ? "\n" : '<br/>');                      // End of line.
 
-require 'gveniver/GvKernelConst.inc.php';
-require 'gveniver/GvKernelInclude.inc.php';
-require 'gveniver/GvKernelExtendCommon.inc.php';
+require 'gveniver/GvConst.inc.php';
+require 'gveniver/GvInclude.inc.php';
+require 'gveniver/GvExtendCommon.inc.php';
 require 'gveniver/GvKernelConfig.inc.php';
 require 'gveniver/GvKernel.inc.php';
 require 'gveniver/GvKernelModule.inc.php';
 require 'gveniver/GvKernelProfile.inc.php';
 require 'gveniver/GvKernelExtension.inc.php';
 
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelConst.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelExtendCommon.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelInclude.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelConfig.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernel.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelModule.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelProfile.inc.php');
-GvKernelInclude::instance()->skipFile('gveniver/GvKernelExtension.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvConst.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvExtendCommon.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvInclude.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvKernelConfig.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvKernel.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvKernelModule.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvKernelProfile.inc.php');
+GvInclude::instance()->skipFile('gveniver/GvKernelExtension.inc.php');
 
-GvKernelInclude::instance()->includeFile('gveniver/system/exception/ArgumentException.inc.php');
-GvKernelInclude::instance()->includeFile('gveniver/system/exception/NotImplementedException.inc.php');
-GvKernelInclude::instance()->includeFile('gveniver/system/exception/SqlException.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/exception/ArgumentException.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/exception/NotImplementedException.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/exception/SqlException.inc.php');

@@ -51,7 +51,7 @@ class GvKernelConfig
         $this->_aConfig = array();
 
         // Try to load configuration from main configuration XML file.
-        $this->mergeXmlFile(GV_PATH_BASE.GvKernelConst::CONFIG_XML_FILE);
+        $this->mergeXmlFile(GV_PATH_BASE.GvConst::CONFIG_XML_FILE);
 
     } // End function
     //-----------------------------------------------------------------------------

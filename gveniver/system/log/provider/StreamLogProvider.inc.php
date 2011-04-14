@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('gveniver/system/log/provider/LogProvider.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/log/provider/LogProvider.inc.php');
 
 /**
  * Log provider class for saving log data to some PHP stream.

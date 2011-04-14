@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
 
 /**
  * Class of extension kernel module.
@@ -42,7 +42,7 @@ class ExtensionModule extends GvKernelModule
         $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
         // Try to create extension loader.
-        $this->_cLoader = GvKernelInclude::createObject(
+        $this->_cLoader = GvInclude::createObject(
             array(
                 'class' => 'DirectoryExtensionLoader',
                 'path'  => 'gveniver/system/extension/loader/%class%.inc.php',

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base abstract class for template objects factory.
  *
  * @category  Gveniver
  * @package   Template
@@ -11,6 +11,8 @@
  */
 
 /**
+ * Base abstract class for template objects factory.
+ * 
  * TODO: Cache of templates.
  *
  * @category  Gveniver

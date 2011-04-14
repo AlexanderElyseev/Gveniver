@@ -11,8 +11,8 @@
  */
 
 require_once('Smarty.class.php');
-GvKernelInclude::instance()->includeFile('gveniver/system/template/factory/BaseFileTemplateFactory.inc.php');
-GvKernelInclude::instance()->includeFile('gveniver/system/template/Smarty3Template.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/template/factory/BaseFileTemplateFactory.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/template/Smarty3Template.inc.php');
 
 
 /**

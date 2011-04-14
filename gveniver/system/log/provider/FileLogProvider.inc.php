@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('gveniver/system/log/provider/LogProvider.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/log/provider/LogProvider.inc.php');
 
 /**
  * Log provider class for saving log data to file.
@@ -65,7 +65,7 @@ class FileLogProvider extends LogProvider
     public function save(array $aData)
     {
         // Convert to absolute path.
-        if (!GvKernelInclude::isAbsolutePath($this->_sFileName))
+        if (!GvInclude::isAbsolutePath($this->_sFileName))
             $this->_sFileName = GV_PATH_BASE.$this->_sFileName;
 
         // Check permissions to write in log directory.

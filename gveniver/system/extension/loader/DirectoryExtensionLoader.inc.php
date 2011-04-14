@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvKernelInclude::instance()->includeFile('gveniver/system/extension/loader/ExtensionLoader.inc.php');
+GvInclude::instance()->includeFile('gveniver/system/extension/loader/ExtensionLoader.inc.php');
 
 /**
  * Loader class for kernel extensions.
@@ -113,7 +113,7 @@ class DirectoryExtensionLoader extends ExtensionLoader
             $this->cKernel->trace->addLine('[%s] Loading extension ("%s") in "%s".', __CLASS__, $sExtensionName, $sExtensionFileName);
 
             // Dynamically load extension.
-            $cExt = GvKernelInclude::createObject(
+            $cExt = GvInclude::createObject(
                 array(
                     'class' => $sExtensionClassName,
                     'path'  => $sExtensionFileName,
