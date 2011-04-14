@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains test kernel extension.
  *
  * @category  Gveniver
  * @package   Extension
@@ -13,7 +13,7 @@
 GvKernelInclude::instance()->includeFile('gveniver/system/extension/SimpleExtension.inc.php');
 
 /**
- *
+ * Test kernel extension class.
  *
  * @category  Gveniver
  * @package   Extension
@@ -24,6 +24,14 @@ GvKernelInclude::instance()->includeFile('gveniver/system/extension/SimpleExtens
  */
 class TestExt extends SimpleExtenson
 {
+    /**
+     * Test extension method.
+     * 
+     * @param string $v Arg1.
+     * @param string $f Arg2.
+     *
+     * @return string
+     */
     public function tESt($v, $f)
     {
         //var_dump(func_get_args());
