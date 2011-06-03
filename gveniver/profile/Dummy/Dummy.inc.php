@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * Filec ontains dummy profile class.
  *
  * @category   Gveniver
  * @package    Kernel
@@ -12,7 +12,7 @@
  */
 
 /**
- *
+ * Dummy profile class.
  *
  * PHP version 5
  *
@@ -29,12 +29,11 @@ class DummyKernelProfile extends GvKernelProfile
     /**
      * Start profile logic.
      *
-     * @return void
+     * @return string
      */
     public function start()
     {
         $this->cKernel->trace->addLine('[%s] Start.', __CLASS__);
-        
         return $this->cKernel->template->parseTemplate('main_enter', array('fromarray' => 'data'));
 
     } // End function

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base abstract cache provider class.
  *
  * @category  Gveniver
  * @package   Cache
@@ -11,7 +11,7 @@
  */
 
 /**
- *
+ * Base abstract cache provider class.
  *
  * @category  Gveniver
  * @package   Cache
@@ -19,6 +19,7 @@
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class CacheProvider
 {
@@ -97,7 +98,7 @@ abstract class CacheProvider
     /**
      * Generator for correct unique cache identifiers by names.
      *
-     * @param strin $sDataName
+     * @param string $sDataName Unique name of cached data.
      * 
      * @return string
      */

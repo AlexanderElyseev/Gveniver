@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/log/provider/LogProvider.inc.php');
+GvInclude::instance()->includeFile('system/log/provider/LogProvider.inc.php');
 
 /**
  * Log provider class for saving log data to email.
@@ -62,13 +62,13 @@ class EmailLogProvider extends LogProvider
     {
         // Use parent constructor.
         parent::__construct($cKernel, $aConfigData);
-
+        
         $bExistsRecipient = isset($aConfigData['Recipient']) && is_string($aConfigData['Recipient']);
         $bExistsFrom = isset($aConfigData['Sender']) && is_string($aConfigData['Sender']);
         $bExistsSubject = isset($aConfigData['Subject']) && is_string($aConfigData['Subject']);
         
         if (!$bExistsRecipient || !$bExistsFrom || !$bExistsSubject)
-            throw new GvException('One ore more of configuration parameters not loaede.');
+            throw new GvException('One ore more of configuration parameters not loaded.');
 
         $this->_sRecipient = $aConfigData['Recipient'];
         $this->_sSender = $aConfigData['Sender'];

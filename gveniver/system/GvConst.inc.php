@@ -19,6 +19,7 @@
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class GvConst
 {

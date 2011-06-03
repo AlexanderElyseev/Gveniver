@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains kernel extension class for debugging.
  *
  * @category  Gveniver
  * @package   Extension
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/extension/SimpleExtension.inc.php');
+GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
 
 /**
- *
+ * Kernel extension class for debugging.
  *
  * @category  Gveniver
  * @package   Extension

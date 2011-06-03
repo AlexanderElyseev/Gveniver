@@ -1,8 +1,28 @@
 <?php
+/**
+ * File contains base abstract kernel extension class.
+ *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
-GvInclude::instance()->includeFile('gveniver/system/extension/ExtensionData.inc.php');
+GvInclude::instance()->includeFile('system/extension/ExtensionData.inc.php');
 
-
+/**
+ * Base abstract kernel extension class.
+ *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ * @abstract
+ */
 abstract class GvKernelExtension
 {
     /**
@@ -27,8 +47,6 @@ abstract class GvKernelExtension
      * Load extension data with specific logic.
      *
      * @param GvKernel $cKernel Current kernel.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel)
     {
@@ -63,12 +81,24 @@ abstract class GvKernelExtension
      */
     public abstract function query($sAction, $aParams = array());
     //-----------------------------------------------------------------------------
-    
+
+    /**
+     * Add resource to the profile.
+     *
+     * @return void
+     */
     public function addResource()
     {
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Add handler to the profile.
+     *
+     * @param ExtensionHandler $cHandler Handler to add.
+     * 
+     * @return void
+     */
     public function addHandler(ExtensionHandler $cHandler)
     {
     } // End function

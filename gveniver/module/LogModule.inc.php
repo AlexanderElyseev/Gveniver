@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
-GvInclude::instance()->includeFile('gveniver/system/log/Log.inc.php');
+GvInclude::instance()->includeFile('GvKernelModule.inc.php');
+GvInclude::instance()->includeFile('system/log/Log.inc.php');
 
 /**
  * Kernel module class for log subsystem.
@@ -71,7 +71,7 @@ class LogModule extends GvKernelModule
                 $cProvider = GvInclude::createObject(
                     array(
                         'class' => $sClassName,
-                        'path'  => 'gveniver/system/log/provider/%class%.inc.php',
+                        'path'  => 'system/log/provider/%class%.inc.php',
                         'args'  => array($this->cKernel, $aProviderData)
                     ),
                     $nErrCode

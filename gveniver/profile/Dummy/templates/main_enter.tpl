@@ -16,7 +16,7 @@
 	</head>
 	<body>
         This is dummy profile and its main page.<br/>
-        <a href="#" id="id_link_trace">Trace</a>
+        <a href="main_enter.tpl#" id="id_link_trace">Trace</a>
         <div id="id_div_trace">
             {[ext ext=GvDebugExt act=getTrace]}
         </div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Profile>
+        <Path>
+            <AbsRootWeb>http://dc1/gv/</AbsRootWeb>
+            <AbsScript>/var/www/gv/gveniver/profile/Dummy/scripts/</AbsScript>
+            <AbsScriptWeb>http://dc1/gv/gveniver/profile/Dummy/scripts/</AbsScriptWeb>
+            <AbsStyle>/var/www/gv/gveniver/profile/Dummy/styles/</AbsStyle>
+            <AbsStyleWeb>http://dc1/gv/gveniver/profile/Dummy/styles/</AbsStyleWeb>
+            <AbsImage>/var/www/gv/gveniver/profile/Dummy/images/</AbsImage>
+            <AbsImageWeb>http://dc1/gv/gveniver/profile/Dummy/images/</AbsImageWeb>
+            <AbsUpload>/var/www/gv/gveniver/profile/Dummy/upload/</AbsUpload>
+            <AbsUploadWeb>http://dc1/gv/gveniver/profile/Dummy/upload/</AbsUploadWeb>
+            <AbsCache>/var/www/gv/gveniver/profile/Dummy/cache/</AbsCache>
+            <AbsCacheWeb>http://dc1/gv/gveniver/profile/Dummy/cache/</AbsCacheWeb>
+            <AbsExtension>/var/www/gv/gveniver/profile/Dummy/extension/</AbsExtension>
+            <AbsTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</AbsTemplate>
+        </Path>
+    </Profile>
+    <Module>
+        <TemplateModule>
+            <SmartyDirCache>/var/www/gv/gveniver/profile/Dummy/cache/</SmartyDirCache>
+            <SmartyDirTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</SmartyDirTemplate>
+            <SmartyDirCompile>/var/www/gv/gveniver/profile/Dummy/templates_c/</SmartyDirCompile>
+            <SmartyDirConfig>/var/www/gv/gveniver/profile/Dummy/</SmartyDirConfig>
+		</TemplateModule>
+    </Module>
+</Configuration>

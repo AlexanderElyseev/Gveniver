@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * File contains base and final class for including files.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,6 +11,8 @@
  */
 
 /**
+ * Base and final class for including files.
+ *
  * TODO: Проблема переинициализации кэша кода, если кэш включен и файл был изменен.
  * TODO: Вырезание php тэгов только из начала и конца файла при кэшировании.
  * 
@@ -150,8 +152,6 @@ final class GvInclude
     /**
      * Private singleton constructor of {@see GvInclude}.
      * Initialize member fields.
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -228,7 +228,7 @@ final class GvInclude
         if (!$bIncluded && !$bSkip) {
             $this->_bCacheChanged = true;
             $this->_aIncludeMeta[$aMeta['hash']] = $aMeta;
-            include $sFileName;
+            include $aMeta['path'];
             return true;
         }
 
@@ -272,9 +272,9 @@ final class GvInclude
             return false;
 
         $this->_aIncludeMeta = unserialize(file_get_contents($this->_sCacheMetaFilePath));
-        require $this->_sCacheCodeFilePath;
-		return true;
-		
+        include $this->_sCacheCodeFilePath;
+        return true;
+        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -387,11 +387,10 @@ final class GvInclude
      *             May contain %class% placeholder. It will be replaced by specified class name.
      * - [base]  - Base class name.
      * - [args]  - Arguments to constructor.
+     * 
+     * @param array $aParams     Paramenters for creating object.
+     * @param int   &$nErrorCode Output error code.
      *
-     *
-     * @param array $aParams
-     * @param int   &$nErrorCode
-
      * @return mixed
      * @static
      */
@@ -434,19 +433,19 @@ final class GvInclude
             }
         }
 
-		// Create object instance.
+        // Create object instance.
         $aArguments = isset($aParams['args']) ? $aParams['args'] : null;
-		try {
+        try {
             if ($aArguments) {
                 $cObj = $cRc->newInstanceArgs($aArguments);
             } else {
                 $cObj = new $sClassName;
             }
-		} catch (Exception $cEx) {
+        } catch (Exception $cEx) {
             //echo($cEx->getMessage());
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
-			return null;
-		}
+            return null;
+        }
 
         $nErrorCode = self::ERRROR_NONE;
         return $cObj;

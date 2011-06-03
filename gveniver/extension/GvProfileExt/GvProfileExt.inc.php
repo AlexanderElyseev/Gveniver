@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains kernel extension for access to profile data.
  *
  * @category  Gveniver
  * @package   Extension
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/extension/SimpleExtension.inc.php');
+GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
 
 /**
- *
+ * Kernel extension class for access to profile data.
  *
  * @category  Gveniver
  * @package   Extension
@@ -25,6 +25,5 @@ GvInclude::instance()->includeFile('gveniver/system/extension/SimpleExtension.in
 class GvProfileExt extends SimpleExtenson
 {
 
-    
 } // End class
 //-----------------------------------------------------------------------------

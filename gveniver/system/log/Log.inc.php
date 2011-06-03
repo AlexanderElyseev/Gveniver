@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/log/provider/LogProvider.inc.php');
+GvInclude::instance()->includeFile('system/log/provider/LogProvider.inc.php');
 
 /**
  * Base logger class.

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains data kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::instance()->includeFile('GvKernelModule.inc.php');
 
 /**
- *
+ * Data kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -53,7 +53,7 @@ class DataModule extends GvKernelModule
         // Clear list of providers.
         $this->_aProviders = array();
 
-		// Load data of providers.
+        // Load data of providers.
         $this->_aConfiguration = $this->cKernel->cConfig->get('Module/DataModule/Providers');
 
         $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
@@ -158,7 +158,7 @@ class DataModule extends GvKernelModule
         $cProvider = GvInclude::createObject(
             array(
                 'class' => $sClassname,
-                'path'  => 'gveniver/system/data/provider/%class%.inc.php',
+                'path'  => 'system/data/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
             $nErrCode

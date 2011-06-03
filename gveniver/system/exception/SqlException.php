@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains SQL exception class for Gveniver system.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/exception/GvException.inc.php');
+GvInclude::instance()->includeFile('system/exception/GvException.inc.php');
 
 /**
- *
+ * SQL exception class for Gveniver system.
  *
  * @category  Gveniver
  * @package   Kernel

@@ -16,7 +16,10 @@
  *
  * @return array|mixed
  */
+// @codingStandardsIgnoreStart
 function array_merge_recursive_distinct()
+// @codingStandardsIgnoreEnd
+
 {
     $arrays = func_get_args();
     $base = array_shift($arrays);
@@ -70,7 +73,9 @@ function array_merge_recursive_distinct()
  * 
  * @return array
  */
+// @codingStandardsIgnoreStart
 function explode_ex($delimiter, $string)
+// @codingStandardsIgnoreEnd
 {
     $exploded = explode($delimiter, $string);
     $fixed = array();
@@ -98,7 +103,9 @@ function explode_ex($delimiter, $string)
  * 
  * @return string
  */
+// @codingStandardsIgnoreStart
 function addslashes_ex($sText)
+// @codingStandardsIgnoreEnd
 {
     $sText = str_replace(':', '\:', $sText);
     $sText = str_replace(',', '\,', $sText);
@@ -120,7 +127,9 @@ function addslashes_ex($sText)
  * 
  * @return string
  */
+// @codingStandardsIgnoreStart
 function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
+// @codingStandardsIgnoreEnd
 { 
     if ($allowattributes) {
         if (!is_array($allowattributes)) 
@@ -153,7 +162,9 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
  * 
  * @return array
  */
+// @codingStandardsIgnoreStart
 function array_shift_ex(&$arr)
+// @codingStandardsIgnoreEnd
 {
     list($k) = array_keys($arr);
     unset($arr[$k]);
@@ -170,7 +181,9 @@ function array_shift_ex(&$arr)
  * 
  * @return string
  */
+// @codingStandardsIgnoreStart
 function strtolower_ex($str)
+// @codingStandardsIgnoreEnd
 {
     $aAlphaLower = array(
         'ё', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 
@@ -197,7 +210,9 @@ function strtolower_ex($str)
  * 
  * @return string
  */
+// @codingStandardsIgnoreStart
 function strtoupper_ex($str)
+// @codingStandardsIgnoreEnd
 {
     $aAlphaLower = array(
         'ё', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 
@@ -224,7 +239,9 @@ function strtoupper_ex($str)
  * 
  * @return string
  */
+// @codingStandardsIgnoreStart
 function str_break_text($string, $max_length)
+// @codingStandardsIgnoreEnd
 { 
     if (mb_strlen($string) > $max_length) { 
         $string = mb_substr($string, 0, $max_length); 
@@ -253,7 +270,9 @@ function str_break_text($string, $max_length)
  * @return string
  * @author Ilya Lebedev
  */
-function str_break_html($txt, $len, $delim = '\s;,.!?:#') 
+// @codingStandardsIgnoreStart
+function str_break_html($txt, $len, $delim = '\s;,.!?:#')
+// @codingStandardsIgnoreEnd
 {
     $txt = preg_replace_callback(
         "#(</?[a-z]+(?:>|\s[^>]*>)|[^<]+)#mi",    // TODO mb_

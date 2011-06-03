@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base abstract kernel profile class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,9 +11,7 @@
  */
 
 /**
- *
- *
- * Provide Singleton pattern.
+ * Base abstract kernel profile class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -21,6 +19,7 @@
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class GvKernelModule
 {
@@ -38,8 +37,6 @@ abstract class GvKernelModule
      * Initialize new instance of profile by kernel.
      *
      * @param GvKernel $cKernel Kernel of profile.
-     *
-     * @return void
      */
     public final function __construct(GvKernel $cKernel)
     {

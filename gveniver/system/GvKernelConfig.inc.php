@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * File contains class for loader of configuration parameters.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,6 +11,8 @@
  */
 
 /**
+ * Class for loader of configuration parameters.
+ * 
  * TODO: Default base configuration (without xml file).
  *
  * @category  Gveniver

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains template factory class for Smarty template system.
  *
  * @category  Gveniver
  * @package   Template
@@ -10,13 +10,11 @@
  * @link      http://prof-club.ru
  */
 
-require_once('Smarty.class.php');
-GvInclude::instance()->includeFile('gveniver/system/template/factory/BaseFileTemplateFactory.inc.php');
-GvInclude::instance()->includeFile('gveniver/system/template/Smarty3Template.inc.php');
-
+GvInclude::instance()->includeFile('system/template/factory/BaseFileTemplateFactory.inc.php');
+GvInclude::instance()->includeFile('system/template/Smarty3Template.inc.php');
 
 /**
- *
+ * Template factory class for Smarty template system.
  *
  * @category  Gveniver
  * @package   Template
@@ -48,6 +46,10 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
         // Use base constructor.
         parent::__construct($cKernel);
 
+        // Check, is SMarty is exists on system.
+        if (!class_exists('Smarty'))
+            throw new GvException('Smarty is not installed.');
+        
         // Initialize smarty.
         $this->_cSmarty = new Smarty();
         if (!$this->_reinstallSmarty())
@@ -64,22 +66,22 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
     private function _reinstallSmarty()
     {
         $sDirTemplate = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirTemplate');
-        if (!$this->_createDir($sDirTemplate))
+        if (!$this->_createDir($sDirTemplate) || !is_readable($sDirTemplate))
             return false;
         $this->_cSmarty->template_dir = $sDirTemplate;
 
         $sDirCompile = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirCompile');
-        if (!$this->_createDir($sDirCompile))
+        if (!$this->_createDir($sDirCompile) || !is_writable($sDirCompile))
             return false;
         $this->_cSmarty->compile_dir = $sDirCompile;
 
         $sDirCache = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirCache');
-        if (!$this->_createDir($sDirCache))
+        if (!$this->_createDir($sDirCache) || !is_writable($sDirCache))
             return false;
         $this->_cSmarty->cache_dir = $sDirCache;
 
         $sDirConfig = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirConfig');
-        if (!$this->_createDir($sDirConfig))
+        if (!$this->_createDir($sDirConfig) || !is_readable($sDirConfig))
             return false;
         $this->_cSmarty->config_dir = $sDirConfig;
 
@@ -124,13 +126,15 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return BaseTemplate
+     * @return BaseTemplate|null
      */
     protected function build($sTemplateName)
     {
         $sTemplateFile = $this->getTemplateFileName($sTemplateName);
         if ($sTemplateFile)
             return new Smarty3Template($this->_cSmarty, $sTemplateFile);
+
+        return null;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -145,7 +149,7 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
      */
     public function extension($aParams, &$cSmarty)
     {
-        $cExtModule = $this->cKernel->getModule('ExtensionModule');
+        $cExtModule = $this->cKernel->extension;
         if (!$cExtModule) {
             $this->cKernel->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
             return null;
@@ -180,7 +184,7 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
         // Assign result to specified variable.
         if ($sVarName) {
             $cSmarty->assign($sVarName, $sRet);
-            return;
+            return "";
         }
         return $sRet;
 

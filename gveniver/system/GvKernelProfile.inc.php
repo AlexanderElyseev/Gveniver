@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base abstract kernel profile class.
  * 
  * @category   Gveniver
  * @package    Kernel
@@ -12,7 +12,7 @@
  */
 
 /**
- * 
+ * Base abstract kernel profile class.
  * 
  * PHP version 5
  *
@@ -40,15 +40,13 @@ abstract class GvKernelProfile
      * Initialize new instance of profile by kernel.
      *
      * @param GvKernel $cKernel Kernel of profile.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel)
     {
         $this->cKernel = $cKernel;
         
     } // End function
-	//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /**
      * Start profile logic.

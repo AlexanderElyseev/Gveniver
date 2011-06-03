@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains file cache provider class.
  *
  * @category  Gveniver
  * @package   Cache
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/cache/provider/CacheProvider.inc.php');
+GvInclude::instance()->includeFile('system/cache/provider/CacheProvider.inc.php');
 
 /**
- *
+ * File cache provider class.
  *
  * @category  Gveniver
  * @package   Cache

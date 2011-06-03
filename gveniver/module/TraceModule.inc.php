@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * File contains tracing kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::instance()->includeFile('GvKernelModule.inc.php');
 
 /**
- * 
+ * Tracing kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -104,9 +104,9 @@ class TraceModule extends GvKernelModule
     {
         // Build message with sprintf function if specified more than 1 parameter.
         if (func_num_args() > 1) {
-			$aArgs = func_get_args();
-			$sMessage = call_user_func_array('sprintf', $aArgs);
-		}
+            $aArgs = func_get_args();
+            $sMessage = call_user_func_array('sprintf', $aArgs);
+        }
 
         //echo $sMessage."<br/>\n";
         

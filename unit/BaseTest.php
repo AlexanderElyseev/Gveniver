@@ -1,55 +1,53 @@
 <?php
 /**
- * File contains simple invar loader class.
+ * File with base unit test cases.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   UnitTest
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/invar/loader/InvarLoader.inc.php');
+require_once '../gveniver/init.inc.php';
 
 /**
- * Simple invar loader class.
+ * Unit test case class for testing initialization of kernel.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   UnitTest
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class SimpleInvarLoader extends InvarLoader
+class InitTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * Analyze invars from request query string.
-     * Build list by GET array.
-     *
-     * @return array
+     * Test correct initialization of kernel with dummy profile.
+     * 
+     * @return void
      */
-    public function analyzeRequest()
+    public function testInit()
     {
-        return array();
+        new GvKernel('Dummy');
 
     } // End function
     //-----------------------------------------------------------------------------
     
     /**
-     * Building request string by associative array of parameters.
+     * Test initialization of kernel with not existed profile.
      *
-     * @param array $aVariables Array of parameters for building request string.
-     *
-     * @return string
+     * @expectedException GvException
+     * @return void
      */
-    public function buildRequest(array $aVariables = array())
+    public function testWrongProfile()
     {
-        return '?'.http_build_query($aVariables);
-        
+        new GvKernel('WronProfileNameHere');
+
     } // End function
     //-----------------------------------------------------------------------------
-       
+
 } // End class
 //-----------------------------------------------------------------------------

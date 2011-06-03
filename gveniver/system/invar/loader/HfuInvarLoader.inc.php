@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains human-friendly url invar loader class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/invar/loader/InvarLoader.inc.php');
+GvInclude::instance()->includeFile('system/invar/loader/InvarLoader.inc.php');
 
 /**
- *
+ * Human-friendly url invar loader class.
  *
  * @category  Gveniver
  * @package   Kernel

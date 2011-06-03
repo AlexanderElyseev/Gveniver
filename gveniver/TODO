@@ -2,6 +2,10 @@
 Todo list for project.
 -------------------------------------------------------------------------------
 
+0. Kernel.
+    0.1. Restore environment after running profile.                                                 [--]
+    0.2. Parameters for error reporting on loading module: exception or dummy class.                [--]
+    0.3. Initialize profile by profile path or profile name.                                        [--]
 1. Data module.                                                                                     [--]
     1.1. Base architecture.                                                                         [ok]
     1.2. Data providers for mysql and mongodb.                                                      [ok]

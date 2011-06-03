@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base and final class of kernel.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,8 +11,7 @@
  */
 
 /**
- *
- *
+ * Base and final class of kernel.
  *
  * PHP version 5
  *
@@ -62,9 +61,9 @@ final class GvKernel
      * Constructor of {@see GvKernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @return void
+     * @param string $sProfile Path to kernel profile dir or name of kernel profile.
      */
-    public function __construct($sProfileName)
+    public function __construct($sProfile)
     {
         // Initialize and load confiuration.
         $this->cConfig = new GvKernelConfig();
@@ -73,9 +72,9 @@ final class GvKernel
         $this->initEnvironment();
 
         // Load profile.
-        $this->_cProfile = $this->_loadProfile($sProfileName);
+        $this->_cProfile = $this->_loadProfile($sProfile);
         if (!$this->_cProfile)
-            throw new GvException(sprintf('Kernel profile with name "%s" not found.', $sProfileName));
+            throw new GvException(sprintf('Kernel profile with name "%s" not found.', $sProfile));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -164,13 +163,16 @@ final class GvKernel
             if($bGzipSupport && $bDeflateSupport)
                 $bDeflateSupport = $bPreferDeflate;
 
-            if ($bDeflateSupport) {                     // Defalte compression.
+            if ($bDeflateSupport) {
+                // Defalte compression.
                 header('Content-Encoding: deflate');
                 ob_start('GvKernel::obHandlerDeflate');
-            } elseif($bGzipSupport) {                   // Gzip compression.
+            } elseif ($bGzipSupport) {
+                // Gzip compression.
                 header('Content-Encoding: gzip');
                 ob_start('GvKernel::obHandlerGzip');
-            } else                                      // No compression.
+            } else
+                // No compression.
                 ob_start();
 
         } // End if
@@ -181,30 +183,36 @@ final class GvKernel
     /**
      * Load kernel profile instance by name.
      *
-     * @param string $sProfileName Name of profile for loading.
+     * @param string $sProfile Path to kernel profile dir or name of kernel profile for loading.
      *
      * @return GvKernelProfile|null Returns kernel profile by specified name or null, if module not loaded.
      */
-    private function _loadProfile($sProfileName)
+    private function _loadProfile($sProfile)
     {
-        $this->trace->addLine('Start loading profile ("%s").', $sProfileName);
-
         // Check profile directory.
-        $sProfilePath = GV_PATH_BASE.'profile'.GV_DS.$sProfileName.GV_DS;
-        if (!is_dir($sProfilePath)) {
-            $this->trace->addLine('[%s] Profile directory ("%s") is not exists.', __CLASS__, $sProfilePath);
-            return null;
+        // If directory is specified, load from directory.
+        // Otherwise, load from base profile directory with specified profile name.
+        if (is_dir($sProfile)) {
+            $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfile);
+            $sProfilePath = $sProfile;
+        } else {
+            $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfile);
+            $sProfilePath = GV_PATH_BASE.'profile'.GV_DS.$sProfile.GV_DS;
+            if (!is_dir($sProfilePath)) {
+                $this->trace->addLine('[%s] Profile directory ("%s") is not exists.', __CLASS__, $sProfilePath);
+                return null;
+            }
         }
 
         // Check profile module file.
-        $sProfilePhpFile = $sProfilePath.$sProfileName.'.inc.php';
+        $sProfilePhpFile = $sProfilePath.$sProfile.'.inc.php';
         if (!is_file($sProfilePhpFile)) {
-            $this->trace->addLine('[%s] Profile file ("%s") is not exists.', __CLASS__, $sProfilePhpFile);
+            $this->trace->addLine('[%s] Profile class file ("%s") is not exists.', __CLASS__, $sProfilePhpFile);
             return null;
         }
 
         // Include profile file with class, if target class is not exists.
-        $cProfileClass = $sProfileName.'KernelProfile';
+        $cProfileClass = $sProfile.'KernelProfile';
         if (!class_exists($cProfileClass)) {
             $this->trace->addLine(
                 '[%s] Profile class ("%s") is not exists. Start of including file: "%s".',
@@ -237,7 +245,7 @@ final class GvKernel
         try {
             $cProfile = new $cProfileClass($this);
         } catch (Exception $cEx) {
-            $this->trace->addLine('[%s] Exception in profile ("%s") constructor: "%s".', __CLASS__, $sProfileName, $cEx->getMessage());
+            $this->trace->addLine('[%s] Exception in profile ("%s") constructor: "%s".', __CLASS__, $sProfile, $cEx->getMessage());
             return null;
 
         } // End catch
@@ -250,7 +258,7 @@ final class GvKernel
             $this->trace->addLine(
                 '[%s] Configuration parameters of profile ("%s") successfully loaded (from "%s").',
                 __CLASS__,
-                $sProfileName,
+                $sProfile,
                 $sProfileXmlFile
             );
         }
@@ -283,7 +291,7 @@ final class GvKernel
 
         // If module class is not exists, include module file.
         if (!class_exists($sModuleName))
-            if (!GvInclude::instance()->includeFile('gveniver'.GV_DS.'module'.GV_DS.$sModuleName.'.inc.php'))
+            if (!GvInclude::instance()->includeFile('module'.GV_DS.$sModuleName.'.inc.php'))
                 return null;
 
         // After including module file, class of module must exists.
@@ -329,6 +337,7 @@ final class GvKernel
         if (isset($this->_aModuleNameHash[$sModuleName])) {
             $sCorrectName = $this->_aModuleNameHash[$sModuleName];
         } else {
+            // TODO: very stupid...
             $sCorrectName = $sModuleName;
             if (!preg_match('/^\w+Module$/i', $sCorrectName))
                 $sCorrectName .= 'Module';

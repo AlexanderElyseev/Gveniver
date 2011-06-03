@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains template class for Smarty template system.
  *
  * @category  Gveniver
  * @package   Template
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/template/BaseTemplate.inc.php');
+GvInclude::instance()->includeFile('system/template/BaseTemplate.inc.php');
 
 /**
- *
+ * Template class for Smarty template system.
  *
  * @category  Gveniver
  * @package   Template
@@ -29,9 +29,9 @@ class Smarty3Template extends BaseTemplate
      *
      * @var Smarty
      */
-	private $_cTpl;
-	//-----------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------
+    private $_cTpl;
+    //-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /**
      * Class constructor.
@@ -40,29 +40,29 @@ class Smarty3Template extends BaseTemplate
      * @param Smarty &$cSmarty      Base Smarty for initialization.
      * @param string $sTemplateName Full path to template file.
      */
-	public function __construct(Smarty &$cSmarty, $sTemplateName)
-	{
+    public function __construct(Smarty &$cSmarty, $sTemplateName)
+    {
         // Compile template.
-		$this->_cTpl = $cSmarty->createTemplate($sTemplateName);
+        $this->_cTpl = $cSmarty->createTemplate($sTemplateName);
 
-	} // End function
-	//-----------------------------------------------------------------------------
+    } // End function
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Parse template with specified data.
-	 *
-	 * @param array $aTemplateData Data for template.
-	 *
-	 * @return string
-	 */
-	public function parse(array $aTemplateData)
-	{
+    /**
+     * Parse template with specified data.
+     *
+     * @param array $aTemplateData Data for template.
+     *
+     * @return string
+     */
+    public function parse(array $aTemplateData)
+    {
         $this->_cTpl->clearAllAssign();
         $this->_cTpl->assign($aTemplateData);
         return $this->_cTpl->fetch();
         
-	} // End function
-	//-----------------------------------------------------------------------------
-	
+    } // End function
+    //-----------------------------------------------------------------------------
+    
 } // End class
 //-----------------------------------------------------------------------------

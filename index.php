@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * Base index file.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -13,8 +13,11 @@
 $begin = microtime(true);
 //-----------------------------------------------------------------------------
 
+// Include Smarty.
+require_once '/var/www/lib/Smarty-3.0.7/libs/Smarty.class.php';
+
 // Include Gveniver Framework.
-require_once 'init.inc.php';
+require_once 'gveniver/init.inc.php';
 
 $cDummyKernel = new GvKernel('Dummy');
 $cDummyKernel->template;

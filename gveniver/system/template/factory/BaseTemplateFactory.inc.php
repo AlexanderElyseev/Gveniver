@@ -46,8 +46,6 @@ abstract class BaseTemplateFactory
      * Initialize member fields.
      *
      * @param GvKernel $cKernel Current kernel.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel)
     {
@@ -56,21 +54,21 @@ abstract class BaseTemplateFactory
     } // End function
     //-----------------------------------------------------------------------------
 
-	/**
-	 * Load template by template name.
-	 *
-	 * @param string $sTemplateName Name of template for loading.
-	 *
-	 * @return BaseTemplate
-	 */
-	public function load($sTemplateName)
+    /**
+     * Load template by template name.
+     *
+     * @param string $sTemplateName Name of template for loading.
+     *
+     * @return BaseTemplate
+     */
+    public function load($sTemplateName)
     {
         return array_key_exists($sTemplateName, $this->_aTemplateCache)
             ? ($this->_aTemplateCache[$sTemplateName])
             : ($this->_aTemplateCache[$sTemplateName] = $this->build($sTemplateName));
         
     } // End function
-	//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /**
      * Build template by template name.
