@@ -204,18 +204,18 @@ final class GvKernel
             }
         }
 
-        // Check profile module file.
+        // Check profile module splitter.
         $sProfilePhpFile = $sProfilePath.$sProfile.'.inc.php';
         if (!is_file($sProfilePhpFile)) {
-            $this->trace->addLine('[%s] Profile class file ("%s") is not exists.', __CLASS__, $sProfilePhpFile);
+            $this->trace->addLine('[%s] Profile class splitter ("%s") is not exists.', __CLASS__, $sProfilePhpFile);
             return null;
         }
 
-        // Include profile file with class, if target class is not exists.
+        // Include profile splitter with class, if target class is not exists.
         $cProfileClass = $sProfile.'KernelProfile';
         if (!class_exists($cProfileClass)) {
             $this->trace->addLine(
-                '[%s] Profile class ("%s") is not exists. Start of including file: "%s".',
+                '[%s] Profile class ("%s") is not exists. Start of including splitter: "%s".',
                 __CLASS__,
                 $cProfileClass,
                 $sProfilePhpFile
@@ -224,7 +224,7 @@ final class GvKernel
             GvInclude::instance()->includeFile($sProfilePhpFile);
             if (!class_exists($cProfileClass)) {
                 $this->trace->addLine(
-                    '[%s] Profile class ("%s") is not exists after including file ("%s").',
+                    '[%s] Profile class ("%s") is not exists after including splitter ("%s").',
                     __CLASS__,
                     $cProfileClass,
                     $sProfilePhpFile
@@ -286,12 +286,12 @@ final class GvKernel
         // Mark attemp of loading module as failed by default.
         $this->_aModules[$sModuleName] = null;
 
-        // If module class is not exists, include module file.
+        // If module class is not exists, include module splitter.
         if (!class_exists($sModuleName))
             if (!GvInclude::instance()->includeFile('module'.GV_DS.$sModuleName.'.inc.php'))
                 return null;
 
-        // After including module file, class of module must exists.
+        // After including module splitter, class of module must exists.
         if (!class_exists($sModuleName))
             return null;
 

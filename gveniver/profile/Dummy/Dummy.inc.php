@@ -39,5 +39,16 @@ class DummyKernelProfile extends GvKernelProfile
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Return name of current section.
+     *
+     * @return string
+     */
+    public function getCurrentSectionName()
+    {
+        // TODO: Implement getCurrentSectionName() method.
+    } // End function
+    //-----------------------------------------------------------------------------
+
 } // End class
 //-----------------------------------------------------------------------------

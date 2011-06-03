@@ -13,6 +13,7 @@ Todo list for project.
 2. Cache module.                                                                                    [--]
     2.1. Base architecture.                                                                         [ok]
     2.2. Cache providers for files and memcached.                                                   [ok]
+    2.3. Cache extension calls by some parameter.                                                   [--] !
 3. Log module.                                                                                      [--]
     3.1. Base architecture.                                                                         [--]
     3.2. Log providers for files and emails.                                                        [--]

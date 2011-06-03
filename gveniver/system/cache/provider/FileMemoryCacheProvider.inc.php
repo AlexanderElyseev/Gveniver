@@ -52,7 +52,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
             }
         }
 
-        // Load data from file cache.
+        // Load data from splitter cache.
         $mData = null;
         $bResult = parent::get($sCacheId, $sCacheGroupId, $mData);
 
@@ -84,7 +84,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
         // Save to memory.
         $this->_aMemoryData[$sCacheGroupId][$sCacheId] = is_object($mData) ? clone $mData : $mData;
 
-        // Save to file.
+        // Save to splitter.
         return parent::set($mData, $sCacheId, $sCacheGroupId, $nTtl);
         
     } // End function
@@ -102,7 +102,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
         // Flush memory cache.
         $this->_aMemoryData[$sCacheGroupId] = array();
 
-        // Flush file cache.
+        // Flush splitter cache.
         return parent::flush($sCacheGroupId);
 
     } // End function

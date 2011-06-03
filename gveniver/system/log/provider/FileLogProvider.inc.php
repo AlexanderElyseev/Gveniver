@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains log provider class for saving log data to file.
+ * File contains log provider class for saving log data to splitter.
  *
  * @category  Gveniver
  * @package   Log
@@ -13,7 +13,7 @@
 GvInclude::instance()->includeFile('system/log/provider/LogProvider.inc.php');
 
 /**
- * Log provider class for saving log data to file.
+ * Log provider class for saving log data to splitter.
  *
  * @category  Gveniver
  * @package   Log
@@ -25,7 +25,7 @@ GvInclude::instance()->includeFile('system/log/provider/LogProvider.inc.php');
 class FileLogProvider extends LogProvider
 {
     /**
-     * Absolute path to log file.
+     * Absolute path to log splitter.
      * 
      * @var string.
      */
@@ -48,7 +48,7 @@ class FileLogProvider extends LogProvider
         parent::__construct($cKernel, $aConfigData);
 
         if (!isset($aConfigData['FileName']) || !is_string($aConfigData['FileName']))
-            throw new GvException('Log file name must be specified.');
+            throw new GvException('Log splitter name must be specified.');
         
         $this->_sFileName = $aConfigData['FileName'];
 
@@ -56,7 +56,7 @@ class FileLogProvider extends LogProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Save log data to specified log file.
+     * Save log data to specified log splitter.
      * 
      * @param array $aData Data to save.
      * 
@@ -77,7 +77,7 @@ class FileLogProvider extends LogProvider
             }
         }
 
-        // Open file for writing.
+        // Open splitter for writing.
         $cFile = fopen($this->_sFileName, 'a');
         if (!$cFile) {
             $this->cKernel->trace->addLine('[%s] Error in opening log "%s".', __CLASS__, $this->_sFileName);

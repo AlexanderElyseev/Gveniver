@@ -44,7 +44,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Error code. Error in include file.
+     * Error code. Error in include splitter.
      *
      * @var int
      */
@@ -133,7 +133,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Path to code cache file.
+     * Path to code cache splitter.
      * 
      * @var string
      */
@@ -141,7 +141,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Path to metadata cache file
+     * Path to metadata cache splitter
      * 
      * @var string
      */
@@ -198,7 +198,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Include code file.
+     * Include code splitter.
      *
      * @param string $sFileName File name for adding to skip list.
      *
@@ -215,12 +215,12 @@ final class GvInclude
             $this->_loadCache();
         }
         
-        // Build metadata for file.
+        // Build metadata for splitter.
         $aMeta = $this->_buildMeta($sFileName);
         if (!$aMeta)
             return false;
         
-        // If file is not included, include file and add include metadata.
+        // If splitter is not included, include splitter and add include metadata.
         // Otherwise, do nothing.
         $aMeta = $this->_buildMeta($sFileName);
         $bIncluded = isset($this->_aIncludeMeta[$aMeta['hash']]);
@@ -238,7 +238,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Add file to skip list.
+     * Add splitter to skip list.
      * These files will not be included at {@see GvInclude::includeFile}.
      *
      * @param string $sFileName File name for adding to skip list.
@@ -247,7 +247,7 @@ final class GvInclude
      */
     public function skipFile($sFileName)
     {
-        // Build metadata for file.
+        // Build metadata for splitter.
         $aMeta = $this->_buildMeta($sFileName);
         if (!$aMeta)
             return false;
@@ -279,9 +279,9 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Save all include files to one cache file by include metadata.
+     * Save all include files to one cache splitter by include metadata.
      * Save metadata with serialization.
-     * From each file removes php open and close tags.
+     * From each splitter removes php open and close tags.
      *
      * @return void
      */
@@ -315,20 +315,20 @@ final class GvInclude
     //-----------------------------------------------------------------------------
     
     /**
-     * Build metadata for include file.
+     * Build metadata for include splitter.
      * File must exists.
      *
-     * @param string $sFileName Full file name.
+     * @param string $sFileName Full splitter name.
      *
-     * @return array Metadata for include file.
+     * @return array Metadata for include splitter.
      */
     private function _buildMeta($sFileName)
     {
-        // Correct file path.
+        // Correct splitter path.
         $sFileName = self::correctPath($sFileName);
 
-        // Check the existence of file for include by relative or absolute path.
-        // If file is not exists, do nothing.
+        // Check the existence of splitter for include by relative or absolute path.
+        // If splitter is not exists, do nothing.
         if (!$this->isAbsolutePath($sFileName))
             $sFileName = GV_PATH_BASE.$sFileName;
         if (!file_exists($sFileName))
@@ -347,7 +347,7 @@ final class GvInclude
      * Correction method of the directory separator character.
      * Replace all wrong characters to correct directory separator.
      *
-     * @param string $sFileName Name of file.
+     * @param string $sFileName Name of splitter.
      *
      * @return string
      */
@@ -378,12 +378,12 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Method for dynamically load class file and create new object of class.
-     * If class is not exists, file will be included automatically.
+     * Method for dynamically load class splitter and create new object of class.
+     * If class is not exists, splitter will be included automatically.
      *
      * Parameters:
      * - class   - Class name for create object.
-     * - path    - Path to include file, if class not exists.
+     * - path    - Path to include splitter, if class not exists.
      *             May contain %class% placeholder. It will be replaced by specified class name.
      * - [base]  - Base class name.
      * - [args]  - Arguments to constructor.
@@ -396,14 +396,14 @@ final class GvInclude
      */
     public static function createObject(array $aParams, &$nErrorCode = null)
     {
-        // Include class file, if class is not exists.
+        // Include class splitter, if class is not exists.
         $sClassName = isset($aParams['class']) ? $aParams['class'] : null;
         if (!class_exists($sClassName)) {
-            // Build path to file by template.
+            // Build path to splitter by template.
             $sPathTpl = isset($aParams['path']) ? $aParams['path'] : null;
             $sPathTpl = str_replace('%class%', $sClassName, $sPathTpl);
 
-            // Try to include file by builded path.
+            // Try to include splitter by builded path.
             if (!GvInclude::instance()->includeFile($sPathTpl)) {
                 $nErrorCode = self::ERRROR_FILE_INCLUDE;
                 return null;

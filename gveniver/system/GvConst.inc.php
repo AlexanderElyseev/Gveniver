@@ -32,7 +32,7 @@ abstract class GvConst
     //-----------------------------------------------------------------------------
 
     /**
-     * XML configuration file name, used in {@see GvKernelConfig}.
+     * XML configuration splitter name, used in {@see GvKernelConfig}.
      * 
      * @var string
      */
@@ -40,7 +40,7 @@ abstract class GvConst
     //-----------------------------------------------------------------------------
 
     /**
-     * Cache configuration file name, used in {@see GvKernelConfig}.
+     * Cache configuration splitter name, used in {@see GvKernelConfig}.
      *
      * @var string
      */

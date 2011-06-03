@@ -46,8 +46,6 @@ abstract class CacheProvider
      *
      * @param GvKernel $cKernel  Current kernel.
      * @param array    $aOptions Options for cache provider.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel, array $aOptions)
     {
