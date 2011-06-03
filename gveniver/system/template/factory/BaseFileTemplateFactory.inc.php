@@ -86,7 +86,7 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
 
         // Template folder.
         $this->sTplFolder = $this->cKernel->cConfig->get('Profile/Path/AbsTemplate');
-        if (!$this->sTplFolder || !file_exists($this->sTplFolder) || !is_dir($this->sTplFolder))
+        if (!$this->sTplFolder  || !is_dir($this->sTplFolder) || !is_readable($this->sTplFolder))
             throw new GvException('Wrong template directory.');
         
     } // End function
@@ -157,6 +157,8 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
 
         } // End else
 
+        return null;
+        
     } // End function
     //-----------------------------------------------------------------------------
 
