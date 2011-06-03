@@ -80,8 +80,8 @@
             </Providers>
         </LogModule>
         <TemplateModule>
-            <DelimiterBegin>{[</DelimiterBegin>
-            <DelimiterEnd>]}</DelimiterEnd>
+            <DelimiterBegin>{</DelimiterBegin>
+            <DelimiterEnd>}</DelimiterEnd>
             <Ext>tpl</Ext>
             <FactoryClass>Smarty3TemplateFactory</FactoryClass>
             <Separator>_</Separator>

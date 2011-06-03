@@ -87,7 +87,7 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
 
         $this->_cSmarty->left_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterBegin');
         $this->_cSmarty->right_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterEnd');
-        $this->_cSmarty->registerPlugin('function', 'ext', array($this, 'extension'));
+        $this->_cSmarty->registerPlugin('function', 'gv', array($this, 'extension'));
         $this->_cSmarty->registerPlugin('modifier', 'upper', 'strtoupper_ex');
         $this->_cSmarty->registerPlugin('modifier', 'lower', 'strtolower_ex');
         $this->_cSmarty->registerPlugin('modifier', 'substr', 'mb_substr');
