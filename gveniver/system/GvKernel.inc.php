@@ -184,14 +184,14 @@ final class GvKernel
      * Load kernel profile instance by name.
      *
      * @param string $sProfile Path to kernel profile dir or name of kernel profile for loading.
+     * If directory is specified, load from directory. Otherwise, load from base profile directory
+     * with specified profile name.
      *
      * @return GvKernelProfile|null Returns kernel profile by specified name or null, if module not loaded.
      */
     private function _loadProfile($sProfile)
     {
         // Check profile directory.
-        // If directory is specified, load from directory.
-        // Otherwise, load from base profile directory with specified profile name.
         if (is_dir($sProfile)) {
             $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfile);
             $sProfilePath = $sProfile;
@@ -238,7 +238,6 @@ final class GvKernel
             $this->trace->addLine('[%s] Profile class ("%s") must extends base profile class.', __CLASS__, $cProfileClass);
             return null;
         }
-
         $this->trace->addLine('[%s] Profile class ("%s") successfully loaded.', __CLASS__, $cProfileClass);
 
         // Create instance of profile.
@@ -247,9 +246,7 @@ final class GvKernel
         } catch (Exception $cEx) {
             $this->trace->addLine('[%s] Exception in profile ("%s") constructor: "%s".', __CLASS__, $sProfile, $cEx->getMessage());
             return null;
-
-        } // End catch
-
+        }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $cProfileClass);
 
         // Load configuration of profile append to main configuration.
