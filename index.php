@@ -20,13 +20,13 @@ require_once '/var/www/lib/Smarty-3.0.7/libs/Smarty.class.php';
 require_once 'gveniver/init.inc.php';
 
 $cDummyKernel = new GvKernel('Dummy');
-$cDummyKernel->template;
-$cDummyKernel->invar;
-$cDummyKernel->data;
-$cDummyKernel->trace;
-$cDummyKernel->extension;
-$cDummyKernel->cache;
-$cDummyKernel->log;
+//$cDummyKernel->template;
+//$cDummyKernel->invar;
+//$cDummyKernel->data;
+//$cDummyKernel->trace;
+//$cDummyKernel->extension;
+//$cDummyKernel->cache;
+//$cDummyKernel->log;
 
 // Start profile and output result content.
 echo $cDummyKernel->getProfile()->start();

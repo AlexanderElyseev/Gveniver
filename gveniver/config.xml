@@ -93,8 +93,11 @@
         <InvarModule>
             <LoaderClass>HfuInvarLoader</LoaderClass>
         </InvarModule>
-        <ProfileModule>
-            <ProfileDir></ProfileDir>
-        </ProfileModule>
     </Module>
+    <Profile>
+        <UseScriptTemplate>1</UseScriptTemplate>
+        <UseStyleTemplate>1</UseStyleTemplate>
+        <CacheScript>1</CacheScript>
+        <CacheStyle>1</CacheStyle>
+    </Profile>
 </Configuration>

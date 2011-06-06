@@ -11,6 +11,7 @@
  */
 
 GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
+GvInclude::instance()->includeFile('system/cache/FileSplitter.inc.php');
 
 /**
  * Kernel extension class for access to profile data.
@@ -25,7 +26,7 @@ GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
 class GvProfileExt extends SimpleExtenson
 {
     /**
-     * Array of configuration parameters.
+     * Array of configuration parameters for extension.
      *
      * @var boolean
      */
@@ -48,9 +49,12 @@ class GvProfileExt extends SimpleExtenson
         $this->_aConfig['ConfigScriptSection'] = $this->cKernel->cConfig->get('Kernel/ConfigScriptSection');
         $this->_aConfig['InvarSectionKey'] = $this->cKernel->cConfig->get('Kernel/InvarSectionKey');
 
-        $this->_aConfig['CacheScripts'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Cache/Scripts'));
-        $this->_aConfig['CacheStyles'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Cache/Styles'));
+        $this->_aConfig['CacheScripts'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheScript'));
+        $this->_aConfig['CacheStyles'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheStyle'));
 
+        $this->_aConfig['UseScriptTemplate'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/UseScriptTemplate'));
+        $this->_aConfig['UseStyleTemplate'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/UseStyleTemplate'));
+        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -62,12 +66,15 @@ class GvProfileExt extends SimpleExtenson
     public function getScripts()
     {
         // If JavaScript configuration is used.
-        $sScriptTpl = $this->cKernel->template->getTemplate('cms_html_script');
         $sJsConfigScript = '';
         if ($this->_aConfig['UseConfigScript']) {
-            $aLinkData = array($this->_aConfig['InvarSectionKey'] => $this->_aConfig['ConfigScriptSection']);
-            $aTplData = array('splitter' => $this->cKernel->invar->getLink($aLinkData));
-            $sJsConfigScript = $this->cKernel->template->parseTemplate($sScriptTpl, $aTplData);
+            $sJsConfigScript = $this->_buildScriptHtml(
+                $this->cKernel->invar->getLink(
+                    array(
+                         $this->_aConfig['InvarSectionKey'] => $this->_aConfig['ConfigScriptSection']
+                    )
+                )
+            );
         }
 
         // Load scripts data.
@@ -94,9 +101,40 @@ class GvProfileExt extends SimpleExtenson
         $sScriptWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsScriptWeb');
         if (is_array($aScriptDataList))
             foreach ($aScriptDataList as $aScript)
-                $sRet .= $this->cKernel->template->parseTemplate($sScriptTpl, array('splitter' => $sScriptWebPath.$aScript['FileName']));
+               $sRet .= $this->_buildScriptHtml($sScriptWebPath.$aScript['FileName']);
 
         return $sJsConfigScript.$sRet;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Build HTML data for script.
+     * 
+     * @param string $sFileUrl Url to script file.
+     *
+     * @return string
+     */
+    private function _buildScriptHtml($sFileUrl)
+    {
+        // Try to load file template for output scripts.
+        if ($this->_aConfig['UseScriptTemplate']) {
+            $sScriptTpl = $this->cKernel->template->getTemplate('cms_html_script');
+            if ($sScriptTpl) {
+                return $this->cKernel->template->parseTemplate(
+                    $sScriptTpl,
+                    array('splitter' => $sFileUrl)
+                );
+            } else {
+                $this->cKernel->trace->addLine(
+                    '[%s] Html template for scripts not found. Using default tempate.',
+                    __CLASS__
+                );
+            }
+        }
+        
+        // Use default template for output scripts.
+        return '<script type="text/javascript" src="'.$sFileUrl.'"></script>';
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -120,10 +158,10 @@ class GvProfileExt extends SimpleExtenson
             if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                 return null;
 
-            return $this->cKernel->template->parseTemplateFile('cms_html_script', array('splitter' => $sScriptCacheWebPath.$sCacheFile));
+            return $this->_buildScriptHtml($sScriptCacheWebPath.$sCacheFile);
 
         } catch (Exception $cEx) {
-            $this->cKernel->trace->addLine('[HeaderExt] Eception. '.$cEx);
+            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
         return null;
@@ -141,6 +179,9 @@ class GvProfileExt extends SimpleExtenson
      */
     private function _saveCacheScripts($aList, $sSectionName)
     {
+        if (!is_array($aList) || count($aList) == 0)
+            return;
+
         try {
             $sScriptAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsScript');
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
@@ -152,7 +193,7 @@ class GvProfileExt extends SimpleExtenson
             $cCacheSplitter->Save();
 
         } catch (Exception $cEx) {
-            $this->cKernel->trace->addLine('[HeaderExt] Eception. '.$cEx);
+            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
     } // End function
@@ -186,18 +227,56 @@ class GvProfileExt extends SimpleExtenson
         // Build result list of styles.
         $sRet = '';
         $sStyleWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsStyleWeb');
-        $sStyleTpl = $this->cKernel->template->getTemplate('cms_html_style');
         if (is_array($aStyleDataList)) {
             foreach ($aStyleDataList as $aStyle) {
-                $aTplData = array('splitter' => $sStyleWebPath.$aStyle['FileName']);
-                if (isset($aStyle['Condition']))
-                    $aTplData['condition'] = $aStyle['Condition'];
-
-                $sRet .= $this->cKernel->template->parseTemplate($sStyleTpl, $aTplData);
+                $sRet .= $this->_buildStyleHtml(
+                    $sStyleWebPath.$aStyle['FileName'],
+                    isset($aStyle['Condition']) ? $aStyle['Condition'] : null
+                );
             }
         }
+        
         return $sRet;
 
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Build HTML data for CSS styles.
+     *
+     * @param string $sFileUrl   Url to CSS style file.
+     * @param string $sCondition Condition for CSS conditional comment.
+     *
+     * @return string
+     */
+    private function _buildStyleHtml($sFileUrl, $sCondition = null)
+    {
+        // Try to load file template for output styles.
+        if ($this->_aConfig['UseStyleTemplate']) {
+            $sStyleTpl = $this->cKernel->template->getTemplate('cms_html_style');
+            if ($sStyleTpl) {
+                $aTplData = array('splitter' => $sFileUrl);
+                if ($sCondition)
+                    $aTplData['condition'] = $sCondition;
+
+                return $this->cKernel->template->parseTemplate(
+                    $sStyleTpl,
+                    $aTplData
+                );
+            } else {
+                $this->cKernel->trace->addLine(
+                    '[%s] Html template for styles not found. Using default tempate.',
+                    __CLASS__
+                );
+            }
+        }
+
+        // Use default template for output styles.
+        $sRet = '<link rel="stylesheet" type="text/css" href="'.$sFileUrl.'" />';
+        if ($sCondition)
+            $sRet = '<!--[if {[$condition]}]>{[/if]}'.$sRet.'<![endif]-->';
+        return $sRet;
+        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -222,21 +301,19 @@ class GvProfileExt extends SimpleExtenson
                 $aVariousConditions[isset($aStyle['Condition']) ? $aStyle['Condition'] : ''][] = $aStyle;
 
             $sRet = '';
-            $sStyleTpl = $this->cKernel->template->getTemplate('cms_html_style');
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = 'style-'.md5($sSectionName.$sCondition).'.css';
                 if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
 
-                $aTplData = array('splitter' => $sStyleCacheWebPath.$sCacheFile, 'condition' => $sCondition);
-                $sRet .= $this->cKernel->template->parseTemplate($sStyleTpl, $aTplData);
+                $sRet .= $this->_buildStyleHtml($sStyleCacheWebPath.$sCacheFile, $sCondition);
 
             } // End foreach
 
             return $sRet;
 
         } catch (Exception $cEx) {
-            $this->cKernel->trace->addLine('[HeaderExt] Eception. '.$cEx);
+            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
         return null;
@@ -254,6 +331,9 @@ class GvProfileExt extends SimpleExtenson
      */
     private function _saveCacheStyles($aList, $sSectionName)
     {
+        if (!is_array($aList) || count($aList) == 0)
+            return;
+
         try {
             $sStyleAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsStyle');
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
@@ -275,7 +355,7 @@ class GvProfileExt extends SimpleExtenson
             } // End foreach
 
         } catch (Exception $cEx) {
-            $this->cKernel->trace->addLine('[HeaderExt] Eception. '.$cEx);
+            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
     } // End function

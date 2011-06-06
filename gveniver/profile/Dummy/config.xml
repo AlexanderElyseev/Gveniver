@@ -16,6 +16,34 @@
             <AbsExtension>/var/www/gv/gveniver/profile/Dummy/extension/</AbsExtension>
             <AbsTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</AbsTemplate>
         </Path>
+        <SectionList>
+			<!-- Default section. -->
+			<Default>
+				<MainTemplate>cms_main_enter.tpl</MainTemplate>
+				<Title>What about FAAAAAAAAAAT???</Title>
+				<SubTitle>Dummy profile</SubTitle>
+				<ContentType><![CDATA[text/html; charset=utf-8]]></ContentType>
+				<Keywords>sex,drugs,rocknroll</Keywords>
+				<Author>http://example.com/</Author>
+				<Robots>INDEX</Robots>
+				<StyleList>
+					<Style><FileName>style.css</FileName></Style>
+				</StyleList>
+				<ScriptList></ScriptList>
+				<InvarsList></InvarsList>
+			</Default>
+
+			<List>
+				<!-- Index. -->
+				<Section>
+					<ActList>
+						<Default><FileName>center_index_index.tpl</FileName></Default>
+					</ActList>
+					<Name>index</Name>
+				</Section>
+				
+			</List>
+		</SectionList>
     </Profile>
     <Module>
         <TemplateModule>

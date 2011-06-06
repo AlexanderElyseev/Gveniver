@@ -166,7 +166,7 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
 
         // Load extension.
         $cExt = $cExtModule->getExtension($sExtensionName);
-        if (!$cExt) {
+        if (!$cExt instanceof GvKernelExtension) {
             $this->cKernel->trace->addLine(
                 '[%s] Extension ("%s") not found for Smarty query.',
                 __CLASS__,
@@ -174,7 +174,7 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
             );
             return null;
         }
-
+        
         // Executing query.
         unset($aParams['ext']);
         unset($aParams['act']);

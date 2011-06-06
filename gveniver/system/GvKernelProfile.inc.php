@@ -214,7 +214,7 @@ abstract class GvKernelProfile
         // Load for default section.
         $sKeywords = '';
         if ($this->cKernel->cConfig->get('Profile/SectionList/Default/Keywords', $sKeywords))
-            $sResult .= ','.$sKeywords;
+            $sResult .= ($sResult) ? ','.$sKeywords : $sKeywords;
 
         return $sResult;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contsins base abstract class for loader of extensions.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,7 +11,7 @@
  */
 
 /**
- *
+ * Base abstract class for loader of extensions.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -19,6 +19,7 @@
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class ExtensionLoader
 {
@@ -48,8 +49,6 @@ abstract class ExtensionLoader
      * Initialize member fields.
      *
      * @param GvKernel $cKernel Current kernel.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel)
     {
@@ -86,7 +85,7 @@ abstract class ExtensionLoader
         
         // Save loaded extension to cache.
         $nIndex = count($this->_aExtensions);
-        $this->_aExtensions[$nIndex] = 1;
+        $this->_aExtensions[$nIndex] = $cExt;
         $this->_aNameHash[$sExtensionName] = $nIndex;
 
         // Return result.
