@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
+    <Module>
+        <TemplateModule>
+            <SmartyDirCache>/var/www/gv/gveniver/profile/Dummy/cache/</SmartyDirCache>
+            <SmartyDirTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</SmartyDirTemplate>
+            <SmartyDirCompile>/var/www/gv/gveniver/profile/Dummy/templates_c/</SmartyDirCompile>
+            <SmartyDirConfig>/var/www/gv/gveniver/profile/Dummy/</SmartyDirConfig>
+		</TemplateModule>
+    </Module>
     <Profile>
         <Path>
             <AbsRootWeb>http://dc1/gv/</AbsRootWeb>
@@ -45,12 +53,4 @@
 			</List>
 		</SectionList>
     </Profile>
-    <Module>
-        <TemplateModule>
-            <SmartyDirCache>/var/www/gv/gveniver/profile/Dummy/cache/</SmartyDirCache>
-            <SmartyDirTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</SmartyDirTemplate>
-            <SmartyDirCompile>/var/www/gv/gveniver/profile/Dummy/templates_c/</SmartyDirCompile>
-            <SmartyDirConfig>/var/www/gv/gveniver/profile/Dummy/</SmartyDirConfig>
-		</TemplateModule>
-    </Module>
 </Configuration>

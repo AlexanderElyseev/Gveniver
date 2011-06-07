@@ -30,8 +30,8 @@ require 'system/GvKernelProfile.inc.php';
 require 'system/GvKernelExtension.inc.php';
 
 GvInclude::instance()->skipFile('system/GvConst.inc.php');
-GvInclude::instance()->skipFile('system/GvExtendCommon.inc.php');
 GvInclude::instance()->skipFile('system/GvInclude.inc.php');
+GvInclude::instance()->skipFile('system/GvExtendCommon.inc.php');
 GvInclude::instance()->skipFile('system/GvKernelConfig.inc.php');
 GvInclude::instance()->skipFile('system/GvKernel.inc.php');
 GvInclude::instance()->skipFile('system/GvKernelModule.inc.php');

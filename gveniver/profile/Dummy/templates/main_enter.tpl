@@ -24,7 +24,7 @@
 	</head>
 	<body>
         This is dummy profile and its main page.<br/>
-        <a href="main_enter.tpl#" id="id_link_trace">Trace</a>
+        <a href="#" id="id_link_trace">Trace</a>
         <div id="id_div_trace">
             {gv ext=GvDebugExt act=getTrace}
         </div>

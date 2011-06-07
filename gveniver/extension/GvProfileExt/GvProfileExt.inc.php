@@ -78,8 +78,12 @@ class GvProfileExt extends SimpleExtenson
         }
 
         // Load scripts data.
-        $sSectionName = $this->cKernel->getProfile()->getCurrentSectionName();
-        $aScriptDataList = $this->cKernel->getProfile()->getScriptList($sSectionName);
+        $cProfile = $this->cKernel->getProfile();
+        $sSectionName = $cProfile->getCurrentSectionName();
+        $aScriptDataList = $this->cKernel->getProfile()->getScriptList(
+            $sSectionName,
+            $cProfile->getCurrentAction()
+        );
 
         // Load scripts from cache.
         if ($this->_aConfig['CacheScripts']) {
@@ -121,13 +125,10 @@ class GvProfileExt extends SimpleExtenson
         if ($this->_aConfig['UseScriptTemplate']) {
             $sScriptTpl = $this->cKernel->template->getTemplate('cms_html_script');
             if ($sScriptTpl) {
-                return $this->cKernel->template->parseTemplate(
-                    $sScriptTpl,
-                    array('splitter' => $sFileUrl)
-                );
+                return $sScriptTpl->parse(array('file' => $sFileUrl));
             } else {
                 $this->cKernel->trace->addLine(
-                    '[%s] Html template for scripts not found. Using default tempate.',
+                    '[%s] Html template for scripts not found. Use default tempate.',
                     __CLASS__
                 );
             }
@@ -206,9 +207,12 @@ class GvProfileExt extends SimpleExtenson
      */
     public function getStyles()
     {
-        // TODO
-        $sSectionName = $this->cKernel->getProfile()->getCurrentSectionName();
-        $aStyleDataList = $this->cKernel->getProfile()->getStyleList($sSectionName);
+        $cProfile = $this->cKernel->getProfile();
+        $sSectionName = $cProfile->getCurrentSectionName();
+        $aStyleDataList = $cProfile->getStyleList(
+            $sSectionName,
+            $cProfile->getCurrentAction()
+        );
 
         // Load styles from cache.
         if ($this->_aConfig['CacheStyles']) {
@@ -255,17 +259,12 @@ class GvProfileExt extends SimpleExtenson
         if ($this->_aConfig['UseStyleTemplate']) {
             $sStyleTpl = $this->cKernel->template->getTemplate('cms_html_style');
             if ($sStyleTpl) {
-                $aTplData = array('splitter' => $sFileUrl);
-                if ($sCondition)
-                    $aTplData['condition'] = $sCondition;
-
-                return $this->cKernel->template->parseTemplate(
-                    $sStyleTpl,
-                    $aTplData
+                return $sStyleTpl->parse(
+                    array('file' => $sFileUrl, 'condition' => $sCondition)
                 );
             } else {
                 $this->cKernel->trace->addLine(
-                    '[%s] Html template for styles not found. Using default tempate.',
+                    '[%s] Html template for styles not found. Use default tempate.',
                     __CLASS__
                 );
             }
@@ -362,72 +361,103 @@ class GvProfileExt extends SimpleExtenson
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns html code for title of current page.
+     * Returns title of current section with specified action from profile
+     * configuration.
      *
      * @return string
      */
     public function getTitle()
     {
-        // TODO
-        $sSectionName = $this->cKernel->getProfile()->getCurrentSectionName();
-        $sAct = InvarsModule::instance()->getVariable('act');
-
-        // Build template data.
-        $cPd = $this->cKernel->getProfile();
-        $aTplData = array(
-            'title'    => $cPd->getTitle($sSectionName, $sAct),
-            'subtitle' => $cPd->getSubTitle($sSectionName, $sAct)
+        $cProfile = $this->cKernel->getProfile();
+        return $cProfile->getSubTitle(
+            $cProfile->getCurrentSectionName(),
+            $cProfile->getCurrentAction()
         );
-
-        return $this->cKernel->template->parseTemplateFile('cms_header_title', $aTplData);
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns content type of current page.
+     * Returns subtitle of current section with specified action from profile
+     * configuration.
+     *
+     * @return string
+     */
+    public function getSubTitle()
+    {
+        $cProfile = $this->cKernel->getProfile();
+        return $cProfile->getSubTitle(
+            $cProfile->getCurrentSectionName(),
+            $cProfile->getCurrentAction()
+        );
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Returns content-type of current section with specified action from profile
+     * configuration.
      *
      * @return string
      */
     public function getContentType()
     {
-        return $this->cKernel->getProfile()->getContentType($this->cKernel->getProfile()->getCurrentSectionName());
+        $cProfile = $this->cKernel->getProfile();
+        return $cProfile->getContentType(
+            $cProfile->getCurrentSectionName(),
+            $cProfile->getCurrentAction()
+        );
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns keywords for current page.
+     * Returns keywords for current section with specified action from profile
+     * configuration.
      *
      * @return string
      */
     public function getKeywords()
     {
-        return $this->cKernel->getProfile()->getKeywords($this->cKernel->getProfile()->getCurrentSectionName());
+        $cProfile = $this->cKernel->getProfile();
+        return $cProfile->getKeywords(
+            $cProfile->getCurrentSectionName(),
+            $cProfile->getCurrentAction()
+        );
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns author of current section from profile configuration.
+     * Returns author of current section with specified action from profile
+     * configuration.
      *
      * @return string
      */
     public function getAuthor()
     {
-        return $this->cKernel->getProfile()->getAuthor($this->cKernel->getProfile()->getCurrentSectionName());
+        $cProfile = $this->cKernel->getProfile();
+        return $cProfile->getAuthor(
+            $cProfile->getCurrentSectionName(),
+            $cProfile->getCurrentAction()
+        );
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns information for robots of current section from profile configuration.
+     * Returns information for robots of current section with specified action from
+     * profile configuration.
      *
      * @return string
      */
     public function getRobots()
     {
-        return $this->cKernel->getProfile()->getRobots($this->cKernel->getProfile()->getCurrentSectionName());
+        $cProfile = $this->cKernel->getProfile();
+        return $cProfile->getRobots(
+            $cProfile->getCurrentSectionName(),
+            $cProfile->getCurrentAction()
+        );
 
     } // End function
     //-----------------------------------------------------------------------------

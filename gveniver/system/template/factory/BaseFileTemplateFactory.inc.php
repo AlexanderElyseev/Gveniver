@@ -145,9 +145,9 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
                     $sComplexAbsFileNameWithExt = $this->sTplFolder . $sName . $this->sTplFileNameExtension;
 
                     if (file_exists($sComplexAbsFileNameWithExt) && !is_dir($sComplexAbsFileNameWithExt))
-                        return $this->_aNameCache[$sName] = $sName . $this->sTplFileNameExtension;
+                        return $this->_aNameCache[$sName] = $sComplexAbsFileNameWithExt;
                     elseif (file_exists($sComplexAbsFileName) && !is_dir($sComplexAbsFileName))
-                        return $this->_aNameCache[$sName] = $sName;
+                        return $this->_aNameCache[$sName] = $sComplexAbsFileName;
 
                 } // End for
 

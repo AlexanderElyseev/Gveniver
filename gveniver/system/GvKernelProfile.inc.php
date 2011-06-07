@@ -58,7 +58,7 @@ abstract class GvKernelProfile
     //-----------------------------------------------------------------------------
 
     /**
-     * Return name of current section.
+     * Returns name of current section.
      *
      * @return string
      * @abstract
@@ -67,14 +67,35 @@ abstract class GvKernelProfile
     //-----------------------------------------------------------------------------
 
     /**
+     * Returns value of current action.
+     *
+     * @return string
+     * @abstract
+     */
+    public abstract function getCurrentAction();
+    //-----------------------------------------------------------------------------
+
+    /**
      * Getter for content type of current page.
      *
      * @param string $sSectionName Name of section. Or default section, if not set.
-     *
+     * @param string $sAct         Action value. If not set, Default action.
+     * 
      * @return string Content type of page or null on error.
      */
-    public function getContentType($sSectionName = null)
+    public function getContentType($sSectionName = null, $sAct = null)
     {
+        // Load for section and action.
+        $aSectionList = null;
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['ContentType']))
+                                    return $aAction['Section']['ContentType'];
+        
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
@@ -112,11 +133,23 @@ abstract class GvKernelProfile
      * Getter for page author.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return string Author metadata of null, if not found.
      */
-    public function getAuthor($sSectionName = null)
+    public function getAuthor($sSectionName = null, $sAct = null)
     {
+        // Load for section and action.
+        $aSectionList = null;
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['Author']))
+                                    return $aAction['Section']['Author'];
+
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
@@ -154,11 +187,23 @@ abstract class GvKernelProfile
      * Getter data for robots.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return string Robots metadata of null, if not found.
      */
-    public function getRobots($sSectionName = null)
+    public function getRobots($sSectionName = null, $sAct = null)
     {
+        // Load for section and action.
+        $aSectionList = null;
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['Robots']))
+                                    return $aAction['Section']['Robots'];
+
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
@@ -197,19 +242,32 @@ abstract class GvKernelProfile
      * Getter for list of page keywords.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return string List of keywords.
      */
-    public function getKeywords($sSectionName = null)
+    public function getKeywords($sSectionName = null, $sAct = null)
     {
-        // Load for section.
         $sResult = '';
+        
+        // Load for section and action.
+        $aSectionList = null;
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['Keywords']))
+                                    $sResult = $aAction['Section']['Keywords'];
+
+        // Load for section.
         $aSectionList = array();
         if ($sSectionName)
             if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Keywords']))
-                        $sResult = $aSection['Keywords'];
+                        $sResult = ($sResult) ? ','.$aSection['Keywords'] : $aSection['Keywords'];
 
         // Load for default section.
         $sKeywords = '';
@@ -390,11 +448,24 @@ abstract class GvKernelProfile
      * Returns list of scripts.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return array
      */
-    public function getScriptList($sSectionName = null)
+    public function getScriptList($sSectionName = null, $sAct = null)
     {
+        // Load for section and action.
+        $aActionSectionScripts = array();
+        $aSectionList = array();
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['ScriptList']))
+                                    $aActionSectionScripts = $aAction['Section']['ScriptList'];
+
         // Load for section.
         $aSectionScripts = array();
         $aSectionList = array();
@@ -408,7 +479,7 @@ abstract class GvKernelProfile
         $aBaseScripts = array();
         $this->cKernel->cConfig->get('Profile/SectionList/Default/ScriptList', $aBaseScripts);
 
-        return array_merge($aBaseScripts, $aSectionScripts);
+        return array_merge($aBaseScripts, $aSectionScripts, $aActionSectionScripts);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -417,11 +488,24 @@ abstract class GvKernelProfile
      * Returns list of styles.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return array
      */
-    public function getStyleList($sSectionName = null)
+    public function getStyleList($sSectionName = null, $sAct = null)
     {
+        // Load for section and action.
+        $aActionSectionStyles = array();
+        $aSectionList = array();
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['StyleList']))
+                                    $aActionSectionStyles = $aAction['Section']['StyleList'];
+
         // Load for section.
         $aSectionStyles = array();
         $aSectionList = array();
@@ -435,7 +519,7 @@ abstract class GvKernelProfile
         $aBaseStyles = array();
         $this->cKernel->cConfig->get('Profile/SectionList/Default/StyleList', $aBaseStyles);
 
-        return array_merge($aBaseStyles, $aSectionStyles);
+        return array_merge($aBaseStyles, $aSectionStyles, $aActionSectionStyles);
 
     } // End function
     //-----------------------------------------------------------------------------

@@ -72,7 +72,7 @@ class TraceModule extends GvKernelModule
         if (!$this->_bDebug)
             return $sRet;
 
-        // Build trace messages.
+        // Build full trace messages.
         foreach ($this->_aMessages as $aMessage)
             $sRet .= sprintf(
                 '[%s %s s. (+%s s.), %.2f KiB (%s%.2f KiB)] %s%s',

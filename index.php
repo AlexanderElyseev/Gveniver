@@ -33,7 +33,7 @@ echo $cDummyKernel->getProfile()->start();
 
 //-----------------------------------------------------------------------------
 printf(
-    'End. Time: %.4f, memory: %.2f MiB;<br/>',
+    'End. Time: %.4f sec., memory: %.2f MiB;<br/>',
     round(microtime(true) - $begin, 4),
     memory_get_peak_usage() / 1024 / 1024
 );

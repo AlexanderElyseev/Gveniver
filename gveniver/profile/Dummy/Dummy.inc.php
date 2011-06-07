@@ -1,6 +1,6 @@
 <?php
 /**
- * Filec ontains dummy profile class.
+ * File contains dummy profile class.
  *
  * @category   Gveniver
  * @package    Kernel
@@ -46,7 +46,16 @@ class DummyKernelProfile extends GvKernelProfile
      */
     public function getCurrentSectionName()
     {
-        // TODO: Implement getCurrentSectionName() method.
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Returns value of current action.
+     *
+     * @return string
+     */
+    public function getCurrentAction()
+    {
     } // End function
     //-----------------------------------------------------------------------------
 

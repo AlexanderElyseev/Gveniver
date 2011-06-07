@@ -74,8 +74,8 @@ class TemplateModule extends GvKernelModule
      * If specified, then the template loads to variable by refernce and returns
      * result of operation (boolean). Otherwise, returns template.
      *
-     * @return BaseTemplate|boolean returns template of operation result
-     * if specified reference varaible.
+     * @return BaseTemplate|boolean Returns template instance or boolean result of
+     * loading operation if specified reference varaible.
      */
     public function getTemplate($sTemplateName, &$cRef = null)
     {
@@ -99,6 +99,7 @@ class TemplateModule extends GvKernelModule
 
     /**
      * Parse template by template name and template data.
+     * If need to parse template object, use {@see BaseTemplate::parse}.
      *
      * @param string $sTemplateName Name of template to parse.
      * @param array  $aData         Template data.
