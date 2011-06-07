@@ -59,9 +59,9 @@ class GvProfileExt extends SimpleExtenson
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns html code for scripts of current section.
+     * Returns list scripts for current section and action.
      *
-     * @return string
+     * @return array
      */
     public function getScripts()
     {
@@ -80,22 +80,23 @@ class GvProfileExt extends SimpleExtenson
         // Load scripts data.
         $cProfile = $this->cKernel->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
+        $sActionValue = $cProfile->getCurrentAction();
         $aScriptDataList = $this->cKernel->getProfile()->getScriptList(
             $sSectionName,
-            $cProfile->getCurrentAction()
+            $sActionValue
         );
 
         // Load scripts from cache.
         if ($this->_aConfig['CacheScripts']) {
             // First, try to load scripts from cache.
-            $sCacheScripts = $this->_getCacheScripts($sSectionName);
+            $sCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
             if ($sCacheScripts)
                 return $sJsConfigScript.$sCacheScripts;
 
             // If cache not loaded, save and reload script cache.
             // This action for preventing use of not cached scripts.
-            $this->_saveCacheScripts($aScriptDataList, $sSectionName);
-            $sCacheScripts = $this->_getCacheScripts($sSectionName);
+            $this->_saveCacheScripts($aScriptDataList, $sSectionName, $sActionValue);
+            $sCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
             if ($sCacheScripts)
                 return $sJsConfigScript.$sCacheScripts;
         }
@@ -145,15 +146,16 @@ class GvProfileExt extends SimpleExtenson
      * Returns html code for connecting to cached scripts.
      *
      * @param string $sSectionName Name of current section for load cached scripts.
+     * @param string $sActionValue Current value of action.
      *
      * @return string Html code for cached scripts for this section or null on error.
      */
-    private function _getCacheScripts($sSectionName)
+    private function _getCacheScripts($sSectionName, $sActionValue)
     {
         try {
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
-            $sCacheFile = 'script-'.md5($sSectionName).'.js';
+            $sCacheFile = 'script-'.md5($sSectionName.$sActionValue).'.js';
 
             // Check script cache.
             if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
@@ -175,10 +177,11 @@ class GvProfileExt extends SimpleExtenson
      *
      * @param array  $aList        List of scripts data for cache.
      * @param string $sSectionName Name of current section for load cached scripts.
+     * @param string $sActionValue Current value of action.
      *
      * @return void
      */
-    private function _saveCacheScripts($aList, $sSectionName)
+    private function _saveCacheScripts($aList, $sSectionName, $sActionValue)
     {
         if (!is_array($aList) || count($aList) == 0)
             return;
@@ -186,7 +189,7 @@ class GvProfileExt extends SimpleExtenson
         try {
             $sScriptAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsScript');
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
-            $sCacheFile = 'script-'.md5($sSectionName).'.js';
+            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
             $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile);
             foreach ($aList as $aScript)
                 $cCacheSplitter->addFile($sScriptAbsPath.$aScript['FileName']);
@@ -201,6 +204,21 @@ class GvProfileExt extends SimpleExtenson
     //-----------------------------------------------------------------------------
 
     /**
+     * Build file name for cache script file.
+     *
+     * @param string $sSectionName Section name of cache script.
+     * @param string $sActionValue Action name of cache script.
+     *
+     * @return string
+     */
+    private function _buildScriptCacheFileName($sSectionName, $sActionValue)
+    {
+        return 'script-'.md5($sSectionName.$sActionValue).'.js';
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Returns html code for styles for current page.
      *
      * @return string
@@ -209,21 +227,22 @@ class GvProfileExt extends SimpleExtenson
     {
         $cProfile = $this->cKernel->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
+        $sActionValue = $cProfile->getCurrentAction();
         $aStyleDataList = $cProfile->getStyleList(
             $sSectionName,
-            $cProfile->getCurrentAction()
+            $sActionValue
         );
 
         // Load styles from cache.
         if ($this->_aConfig['CacheStyles']) {
-            $sCacheStyles = $this->_getCacheStyles($aStyleDataList, $sSectionName);
+            $sCacheStyles = $this->_getCacheStyles($aStyleDataList, $sSectionName, $sActionValue);
             if ($sCacheStyles)
                 return $sCacheStyles;
 
             // If cache not loaded, save and reload style cache.
             // This action for preventing use of not cached styles.
-            $this->_saveCacheStyles($aStyleDataList, $sSectionName);
-            $sCacheStyles = $this->_getCacheStyles($aStyleDataList, $sSectionName);
+            $this->_saveCacheStyles($aStyleDataList, $sSectionName, $sActionValue);
+            $sCacheStyles = $this->_getCacheStyles($aStyleDataList, $sSectionName, $sActionValue);
             if ($sCacheStyles)
                 return $sCacheStyles;
         }
@@ -285,10 +304,11 @@ class GvProfileExt extends SimpleExtenson
      *
      * @param array  $aList        List of styles in section.
      * @param string $sSectionName Section name.
+     * @param string $sActionValue Current value of action.
      *
      * @return string Html code with list of cached styles of null on error.
      */
-    private function _getCacheStyles($aList, $sSectionName)
+    private function _getCacheStyles($aList, $sSectionName, $sActionValue)
     {
         try {
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
@@ -301,7 +321,7 @@ class GvProfileExt extends SimpleExtenson
 
             $sRet = '';
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
-                $sCacheFile = 'style-'.md5($sSectionName.$sCondition).'.css';
+                $sCacheFile = 'style-'.md5($sSectionName.$sCondition, $sActionValue).'.css';
                 if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
 
@@ -325,10 +345,11 @@ class GvProfileExt extends SimpleExtenson
      *
      * @param array  $aList        List of styles for cache.
      * @param string $sSectionName Current section name for saving style cache.
+     * @param string $sActionValue Current value of action.
      *
      * @return void
      */
-    private function _saveCacheStyles($aList, $sSectionName)
+    private function _saveCacheStyles($aList, $sSectionName, $sActionValue)
     {
         if (!is_array($aList) || count($aList) == 0)
             return;
@@ -344,7 +365,7 @@ class GvProfileExt extends SimpleExtenson
 
             // Save each group of styles.
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
-                $sCacheFile = 'style-'.md5($sSectionName.$sCondition).'.css';
+                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
                 $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile);
                 foreach ($aSameConditions as $aSameConditionStyle)
                     $cCacheSplitter->addFile($sStyleAbsPath.$aSameConditionStyle['FileName']);
@@ -361,6 +382,22 @@ class GvProfileExt extends SimpleExtenson
     //-----------------------------------------------------------------------------
 
     /**
+     * Build file name for cache style file.
+     *
+     * @param string $sSectionName Section name of cache style.
+     * @param string $sActionValue Action name of cache style.
+     * @param string $sCondition   Condition for cache style.
+     *
+     * @return string
+     */
+    private function _buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition)
+    {
+        return 'style-'.md5($sSectionName.$sActionValue.$sCondition).'.css';
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Returns title of current section with specified action from profile
      * configuration.
      *
@@ -369,7 +406,7 @@ class GvProfileExt extends SimpleExtenson
     public function getTitle()
     {
         $cProfile = $this->cKernel->getProfile();
-        return $cProfile->getSubTitle(
+        return $cProfile->getTitle(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()
         );

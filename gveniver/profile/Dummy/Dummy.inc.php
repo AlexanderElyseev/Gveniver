@@ -34,11 +34,18 @@ class DummyKernelProfile extends GvKernelProfile
     public function start()
     {
         $this->cKernel->trace->addLine('[%s] Start.', __CLASS__);
-        return $this->cKernel->template->parseTemplate('main_enter', array('fromarray' => 'data'));
+        $sResult = $this->cKernel->template->parseTemplate(
+            $this->getMainTemplate(
+                $this->getCurrentSectionName(),
+                $this->getCurrentAction()
+            )
+        );
+        $this->cKernel->trace->addLine('[%s] End.', __CLASS__);
+        return $sResult;
 
     } // End function
     //-----------------------------------------------------------------------------
-
+    
     /**
      * Return name of current section.
      *
@@ -46,9 +53,13 @@ class DummyKernelProfile extends GvKernelProfile
      */
     public function getCurrentSectionName()
     {
+        return $this->cKernel->invar->get(
+            $this->cKernel->cConfig->get('Module/InvarModule/SectionKeyName')
+        );
+        
     } // End function
     //-----------------------------------------------------------------------------
-
+    
     /**
      * Returns value of current action.
      *
@@ -56,8 +67,12 @@ class DummyKernelProfile extends GvKernelProfile
      */
     public function getCurrentAction()
     {
+        return $this->cKernel->invar->get(
+            $this->cKernel->cConfig->get('Module/InvarModule/ActionKeyName')
+        );
+
     } // End function
     //-----------------------------------------------------------------------------
-
+    
 } // End class
 //-----------------------------------------------------------------------------

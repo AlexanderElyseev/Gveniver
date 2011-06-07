@@ -124,7 +124,7 @@ abstract class GvKernelProfile
      */
     public function addContentType($sContentType, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ abstract class GvKernelProfile
      */
     public function addAuthor($sAuthor, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -233,7 +233,7 @@ abstract class GvKernelProfile
      */
     public function addRobots($sRobots, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -290,7 +290,7 @@ abstract class GvKernelProfile
      */
     public function addKeywords($sKeywords, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ abstract class GvKernelProfile
      */
     public function addTitle($sTitle, $sSectionName = null, $sAct = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -322,7 +322,7 @@ abstract class GvKernelProfile
      */
     public function addSubTitle($sSubTitle, $sSectionName = null, $sAct = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -337,7 +337,7 @@ abstract class GvKernelProfile
      */
     public function addMainTemplate($sTemplate, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -353,7 +353,7 @@ abstract class GvKernelProfile
      */
     public function addActTemplate($sTemplate, $sSectionName, $sAct = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -368,7 +368,7 @@ abstract class GvKernelProfile
      */
     public function addScript($sScript, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -384,7 +384,7 @@ abstract class GvKernelProfile
      */
     public function addStyle($sStyle, $sCondition, $sSectionName = null)
     {
-        // TODO
+        throw new NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -392,25 +392,36 @@ abstract class GvKernelProfile
     /**
      * Getter for action template.
      *
-     * @param string $sSectionName Name of section.
-     * @param string $sAction      Action.
+     * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return string Template name or null, if not found.
      */
-    public function getActTemplate($sSectionName, $sAction)
+    public function getActTemplate($sSectionName = null, $sAct = null)
     {
-        // Load by section.
+        // Load by section and action.
         $aSectionList = array();
-        if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList)) {
-            foreach ($aSectionList as $aSection) {
-                if ($aSection['Name'] == $sSectionName && isset($aSection['ActList'])) {
-                    foreach ($aSection['ActList'] as $aAction)
-                        if (isset($aAction['Value']) && $aAction['Value'] == $sAction)
-                            return $aAction['FileName'];
-                    return $aSection['ActList']['Default']['FileName'];
-                }
-            }
-        }
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']))
+                        foreach ($aSection['ActList'] as $aAction)
+                            if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['FileName']))
+                                return $aAction['FileName'];
+
+        // Load for section and default action.
+        $aSectionList = array();
+        if ($sSectionName)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']['Default']['FileName']))
+                        return $aSection['ActList']['Default']['FileName'];
+
+
+        // Load for default section.
+        $sTpl = '';
+        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/ActList/Default/FileName', $sTpl))
+            return $sTpl;
 
         return null;
 
@@ -421,11 +432,23 @@ abstract class GvKernelProfile
      * Getter for main template.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
      *
      * @return string Main template name or null, if not found.
      */
-    public function getMainTemplate($sSectionName = null)
+    public function getMainTemplate($sSectionName = null, $sAct = null)
     {
+        // Load for section and action.
+        $aSectionList = array();
+        if ($sSectionName && $sAct)
+            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+                foreach ($aSectionList as $aSection)
+                    if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
+                        if (isset($aSection['ActList']))
+                            foreach ($aSection['ActList'] as $aAction)
+                                if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['MainTemplate']))
+                                    return $aAction['Section']['MainTemplate'];
+        
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)

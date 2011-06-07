@@ -25,31 +25,32 @@
             <AbsTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</AbsTemplate>
         </Path>
         <SectionList>
-			<!-- Default section. -->
 			<Default>
-				<MainTemplate>cms_main_enter.tpl</MainTemplate>
-				<Title>What about FAAAAAAAAAAT???</Title>
-				<SubTitle>Dummy profile</SubTitle>
+                <ActList>
+                    <Default><FileName>act_index.tpl</FileName></Default>
+                </ActList>
+                <Author>http://example.com/</Author>
 				<ContentType><![CDATA[text/html; charset=utf-8]]></ContentType>
-				<Keywords>sex,drugs,rocknroll</Keywords>
-				<Author>http://example.com/</Author>
-				<Robots>INDEX</Robots>
-				<StyleList>
+                <InvarsList></InvarsList>
+                <Keywords>sex,drugs,rocknroll</Keywords>
+				<MainTemplate>main_enter.tpl</MainTemplate>
+                <Robots>INDEX</Robots>
+                <ScriptList></ScriptList>
+                <StyleList>
 					<Style><FileName>style.css</FileName></Style>
 				</StyleList>
-				<ScriptList></ScriptList>
-				<InvarsList></InvarsList>
+                <SubTitle>Dummy profile</SubTitle>
+				<Title>Default section</Title>
 			</Default>
 
 			<List>
-				<!-- Index. -->
 				<Section>
 					<ActList>
-						<Default><FileName>center_index_index.tpl</FileName></Default>
+						<Default><FileName>act_index.tpl</FileName></Default>
 					</ActList>
+                    <MainTemplate>main_enter_index.tpl</MainTemplate>
 					<Name>index</Name>
 				</Section>
-				
 			</List>
 		</SectionList>
     </Profile>

@@ -91,6 +91,8 @@
             <SmartyDirConfig>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\</SmartyDirConfig>
         </TemplateModule>
         <InvarModule>
+            <SectionKeyName>section</SectionKeyName>
+            <ActionKeyName>action</ActionKeyName>
             <LoaderClass>HfuInvarLoader</LoaderClass>
         </InvarModule>
     </Module>
