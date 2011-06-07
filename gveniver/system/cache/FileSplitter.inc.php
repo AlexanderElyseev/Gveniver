@@ -62,7 +62,7 @@ class FileSplitter
     /**
      * Class constructor.
      * 
-     * @param string     $sOutputFileName Output cache splitter name.
+     * @param string     $sOutputFileName Output cache file name.
      * @param DataPacker $cPacker         Packer for data.
      */
     public function __construct($sOutputFileName, DataPacker $cPacker = null)
@@ -74,7 +74,7 @@ class FileSplitter
             if (!mkdir($sOutputDir, null, true))
                 throw new ArgumentException(sprintf('[%s] Error in creating file directory!', __CLASS__));
         if (!file_exists($sOutputDir) || !is_dir($sOutputDir) || !is_writable($sOutputDir))
-            throw new ArgumentException(sprintf('[%s] Incorrect target cache splitter name or path!', __CLASS__));
+            throw new ArgumentException(sprintf('[%s] Incorrect target cache file name or path!', __CLASS__));
 
         $this->_sOutputFileName = $sOutputFileName;
         $this->_cPacker = $cPacker;
@@ -114,7 +114,7 @@ class FileSplitter
     //-----------------------------------------------------------------------------------
         
     /**
-     * Adding splitter for caching.
+     * Adding file for caching.
      * 
      * @param string $sFileName File name to add.
      *

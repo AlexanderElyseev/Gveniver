@@ -1,6 +1,6 @@
 <?php
 /**
- * Base index splitter.
+ * Base index file.
  *
  * @category  Gveniver
  * @package   Kernel

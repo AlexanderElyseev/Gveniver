@@ -26,7 +26,7 @@ GvInclude::instance()->includeFile('system/template/factory/BaseTemplateFactory.
 abstract class BaseFileTemplateFactory extends BaseTemplateFactory
 {
     /**
-     * Cache of template splitter names.
+     * Cache of template file names.
      *
      * @var array
      */
@@ -42,7 +42,7 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
     //-----------------------------------------------------------------------------
 
     /**
-     * Template splitter name seprarator.
+     * Template file name seprarator.
      *
      * @var string
      */
@@ -93,11 +93,11 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns the content of template splitter by template name.
+     * Returns the content of template file by template name.
      *
-     * @param string $sTemplateName Template name for loading splitter content.
+     * @param string $sTemplateName Template name for loading file content.
      * 
-     * @return string|null Returns null if splitter not found.
+     * @return string|null Returns null if file not found.
      */
     protected function getTemplateFileContent($sTemplateName)
     {
@@ -111,11 +111,11 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns correct template splitter name by template name.
+     * Returns correct template file name by template name.
      *
-     * @param string $sName Template name for loading splitter name.
+     * @param string $sName Template name for loading file name.
      *
-     * @return string|null Returns null if splitter not found.
+     * @return string|null Returns null if file not found.
      */
     protected function getTemplateFileName($sName)
     {
@@ -129,7 +129,7 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
             elseif (file_exists($sAbsFileName) && !is_dir($sAbsFileName))
                 return $this->_aNameCache[$sName] = $sName;
             else {
-                // Load template content by complex splitter name from base folder.
+                // Load template content by complex file name from base folder.
                 // a_b_c_d.tpl ---> a/b_c_d.tpl ---> ... ---> a/b/c/d.tpl
                 $sStartName = $sName;
                 $nLength = mb_strlen($sName);

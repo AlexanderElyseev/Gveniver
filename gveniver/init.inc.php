@@ -1,6 +1,6 @@
 <?php
 /**
- * System initialization splitter.
+ * System initialization file.
  *
  * @category  Gveniver
  * @package   Kernel

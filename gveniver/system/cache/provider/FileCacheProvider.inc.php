@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains splitter cache provider class.
+ * File contains file cache provider class.
  *
  * @category  Gveniver
  * @package   Cache
@@ -65,7 +65,7 @@ class FileCacheProvider extends CacheProvider
      */
     public function get($sCacheId, $sCacheGroupId, &$cRef)
     {
-        // Try to load data from cache splitter.
+        // Try to load data from cache file.
         $mData = null;
         $nTime = 0;
         if (!$this->_readFile($sCacheId, $sCacheGroupId, $nTime, $mData))
@@ -94,7 +94,7 @@ class FileCacheProvider extends CacheProvider
      */
     public function set($mData, $sCacheId, $sCacheGroupId, $nTtl)
     {
-        // Save data to cache splitter.
+        // Save data to cache file.
         return $this->_writeFile(
             $sCacheId,
             $sCacheGroupId,
@@ -128,7 +128,7 @@ class FileCacheProvider extends CacheProvider
     //-----------------------------------------------------------------------------
     
     /**
-     * Read cache splitter.
+     * Read cache file.
      * 
      * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
@@ -139,14 +139,14 @@ class FileCacheProvider extends CacheProvider
      */
     private function _readFile($sCacheId, $sCacheGroupId, &$nTtl, &$mData)
     {
-        // Build cache splitter name. Check ixistence and correctness of cache splitter.
+        // Build cache file name. Check ixistence and correctness of cache file.
         $sFileName = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS.$sCacheId;
         $bFileExist = file_exists($sFileName);
         $bFileIsDir = is_dir($sFileName);
         if (!$bFileExist || $bFileIsDir)
             return false;
 
-        // Open and block cache splitter for reading.
+        // Open and block cache file for reading.
         $file = fopen($sFileName, 'r');
         flock($file, LOCK_SH);
 
@@ -166,7 +166,7 @@ class FileCacheProvider extends CacheProvider
             return false;
         }
 
-        // Unlock and close splitter.
+        // Unlock and close file.
         flock($file, LOCK_UN);
         fclose($file);
         return true;
@@ -175,7 +175,7 @@ class FileCacheProvider extends CacheProvider
     //------------------------------------------------------------------------------------
 
     /**
-     * Write cache splitter.
+     * Write cache file.
      *
      * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
@@ -197,7 +197,7 @@ class FileCacheProvider extends CacheProvider
             }
         }
 
-        // Build path to cache splitter.
+        // Build path to cache file.
         $sFileName = $sCacheDirectory.$sCacheId;
 
         // Write cache data with exclusive lock.
@@ -208,7 +208,7 @@ class FileCacheProvider extends CacheProvider
         fwrite($fp, pack('L', strlen($sData)));         // Length.
         fwrite($fp, pack('a*', $sData));                // Data.
 
-        // Unlock and close splitter.
+        // Unlock and close file.
         flock($fp, LOCK_UN);
         fclose($fp);
         return true;

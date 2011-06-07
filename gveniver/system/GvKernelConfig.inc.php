@@ -13,7 +13,7 @@
 /**
  * Class for loader of configuration parameters.
  * 
- * TODO: Default base configuration (without xml splitter).
+ * TODO: Default base configuration (without xml file).
  *
  * @category  Gveniver
  * @package   Kernel
@@ -52,18 +52,18 @@ class GvKernelConfig
         // Initialize base configuration.
         $this->_aConfig = array();
 
-        // Try to load configuration from main configuration XML splitter.
+        // Try to load configuration from main configuration XML file.
         $this->mergeXmlFile(GV_PATH_BASE.GvConst::CONFIG_XML_FILE);
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Build array of configuration parameters from XML splitter and merge with current.
-     * First, trying to load configuration from cache splitter. If cache is incorrect, parse
-     * XML configuration splitter and save to cache by serialization of loaded data.
+     * Build array of configuration parameters from XML file and merge with current.
+     * First, trying to load configuration from cache file. If cache is incorrect, parse
+     * XML configuration file and save to cache by serialization of loaded data.
      *
-     * @param string $sConfigFile Path configuration XML splitter.
+     * @param string $sConfigFile Path configuration XML file.
      * 
      * @return boolean Returns tru on success.
      */

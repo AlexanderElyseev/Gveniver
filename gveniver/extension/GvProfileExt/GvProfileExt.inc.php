@@ -155,7 +155,7 @@ class GvProfileExt extends SimpleExtenson
         try {
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
-            $sCacheFile = 'script-'.md5($sSectionName.$sActionValue).'.js';
+            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
 
             // Check script cache.
             if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
@@ -225,24 +225,25 @@ class GvProfileExt extends SimpleExtenson
      */
     public function getStyles()
     {
+        // Load data of profile.
         $cProfile = $this->cKernel->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
-        $aStyleDataList = $cProfile->getStyleList(
+        $aStyleList = $cProfile->getStyleList(
             $sSectionName,
             $sActionValue
         );
 
         // Load styles from cache.
         if ($this->_aConfig['CacheStyles']) {
-            $sCacheStyles = $this->_getCacheStyles($aStyleDataList, $sSectionName, $sActionValue);
+            $sCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
             if ($sCacheStyles)
                 return $sCacheStyles;
 
             // If cache not loaded, save and reload style cache.
             // This action for preventing use of not cached styles.
-            $this->_saveCacheStyles($aStyleDataList, $sSectionName, $sActionValue);
-            $sCacheStyles = $this->_getCacheStyles($aStyleDataList, $sSectionName, $sActionValue);
+            $this->_saveCacheStyles($aStyleList, $sSectionName, $sActionValue);
+            $sCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
             if ($sCacheStyles)
                 return $sCacheStyles;
         }
@@ -250,8 +251,8 @@ class GvProfileExt extends SimpleExtenson
         // Build result list of styles.
         $sRet = '';
         $sStyleWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsStyleWeb');
-        if (is_array($aStyleDataList)) {
-            foreach ($aStyleDataList as $aStyle) {
+        if (is_array($aStyleList)) {
+            foreach ($aStyleList as $aStyle) {
                 $sRet .= $this->_buildStyleHtml(
                     $sStyleWebPath.$aStyle['FileName'],
                     isset($aStyle['Condition']) ? $aStyle['Condition'] : null
@@ -321,7 +322,7 @@ class GvProfileExt extends SimpleExtenson
 
             $sRet = '';
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
-                $sCacheFile = 'style-'.md5($sSectionName.$sCondition, $sActionValue).'.css';
+                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
                 if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
 
@@ -341,7 +342,7 @@ class GvProfileExt extends SimpleExtenson
     //-----------------------------------------------------------------------------
 
     /**
-     * Save cache of styles to single style splitter for each condition.
+     * Save cache of styles to single style file for each condition.
      *
      * @param array  $aList        List of styles for cache.
      * @param string $sSectionName Current section name for saving style cache.
