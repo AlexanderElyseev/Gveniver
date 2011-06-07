@@ -102,6 +102,10 @@ class TraceModule extends GvKernelModule
      */
     public function addLine($sMessage)
     {
+        // Add trace data only in debug state.
+        if (!$this->_bDebug)
+            return;
+
         // Build message with sprintf function if specified more than 1 parameter.
         if (func_num_args() > 1) {
             $aArgs = func_get_args();
@@ -110,10 +114,6 @@ class TraceModule extends GvKernelModule
 
         //echo $sMessage."<br/>\n";
         
-        // Add trace data only in debug state.
-        if (!$this->_bDebug)
-            return;
-
         $dMemory = memory_get_usage();
         $dTime = microtime(true);
         $nPrevIndex = count($this->_aMessages) - 1;
