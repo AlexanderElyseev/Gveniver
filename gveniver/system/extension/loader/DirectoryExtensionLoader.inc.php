@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/extension/loader/ExtensionLoader.inc.php');
+GvInclude::i('system/extension/loader/ExtensionLoader.inc.php');
 
 /**
  * Loader class for kernel extensions.

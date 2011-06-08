@@ -223,7 +223,7 @@ final class GvInclude
     /**
      * Include code file.
      *
-     * @param string $sFileName File name for adding to skip list.
+     * @param string $sFileName Name of file for include.
      *
      * @return bool True on success.
      */
@@ -272,12 +272,42 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
+     * Short alias to {@see GvInclude::includeFile} function.
+     *
+     * @param string $sFileName Name of file for include.
+     *
+     * @return bool True on success.
+     * @static
+     */
+    public static function i($sFileName)
+    {
+        return self::instance()->includeFile($sFileName);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Short alias to {@see GvInclude::skipFile} function.
+     *
+     * @param string $sFileName Name of file for adding to skip-list.
+     *
+     * @return bool True on success.
+     * @static
+     */
+    public static function s($sFileName)
+    {
+        return self::instance()->skipFile($sFileName);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Add file to skip list.
      * These files will not be included at {@see GvInclude::includeFile}.
      *
      * @param string $sFileName File name for adding to skip list.
      *
-     * @return bool True of successful operation.
+     * @return bool True of success.
      */
     public function skipFile($sFileName)
     {
@@ -474,7 +504,7 @@ final class GvInclude
             $sPathTpl = str_replace('%class%', $sClassName, $sPathTpl);
 
             // Try to include file by builded path.
-            if (!GvInclude::instance()->includeFile($sPathTpl)) {
+            if (!GvInclude::i($sPathTpl)) {
                 $nErrorCode = self::ERRROR_FILE_INCLUDE;
                 return null;
             }

@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile("system/cache/packer/DataPacker.inc.php");
+GvInclude::i("system/cache/packer/DataPacker.inc.php");
 
 /**
  * Base class for splitting files.

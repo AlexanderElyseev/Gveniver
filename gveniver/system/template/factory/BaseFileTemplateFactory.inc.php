@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/template/factory/BaseTemplateFactory.inc.php');
+GvInclude::i('system/template/factory/BaseTemplateFactory.inc.php');
 
 /**
  * Base abstract template factory class.

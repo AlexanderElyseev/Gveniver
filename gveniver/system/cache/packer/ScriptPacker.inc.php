@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/cache/packer/DataPacker.inc.php');
-GvInclude::instance()->includeFile('system/cache/packer/lib/class.JavaScriptPacker.php');
+GvInclude::i('system/cache/packer/DataPacker.inc.php');
+GvInclude::i('system/cache/packer/lib/class.JavaScriptPacker.php');
 
 /**
  * Class for packing JavaScript data.

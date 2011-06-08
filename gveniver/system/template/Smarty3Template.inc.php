@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/template/BaseTemplate.inc.php');
+GvInclude::i('system/template/BaseTemplate.inc.php');
 
 /**
  * Template class for Smarty template system.

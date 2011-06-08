@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/template/factory/BaseFileTemplateFactory.inc.php');
-GvInclude::instance()->includeFile('system/template/Smarty3Template.inc.php');
+GvInclude::i('system/template/factory/BaseFileTemplateFactory.inc.php');
+GvInclude::i('system/template/Smarty3Template.inc.php');
 
 /**
  * Template factory class for Smarty template system.

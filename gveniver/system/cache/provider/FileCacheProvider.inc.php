@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/cache/provider/CacheProvider.inc.php');
+GvInclude::i('system/cache/provider/CacheProvider.inc.php');
 
 /**
  * File cache provider class.

@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('GvKernelModule.inc.php');
-GvInclude::instance()->includeFile('system/log/Log.inc.php');
+GvInclude::i('GvKernelModule.inc.php');
+GvInclude::i('system/log/Log.inc.php');
 
 /**
  * Kernel module class for log subsystem.

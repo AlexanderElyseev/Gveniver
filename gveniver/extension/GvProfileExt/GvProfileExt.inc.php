@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
-GvInclude::instance()->includeFile('system/cache/FileSplitter.inc.php');
-GvInclude::instance()->includeFile('system/cache/packer/StylePacker.inc.php');
-GvInclude::instance()->includeFile('system/cache/packer/ScriptPacker.inc.php');
+GvInclude::i('system/extension/SimpleExtension.inc.php');
+GvInclude::i('system/cache/FileSplitter.inc.php');
+GvInclude::i('system/cache/packer/StylePacker.inc.php');
+GvInclude::i('system/cache/packer/ScriptPacker.inc.php');
 
 /**
  * Kernel extension class for access to profile data.

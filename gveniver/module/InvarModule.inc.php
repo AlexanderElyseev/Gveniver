@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('GvKernelModule.inc.php');
+GvInclude::i('GvKernelModule.inc.php');
 
 /**
  * Invar kernel module class.

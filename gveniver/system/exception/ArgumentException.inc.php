@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/exception/GvException.inc.php');
+GvInclude::i('system/exception/GvException.inc.php');
 
 /**
  * Argument exception class for Gveniver system.

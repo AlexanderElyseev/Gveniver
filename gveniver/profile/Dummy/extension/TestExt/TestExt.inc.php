@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
+GvInclude::i('system/extension/SimpleExtension.inc.php');
 
 /**
  * Test kernel extension class.

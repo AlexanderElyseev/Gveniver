@@ -11,7 +11,7 @@
  */
 
 
-GvInclude::instance()->includeFile('system/data/provider/DataProvider.inc.php');
+GvInclude::i('system/data/provider/DataProvider.inc.php');
 
 /**
  * Class for data provider over PDO system.
