@@ -30,3 +30,5 @@ Todo list for project.
 6. Configuration.                                                                                   [--]
     6.1. Smart XML parsing for build PHP array. Use attributes for build structure.
          Use attributes for converting parameters in specified type.                                [--]
+7. Deploy.                                                                                          [--]
+    7.1. Use some builder (ant?).                                                                   [--]

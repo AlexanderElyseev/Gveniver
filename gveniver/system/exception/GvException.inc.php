@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains base Gveniver system exception class.
+ * File contains base system exception class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,7 +11,7 @@
  */
 
 /**
- * Base Gveniver system exception class.
+ * Base system exception class.
  *
  * @category  Gveniver
  * @package   Kernel

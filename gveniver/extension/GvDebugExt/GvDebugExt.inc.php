@@ -22,7 +22,7 @@ GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvDebugExt extends SimpleExtenson
+class GvDebugExt extends SimpleExtension
 {
     /**
      * Returns current trace content from tracing module.

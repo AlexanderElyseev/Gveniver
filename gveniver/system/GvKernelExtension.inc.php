@@ -10,8 +10,6 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('system/extension/ExtensionData.inc.php');
-
 /**
  * Base abstract kernel extension class.
  *
@@ -32,14 +30,6 @@ abstract class GvKernelExtension
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
-
-    /**
-     * Data of current extension.
-     *
-     * @var ExtensionData
-     */
-    protected $cData;
-    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
@@ -52,22 +42,8 @@ abstract class GvKernelExtension
     {
         // Save current kernel.
         $this->cKernel = $cKernel;
-        
-        // Load extension data.
-        $this->cData = $this->loadData();
-        if (!$this->cData)
-            $this->cData = new ExtensionData();
 
     } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Template method for loading extension data.
-     *
-     * @return ExtensionData
-     * @abstract
-     */
-    protected abstract function loadData();
     //-----------------------------------------------------------------------------
 
     /**

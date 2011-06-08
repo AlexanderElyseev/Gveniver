@@ -27,7 +27,7 @@ final class GvKernel
     /**
      * Configuration of kernel.
      *
-     * @var GvKernelConfig
+     * @var GvConfig
      */
     public $cConfig;
     //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ final class GvKernel
     public function __construct($sProfile)
     {
         // Initialize and load confiuration.
-        $this->cConfig = new GvKernelConfig();
+        $this->cConfig = new GvConfig();
 
         // Initialization of environment.
         $this->initEnvironment();

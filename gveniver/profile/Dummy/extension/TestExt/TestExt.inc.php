@@ -22,7 +22,7 @@ GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class TestExt extends SimpleExtenson
+class TestExt extends SimpleExtension
 {
     /**
      * Test extension method.

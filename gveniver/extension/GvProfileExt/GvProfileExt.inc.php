@@ -25,7 +25,7 @@ GvInclude::instance()->includeFile('system/cache/packer/ScriptPacker.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvProfileExt extends SimpleExtenson
+class GvProfileExt extends SimpleExtension
 {
     /**
      * Array of configuration parameters for extension.

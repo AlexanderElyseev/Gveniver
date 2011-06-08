@@ -20,7 +20,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvKernelConfig
+class GvConfig
 {
     /**
      * List of configuration parameters.
@@ -40,7 +40,7 @@ class GvKernelConfig
     //-----------------------------------------------------------------------------
 
     /**
-     * Private singleton constructor of {@see GvKernelConfig}.
+     * Class constructor.
      * Load configuration parameters.
      */
     public function __construct()
