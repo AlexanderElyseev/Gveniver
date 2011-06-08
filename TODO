@@ -7,6 +7,8 @@ Todo list for project.
     0.2. Parameters for error reporting on loading module: exception or dummy class.                [--]
     0.3. Initialize profile by profile path or profile name.                                        [--]
     0.4. Run over njinx and fcgi.                                                                   [--]
+    0.5. Fatal errors handling. Clear caches.                                                       [--]
+    0.6. Correct processing of cache code files (<?php, ?>, etc)                                    [--]
 1. Data module.                                                                                     [--]
     1.1. Base architecture.                                                                         [ok]
     1.2. Data providers for mysql and mongodb.                                                      [ok]

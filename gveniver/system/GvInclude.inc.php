@@ -94,9 +94,18 @@ final class GvInclude
 
     /**
      * List of metadata about inclueded files.
+     *
      * @var array
      */
     private $_aIncludeMeta;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * List of mtime for files.
+     *
+     * @var array
+     */
+    private $_aModifiedTime;
     //-----------------------------------------------------------------------------
 
     /**
@@ -135,15 +144,6 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Flag that cache is invalid.
-     * If cache is invalid, it will be removed on exit.
-     *
-     * @var bool
-     */
-    private $_bCacheInvalidated;
-    //-----------------------------------------------------------------------------
-
-    /**
      * Configuration parameter that cache of code files is enabled.
      * 
      * @var bool
@@ -177,16 +177,14 @@ final class GvInclude
         $this->_sCacheCodeFilePath = GV_PATH_CACHE.'include.inc.php';
         $this->_sCacheMetaFilePath = GV_PATH_CACHE.'include.dat';
 
+        $this->_aModifiedTime = array();
         $this->_aIncludeMeta = array();
         $this->_aSkipIncludeMeta = array();
 
         $this->_bCacheEnabled = true;
-
         $this->_bLoadingCache = false;
-        
         $this->_bCacheLoaded = false;
         $this->_bCacheChanged = false;
-        $this->_bCacheInvalidated = false;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -199,10 +197,6 @@ final class GvInclude
      */
     public function __destruct()
     {
-        // Clear cache if need.
-        if ($this->_bCacheInvalidated)
-            $this->_clearCache();
-
         // Save cache if need.
         if ($this->_bCacheChanged && $this->_bCacheEnabled)
             $this->_saveCache();
@@ -256,13 +250,6 @@ final class GvInclude
         $aMeta = $this->_buildMeta($sFileName);
         $bIncluded = isset($this->_aIncludeMeta[$aMeta['hash']]);
         $bSkip = isset($this->_aSkipIncludeMeta[$aMeta['hash']]);
-
-        // If file was changed after saving cache data, invalidate cache on exit.
-        $bFileChanged = $bIncluded && $aMeta['mtime'] > $this->_aIncludeMeta[$aMeta['hash']]['mtime'];
-        if ($bFileChanged) {
-            $this->_bCacheInvalidated = true;
-            return true;
-        }
 
         // No action for skipped files or on loading cache.
         if ($bSkip || $this->_bLoadingCache)
@@ -321,7 +308,20 @@ final class GvInclude
         $this->_aIncludeMeta = unserialize(file_get_contents($this->_sCacheMetaFilePath));
         if (!is_array($this->_aIncludeMeta))
             return false;
-        
+
+        // Check changes for cached files.
+        foreach ($this->_aIncludeMeta as $aMeta) {
+            $nMtime = isset($this->_aModifiedTime[$aMeta['hash']])
+                    ? $this->_aModifiedTime[$aMeta['hash']]
+                    : $this->_aModifiedTime[$aMeta['hash']] = filemtime($aMeta['path']);
+
+            if ($aMeta['mtime'] < $nMtime) {
+                echo "Cahnged ".$aMeta['path']."<br/>";
+                $this->_aIncludeMeta = array();
+                return false;
+            }
+        }
+
         include $this->_sCacheCodeFilePath;
         return true;
         
@@ -391,16 +391,17 @@ final class GvInclude
         // Correct file path.
         $sFileName = self::correctPath($sFileName);
 
-        // Check the existence of file for include by relative or absolute path.
         // If file is not exists, do nothing.
-        if (!$this->isAbsolutePath($sFileName))
-            $sFileName = GV_PATH_BASE.$sFileName;
         if (!file_exists($sFileName))
             return null;
 
+        $sHash = md5($sFileName);
+        $nMtime = isset($this->_aModifiedTime[$sHash])
+                    ? $this->_aModifiedTime[$sHash]
+                    : $this->_aModifiedTime[$sHash] = filemtime($sFileName);
         return array(
-            'hash'   => md5($sFileName),
-            'mtime'  => filemtime($sFileName),
+            'hash'   => $sHash,
+            'mtime'  => $nMtime,
             'path'   => $sFileName
         );
 
@@ -417,9 +418,14 @@ final class GvInclude
      */
     public static function correctPath($sFileName)
     {
-        return (GV_DS === '/')
+        $sFileName = (GV_DS === '/')
             ? str_replace('\\', GV_DS, $sFileName)
             : str_replace('/', GV_DS, $sFileName);
+
+        if (!self::isAbsolutePath($sFileName))
+            $sFileName = GV_PATH_BASE.$sFileName;
+
+        return $sFileName;
 
     } // End function
     //-----------------------------------------------------------------------------
