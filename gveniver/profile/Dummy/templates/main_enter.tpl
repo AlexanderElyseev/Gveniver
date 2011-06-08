@@ -2,8 +2,21 @@
 <html>
 	<head>
         <title>Dummy page</title>
-        {gv ext=GvProfileExt act=getScripts}
-        {gv ext=GvProfileExt act=getStyles}
+
+        {gv ext=GvProfileExt act=getScripts var=scriptList}
+        {foreach from=$scriptList item=script}
+            <script type="text/javascript" src="{$script.FileName}"></script>
+        {/foreach}
+
+        {gv ext=GvProfileExt act=getStyles var=styleList}
+        {foreach from=$styleList item=style}
+            {if $style.Condition}
+                <!--[if {$style.Condition}]><link rel="stylesheet" type="text/css" href="{$style.FileName}" /><![endif]-->
+            {else}
+                <link rel="stylesheet" type="text/css" href="{$style.FileName}" />
+            {/if}
+        {/foreach}
+
 {*        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>*}
 {*        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>*}
         <script type="text/javascript">

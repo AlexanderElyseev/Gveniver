@@ -35,7 +35,10 @@
                 <Keywords>sex,drugs,rocknroll</Keywords>
 				<MainTemplate>main_enter.tpl</MainTemplate>
                 <Robots>INDEX</Robots>
-                <ScriptList></ScriptList>
+                <ScriptList>
+                    <Script><FileName>script1.js</FileName></Script>
+                    <Script><FileName>script2.js</FileName></Script>
+                </ScriptList>
                 <StyleList>
 					<Style><FileName>style.css</FileName></Style>
 				</StyleList>

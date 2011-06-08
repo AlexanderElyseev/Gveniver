@@ -12,6 +12,8 @@
 
 GvInclude::instance()->includeFile('system/extension/SimpleExtension.inc.php');
 GvInclude::instance()->includeFile('system/cache/FileSplitter.inc.php');
+GvInclude::instance()->includeFile('system/cache/packer/StylePacker.inc.php');
+GvInclude::instance()->includeFile('system/cache/packer/ScriptPacker.inc.php');
 
 /**
  * Kernel extension class for access to profile data.
@@ -65,19 +67,17 @@ class GvProfileExt extends SimpleExtenson
      */
     public function getScripts()
     {
-        // If JavaScript configuration is used.
-        $sJsConfigScript = '';
-        if ($this->_aConfig['UseConfigScript']) {
-            $sJsConfigScript = $this->_buildScriptHtml(
-                $this->cKernel->invar->getLink(
-                    array(
-                         $this->_aConfig['InvarSectionKey'] => $this->_aConfig['ConfigScriptSection']
-                    )
+        $aRet = array();
+
+        // Add JavaScript configuration.
+        if ($this->_aConfig['UseConfigScript'])
+            $aRet[] = array(
+                'FileName' => $this->cKernel->invar->getLink(
+                    array($this->_aConfig['InvarSectionKey'] => $this->_aConfig['ConfigScriptSection'])
                 )
             );
-        }
 
-        // Load scripts data.
+        // Load scripts data from profile configuration.
         $cProfile = $this->cKernel->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
@@ -89,54 +89,25 @@ class GvProfileExt extends SimpleExtenson
         // Load scripts from cache.
         if ($this->_aConfig['CacheScripts']) {
             // First, try to load scripts from cache.
-            $sCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
-            if ($sCacheScripts)
-                return $sJsConfigScript.$sCacheScripts;
+            $aCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
+            if ($aCacheScripts)
+                return array_merge($aRet, $aCacheScripts);
 
             // If cache not loaded, save and reload script cache.
-            // This action for preventing use of not cached scripts.
+            // This action for prevent using of not cached scripts.
             $this->_saveCacheScripts($aScriptDataList, $sSectionName, $sActionValue);
-            $sCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
-            if ($sCacheScripts)
-                return $sJsConfigScript.$sCacheScripts;
+            $aCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
+            if ($aCacheScripts)
+                return array_merge($aRet, $aCacheScripts);
         }
 
-        // Build result list of scripts.
-        $sRet = '';
+        // Set absolute path to scripts.
         $sScriptWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsScriptWeb');
-        if (is_array($aScriptDataList))
-            foreach ($aScriptDataList as $aScript)
-               $sRet .= $this->_buildScriptHtml($sScriptWebPath.$aScript['FileName']);
-
-        return $sJsConfigScript.$sRet;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Build HTML data for script.
-     * 
-     * @param string $sFileUrl Url to script file.
-     *
-     * @return string
-     */
-    private function _buildScriptHtml($sFileUrl)
-    {
-        // Try to load file template for output scripts.
-        if ($this->_aConfig['UseScriptTemplate']) {
-            $sScriptTpl = $this->cKernel->template->getTemplate('cms_html_script');
-            if ($sScriptTpl) {
-                return $sScriptTpl->parse(array('file' => $sFileUrl));
-            } else {
-                $this->cKernel->trace->addLine(
-                    '[%s] Html template for scripts not found. Use default tempate.',
-                    __CLASS__
-                );
-            }
+        foreach ($aScriptDataList as &$aScript) {
+            $aScript['FileName'] = $sScriptWebPath.$aScript['FileName'];
         }
-        
-        // Use default template for output scripts.
-        return '<script type="text/javascript" src="'.$sFileUrl.'"></script>';
+
+        return array_merge($aRet, $aScriptDataList);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -148,20 +119,21 @@ class GvProfileExt extends SimpleExtenson
      * @param string $sSectionName Name of current section for load cached scripts.
      * @param string $sActionValue Current value of action.
      *
-     * @return string Html code for cached scripts for this section or null on error.
+     * @return array|null List of cached scripts for this section and action or null on error.
      */
     private function _getCacheScripts($sSectionName, $sActionValue)
     {
         try {
-            $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
-            $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
-            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-
             // Check script cache.
+            $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
+            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
             if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                 return null;
 
-            return $this->_buildScriptHtml($sScriptCacheWebPath.$sCacheFile);
+            $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
+            return array(
+                array('FileName' => $sScriptCacheWebPath.$sCacheFile)
+            );
 
         } catch (Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
@@ -190,11 +162,11 @@ class GvProfileExt extends SimpleExtenson
             $sScriptAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsScript');
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile);
+            $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile, new ScriptPacker());
             foreach ($aList as $aScript)
                 $cCacheSplitter->addFile($sScriptAbsPath.$aScript['FileName']);
 
-            $cCacheSplitter->Save();
+            $cCacheSplitter->save();
 
         } catch (Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
@@ -219,13 +191,13 @@ class GvProfileExt extends SimpleExtenson
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns html code for styles for current page.
+     * Returns list of styles for current page.
      *
-     * @return string
+     * @return array
      */
     public function getStyles()
     {
-        // Load data of profile.
+        // Load data from profile configuration.
         $cProfile = $this->cKernel->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
@@ -236,66 +208,32 @@ class GvProfileExt extends SimpleExtenson
 
         // Load styles from cache.
         if ($this->_aConfig['CacheStyles']) {
-            $sCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
-            if ($sCacheStyles)
-                return $sCacheStyles;
+            $aCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
+            if ($aCacheStyles)
+                return $aCacheStyles;
 
             // If cache not loaded, save and reload style cache.
             // This action for preventing use of not cached styles.
             $this->_saveCacheStyles($aStyleList, $sSectionName, $sActionValue);
-            $sCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
-            if ($sCacheStyles)
-                return $sCacheStyles;
+            $aCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
+            if ($aCacheStyles)
+                return $aCacheStyles;
         }
 
         // Build result list of styles.
-        $sRet = '';
+        $aRet = array();
         $sStyleWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsStyleWeb');
         if (is_array($aStyleList)) {
             foreach ($aStyleList as $aStyle) {
-                $sRet .= $this->_buildStyleHtml(
-                    $sStyleWebPath.$aStyle['FileName'],
-                    isset($aStyle['Condition']) ? $aStyle['Condition'] : null
+                $aRet[] = array(
+                    'FileName'  => $sStyleWebPath.$aStyle['FileName'],
+                    'Condition' => isset($aStyle['Condition']) ? $aStyle['Condition'] : null
                 );
             }
         }
         
-        return $sRet;
+        return $aRet;
 
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Build HTML data for CSS styles.
-     *
-     * @param string $sFileUrl   Url to CSS style file.
-     * @param string $sCondition Condition for CSS conditional comment.
-     *
-     * @return string
-     */
-    private function _buildStyleHtml($sFileUrl, $sCondition = null)
-    {
-        // Try to load file template for output styles.
-        if ($this->_aConfig['UseStyleTemplate']) {
-            $sStyleTpl = $this->cKernel->template->getTemplate('cms_html_style');
-            if ($sStyleTpl) {
-                return $sStyleTpl->parse(
-                    array('file' => $sFileUrl, 'condition' => $sCondition)
-                );
-            } else {
-                $this->cKernel->trace->addLine(
-                    '[%s] Html template for styles not found. Use default tempate.',
-                    __CLASS__
-                );
-            }
-        }
-
-        // Use default template for output styles.
-        $sRet = '<link rel="stylesheet" type="text/css" href="'.$sFileUrl.'" />';
-        if ($sCondition)
-            $sRet = '<!--[if {[$condition]}]>{[/if]}'.$sRet.'<![endif]-->';
-        return $sRet;
-        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -307,7 +245,7 @@ class GvProfileExt extends SimpleExtenson
      * @param string $sSectionName Section name.
      * @param string $sActionValue Current value of action.
      *
-     * @return string Html code with list of cached styles of null on error.
+     * @return array|null List of cached styles or null on error.
      */
     private function _getCacheStyles($aList, $sSectionName, $sActionValue)
     {
@@ -320,17 +258,21 @@ class GvProfileExt extends SimpleExtenson
             foreach ($aList as $aStyle)
                 $aVariousConditions[isset($aStyle['Condition']) ? $aStyle['Condition'] : ''][] = $aStyle;
 
-            $sRet = '';
+            // Build result list.
+            $aRet = array();
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
                 if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
 
-                $sRet .= $this->_buildStyleHtml($sStyleCacheWebPath.$sCacheFile, $sCondition);
+                $aRet[] = array(
+                    'FileName'  => $sStyleCacheWebPath.$sCacheFile,
+                    'Condition' => $sCondition
+                );
 
             } // End foreach
 
-            return $sRet;
+            return $aRet;
 
         } catch (Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
@@ -367,11 +309,11 @@ class GvProfileExt extends SimpleExtenson
             // Save each group of styles.
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
-                $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile);
+                $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile, new StylePacker());
                 foreach ($aSameConditions as $aSameConditionStyle)
                     $cCacheSplitter->addFile($sStyleAbsPath.$aSameConditionStyle['FileName']);
 
-                $cCacheSplitter->Save();
+                $cCacheSplitter->save();
 
             } // End foreach
 
