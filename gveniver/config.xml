@@ -3,7 +3,7 @@
     <Kernel>
         <Debug>true</Debug>
         <DisplayErrors>1</DisplayErrors>
-        <EnableCache>0</EnableCache>
+        <EnableCache>1</EnableCache>
         <Encoding>utf-8</Encoding>
         <ErrorReporting>2047</ErrorReporting>
         <ErrorReportingType>exception</ErrorReportingType>
