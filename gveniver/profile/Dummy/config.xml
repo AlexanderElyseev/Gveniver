@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Module>
+        <TemplateModule>
+            <SmartyDirCache>/var/www/gv/gveniver/profile/Dummy/cache/</SmartyDirCache>
+            <SmartyDirTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</SmartyDirTemplate>
+            <SmartyDirCompile>/var/www/gv/gveniver/profile/Dummy/templates_c/</SmartyDirCompile>
+            <SmartyDirConfig>/var/www/gv/gveniver/profile/Dummy/</SmartyDirConfig>
+		</TemplateModule>
+    </Module>
+    <Profile>
+        <Path>
+            <AbsRootWeb>http://dc1/gv/</AbsRootWeb>
+            <AbsScript>/var/www/gv/gveniver/profile/Dummy/scripts/</AbsScript>
+            <AbsScriptWeb>http://dc1/gv/gveniver/profile/Dummy/scripts/</AbsScriptWeb>
+            <AbsStyle>/var/www/gv/gveniver/profile/Dummy/styles/</AbsStyle>
+            <AbsStyleWeb>http://dc1/gv/gveniver/profile/Dummy/styles/</AbsStyleWeb>
+            <AbsImage>/var/www/gv/gveniver/profile/Dummy/images/</AbsImage>
+            <AbsImageWeb>http://dc1/gv/gveniver/profile/Dummy/images/</AbsImageWeb>
+            <AbsUpload>/var/www/gv/gveniver/profile/Dummy/upload/</AbsUpload>
+            <AbsUploadWeb>http://dc1/gv/gveniver/profile/Dummy/upload/</AbsUploadWeb>
+            <AbsCache>/var/www/gv/gveniver/profile/Dummy/cache/</AbsCache>
+            <AbsCacheWeb>http://dc1/gv/gveniver/profile/Dummy/cache/</AbsCacheWeb>
+            <AbsExtension>/var/www/gv/gveniver/profile/Dummy/extension/</AbsExtension>
+            <AbsTemplate>/var/www/gv/gveniver/profile/Dummy/templates/</AbsTemplate>
+        </Path>
+        <SectionList>
+			<Default>
+                <ActList>
+                    <Default><FileName>act_index.tpl</FileName></Default>
+                </ActList>
+                <Author>http://example.com/</Author>
+				<ContentType><![CDATA[text/html; charset=utf-8]]></ContentType>
+                <InvarsList></InvarsList>
+                <Keywords>sex,drugs,rocknroll</Keywords>
+				<MainTemplate>main_enter.tpl</MainTemplate>
+                <Robots>INDEX</Robots>
+                <ScriptList>
+                    <Script><FileName>script1.js</FileName></Script>
+                    <Script><FileName>script2.js</FileName></Script>
+                </ScriptList>
+                <StyleList>
+					<Style><FileName>style.css</FileName></Style>
+				</StyleList>
+                <SubTitle>Dummy profile</SubTitle>
+				<Title>Default section</Title>
+			</Default>
+
+			<List>
+				<Section>
+					<ActList>
+						<Default><FileName>act_index.tpl</FileName></Default>
+					</ActList>
+                    <MainTemplate>main_enter_index.tpl</MainTemplate>
+					<Name>index</Name>
+				</Section>
+			</List>
+		</SectionList>
+    </Profile>
+</Configuration>

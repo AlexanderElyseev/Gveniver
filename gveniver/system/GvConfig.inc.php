@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * File contains class for loader of configuration parameters.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,8 +11,8 @@
  */
 
 /**
- * TODO: Default base configuration (without xml file).
- *
+ * Class for loader of configuration parameters.
+ * 
  * @category  Gveniver
  * @package   Kernel
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
@@ -20,7 +20,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvKernelConfig
+class GvConfig
 {
     /**
      * List of configuration parameters.
@@ -40,10 +40,8 @@ class GvKernelConfig
     //-----------------------------------------------------------------------------
 
     /**
-     * Private singleton constructor of {@see GvKernelConfig}.
+     * Class constructor.
      * Load configuration parameters.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -60,38 +58,44 @@ class GvKernelConfig
      * Build array of configuration parameters from XML file and merge with current.
      * First, trying to load configuration from cache file. If cache is incorrect, parse
      * XML configuration file and save to cache by serialization of loaded data.
+     * It is important taht at first load data and then read cache parameters.
      *
      * @param string $sConfigFile Path configuration XML file.
      * 
-     * @return boolean Returns tru on success.
+     * @return boolean Returns true on success.
      */
     public function mergeXmlFile($sConfigFile)
     {
         if (!file_exists($sConfigFile))
             return false;
 
-        // Try to load configuration from cache.
-        $bCacheEnabled = GvKernel::toBoolean($this->get('Kernel/EnableCache'));
-        if ($bCacheEnabled) {
-            $sCacheFile = GV_PATH_CACHE.'config-'.md5($sConfigFile).'.dat';
-            if (file_exists($sCacheFile) && filemtime($sCacheFile) >= filemtime($sConfigFile)) {
-                $aConfig = unserialize(file_get_contents($sCacheFile));
-            } else {
-                $aConfig = $this->_buildXmlConfig(simplexml_load_file($sConfigFile));
-                $sCacheDir = dirname($sCacheFile);
-                if (!file_exists($sCacheDir))
-                    mkdir($sCacheDir, 0666, true);
-
-                file_put_contents($sCacheFile, serialize($aConfig), LOCK_EX);
+        // Try to read configuration from cache.
+        $sCacheFile = GV_PATH_CACHE.'config-'.md5($sConfigFile).'.dat';
+        if (file_exists($sCacheFile) && filemtime($sCacheFile) >= filemtime($sConfigFile)) {
+            // Unserialize the array of configuration and check correctness.
+            $aConfig = unserialize(file_get_contents($sCacheFile));
+            if (is_array($aConfig)) {
+                $this->_merge($aConfig);
+                return true;
             }
-        } else {
-            $aConfig = $this->_buildXmlConfig(simplexml_load_file($sConfigFile));
         }
 
-        // Merge with current configuration and invalidate cache.
+        // Load an array of configuration from XML configuration file.
+        $aConfig = $this->_buildXmlConfig(simplexml_load_file($sConfigFile));
         $this->_merge($aConfig);
+
+        // Save cache if need.
+        $bCacheEnabled = GvKernel::toBoolean($this->get('Kernel/EnableCache'));
+        if ($bCacheEnabled) {
+            $sCacheDir = dirname($sCacheFile);
+            if (!file_exists($sCacheDir))
+                mkdir($sCacheDir, 0666, true);
+
+            file_put_contents($sCacheFile, serialize($aConfig), LOCK_EX);
+        }
+
         return true;
-        
+
     } // End function
     //-----------------------------------------------------------------------------
 

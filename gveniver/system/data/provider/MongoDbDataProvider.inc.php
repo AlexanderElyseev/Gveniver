@@ -1,7 +1,28 @@
 <?php
+/**
+ * File contains class for data provider over MongoDb.
+ *
+ * @category  Gveniver
+ * @package   Template
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
-GvInclude::instance()->includeFile('gveniver/system/data/provider/DataProvider.inc.php');
 
+GvInclude::i('system/data/provider/DataProvider.inc.php');
+
+/**
+ * Class for data provider over MongoDb.
+ *
+ * @category  Gveniver
+ * @package   Template
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 class MongoDbDataProvider extends DataProvider
 {
     /**

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-	<Kernel>
+    <Kernel>
         <Debug>true</Debug>
         <DisplayErrors>1</DisplayErrors>
-        <EnableCache>0</EnableCache>
+        <EnableCache>1</EnableCache>
         <Encoding>utf-8</Encoding>
         <ErrorReporting>2047</ErrorReporting>
         <ErrorReportingType>exception</ErrorReportingType>
         <ForceCompression>false</ForceCompression>
         <Locale>ru_RU</Locale>
-        <PreferDeflate>false</PreferDeflate>
+        <PreferDeflate>0</PreferDeflate>
         <StartSession>false</StartSession>
         <Timezone>Europe/Moscow</Timezone>
         <UseOutputBuffering>0</UseOutputBuffering>
-	</Kernel>
+    </Kernel>
     <Module>
         <CacheModule>
             <Providers>
@@ -73,22 +73,33 @@
                 </Provider>
                 <Provider>
                     <Class>EmailLogProvider</Class>
+                    <Recipient>eas@prof-club.ru</Recipient>
+                    <Sender>mail@prof-club.ru</Sender>
+                    <Subject>Error log</Subject>
                 </Provider>
             </Providers>
         </LogModule>
-		<TemplateModule>
-			<DelimiterBegin>{[</DelimiterBegin>
-			<DelimiterEnd>]}</DelimiterEnd>
-			<Ext>tpl</Ext>
-			<FactoryClass>Smarty3TemplateFactory</FactoryClass>
-			<Separator>_</Separator>
+        <TemplateModule>
+            <DelimiterBegin>{</DelimiterBegin>
+            <DelimiterEnd>}</DelimiterEnd>
+            <Ext>tpl</Ext>
+            <FactoryClass>Smarty3TemplateFactory</FactoryClass>
+            <Separator>_</Separator>
             <SmartyDirCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\cache\</SmartyDirCache>
             <SmartyDirTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\templates\</SmartyDirTemplate>
             <SmartyDirCompile>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\templates_c\</SmartyDirCompile>
             <SmartyDirConfig>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\</SmartyDirConfig>
-		</TemplateModule>
+        </TemplateModule>
         <InvarModule>
+            <SectionKeyName>section</SectionKeyName>
+            <ActionKeyName>action</ActionKeyName>
             <LoaderClass>HfuInvarLoader</LoaderClass>
         </InvarModule>
     </Module>
+    <Profile>
+        <UseScriptTemplate>1</UseScriptTemplate>
+        <UseStyleTemplate>1</UseStyleTemplate>
+        <CacheScript>1</CacheScript>
+        <CacheStyle>1</CacheStyle>
+    </Profile>
 </Configuration>

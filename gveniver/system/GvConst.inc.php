@@ -19,11 +19,12 @@
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class GvConst
 {
     /**
-     * Separator of path in configuration tree, used in {@see GvKernelConfig}.
+     * Separator of path in configuration tree, used in {@see GvConfig}.
      *
      * @var string
      */
@@ -31,7 +32,7 @@ abstract class GvConst
     //-----------------------------------------------------------------------------
 
     /**
-     * XML configuration file name, used in {@see GvKernelConfig}.
+     * XML configuration file name, used in {@see GvConfig}.
      * 
      * @var string
      */
@@ -39,7 +40,7 @@ abstract class GvConst
     //-----------------------------------------------------------------------------
 
     /**
-     * Cache configuration file name, used in {@see GvKernelConfig}.
+     * Cache configuration file name, used in {@see GvConfig}.
      *
      * @var string
      */

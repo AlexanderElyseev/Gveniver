@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains not implemented exception class for Gveniver system.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/exception/GvException.inc.php');
+GvInclude::i('system/exception/GvException.inc.php');
 
 /**
- *
+ * Not implemented exception class for Gveniver system.
  *
  * @category  Gveniver
  * @package   Kernel

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base system exception class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,7 +11,7 @@
  */
 
 /**
- *
+ * Base system exception class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -27,8 +27,6 @@ class GvException extends Exception
      * 
      * @param string $message Error message.
      * @param int    $code    Error code.
-     * 
-     * @return void
      */
     public function __construct($message = '', $code = 0) 
     {

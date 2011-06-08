@@ -2,6 +2,13 @@
 Todo list for project.
 -------------------------------------------------------------------------------
 
+0. Kernel.
+    0.1. Restore environment after running profile.                                                 [--]
+    0.2. Parameters for error reporting on loading module: exception or dummy class.                [--]
+    0.3. Initialize profile by profile path or profile name.                                        [--]
+    0.4. Run over njinx and fcgi.                                                                   [--]
+    0.5. Fatal errors handling. Clear caches.                                                       [--]
+    0.6. Correct processing of cache code files (<?php, ?>, etc)                                    [--]
 1. Data module.                                                                                     [--]
     1.1. Base architecture.                                                                         [ok]
     1.2. Data providers for mysql and mongodb.                                                      [ok]
@@ -9,6 +16,8 @@ Todo list for project.
 2. Cache module.                                                                                    [--]
     2.1. Base architecture.                                                                         [ok]
     2.2. Cache providers for files and memcached.                                                   [ok]
+    2.3. Cache extension calls by some parameter.                                                   [--] !
+    2.4. TTL for script cache and style cache based on content files (not on constant).             [--]
 3. Log module.                                                                                      [--]
     3.1. Base architecture.                                                                         [--]
     3.2. Log providers for files and emails.                                                        [--]
@@ -17,7 +26,11 @@ Todo list for project.
         4.1.1. Output and cache scripts.                                                            [--]
         4.1.2. Output and cache styles.                                                             [--]
         4.1.3. Html meta data.                                                                      [--]
+    4.2. Profiling for each extension. Calculate call time.                                         [--]
+    4.3. Extensions must returns raw data, not HTML.                                                [--]
 5. Ajax.                                                                                            [--]
 6. Configuration.                                                                                   [--]
     6.1. Smart XML parsing for build PHP array. Use attributes for build structure.
          Use attributes for converting parameters in specified type.                                [--]
+7. Deploy.                                                                                          [--]
+    7.1. Use some builder (ant?).                                                                   [--]

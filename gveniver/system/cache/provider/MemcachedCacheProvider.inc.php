@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains cache provider class for memcached system.
  *
  * @category  Gveniver
  * @package   Cache
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/cache/provider/CacheProvider.inc.php');
+GvInclude::i('system/cache/provider/CacheProvider.inc.php');
 
 /**
- *
+ * Cache provider class for memcached system.
  *
  * @category  Gveniver
  * @package   Cache
@@ -38,8 +38,6 @@ class MemcachedCacheProvider extends CacheProvider
      *
      * @param GvKernel $cKernel  Current kernel.
      * @param array    $aOptions Options for cache provider.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel, array $aOptions)
     {

@@ -1,42 +1,38 @@
 <?php
 /**
- * File contains test kernel extension.
- *
+ * File contains base abstract class for packing data.
+ * 
  * @category  Gveniver
- * @package   Extension
+ * @package   Cache
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-
-GvInclude::instance()->includeFile('gveniver/system/extension/SimpleExtension.inc.php');
 
 /**
- * Test kernel extension class.
+ * Base abstract class for packing data.
  *
  * @category  Gveniver
- * @package   Extension
+ * @package   Cache
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
-class TestExt extends SimpleExtenson
+abstract class DataPacker
 {
     /**
-     * Test extension method.
+     * Method for packing data.
      * 
-     * @param string $v Arg1.
-     * @param string $f Arg2.
+     * @param string $sData Data for packing.
      *
      * @return string
+     * @abstract
      */
-    public function tESt($v, $f)
-    {
-        //var_dump(func_get_args());
-        return 'this is test';
-    }
-    
+    abstract public function pack($sData);
+    //--------------------------------------------------------------------------------
+
 } // End class
-//-----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------

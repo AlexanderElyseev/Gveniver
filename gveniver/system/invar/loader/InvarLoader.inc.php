@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base abstract class for loader of invars.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::i('GvKernelModule.inc.php');
 
 /**
- *
+ * Base abstract class for loader of invars.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -21,6 +21,7 @@ GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class InvarLoader
 {

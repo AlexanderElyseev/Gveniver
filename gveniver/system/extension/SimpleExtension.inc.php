@@ -1,18 +1,28 @@
 <?php
+/**
+ * File contains class of simple kernel extension.
+ *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
-
-class SimpleExtenson extends GvKernelExtension
+/**
+ * Class of simple kernel extension.
+ * Without export data.
+ *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
+class SimpleExtension extends GvKernelExtension
 {
-    /**
-     * Template method for loading extension data.
-     *
-     * @return ExtensionData
-     */
-    protected function loadData()
-    {
-    } // End function
-    //-----------------------------------------------------------------------------
-
     /**
      * Query to extension.
      * Redirect request to public function of current extension with same name.

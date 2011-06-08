@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * File contains tracing kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::i('GvKernelModule.inc.php');
 
 /**
- * 
+ * Tracing kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -72,7 +72,7 @@ class TraceModule extends GvKernelModule
         if (!$this->_bDebug)
             return $sRet;
 
-        // Build trace messages.
+        // Build full trace messages.
         foreach ($this->_aMessages as $aMessage)
             $sRet .= sprintf(
                 '[%s %s s. (+%s s.), %.2f KiB (%s%.2f KiB)] %s%s',
@@ -102,18 +102,18 @@ class TraceModule extends GvKernelModule
      */
     public function addLine($sMessage)
     {
-        // Build message with sprintf function if specified more than 1 parameter.
-        if (func_num_args() > 1) {
-			$aArgs = func_get_args();
-			$sMessage = call_user_func_array('sprintf', $aArgs);
-		}
-
-        //echo $sMessage."<br/>\n";
-        
         // Add trace data only in debug state.
         if (!$this->_bDebug)
             return;
 
+        // Build message with sprintf function if specified more than 1 parameter.
+        if (func_num_args() > 1) {
+            $aArgs = func_get_args();
+            $sMessage = call_user_func_array('sprintf', $aArgs);
+        }
+
+        //echo $sMessage."<br/>\n";
+        
         $dMemory = memory_get_usage();
         $dTime = microtime(true);
         $nPrevIndex = count($this->_aMessages) - 1;

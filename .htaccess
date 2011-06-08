@@ -10,8 +10,8 @@ AddDefaultCharset utf-8
 Options -Indexes +ExecCGI
 AddHandler cgi-script .cgi
 <FilesMatch "\.(xml|xsd|xsl|inc\.php|tpl|log|txt)$">
-	Order Deny,Allow
-	Deny From All
+    Order Deny,Allow
+    Deny From All
 </FilesMatch>
 #-------------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ AddHandler cgi-script .cgi
 #-------------------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
     RewriteEngine On
-	RewriteOptions MaxRedirects=1
+    RewriteOptions MaxRedirects=1
     RewriteCond %{REQUEST_FILENAME} !\.(ico|gif|jpe?g|png|js|css)$ [NC]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

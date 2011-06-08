@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains base abstract template factory class.
  *
  * @category  Gveniver
  * @package   Template
@@ -10,9 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/template/factory/BaseTemplateFactory.inc.php');
+GvInclude::i('system/template/factory/BaseTemplateFactory.inc.php');
+
 /**
- *
+ * Base abstract template factory class.
  *
  * @category  Gveniver
  * @package   Template
@@ -20,6 +21,7 @@ GvInclude::instance()->includeFile('gveniver/system/template/factory/BaseTemplat
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ * @abstract
  */
 abstract class BaseFileTemplateFactory extends BaseTemplateFactory
 {
@@ -82,9 +84,9 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
         if (!$this->sTplFileNameSeparator)
             throw new GvException('Extension of template files not loaded from configuration.');
 
-		// Template folder.
+        // Template folder.
         $this->sTplFolder = $this->cKernel->cConfig->get('Profile/Path/AbsTemplate');
-        if (!$this->sTplFolder || !file_exists($this->sTplFolder) || !is_dir($this->sTplFolder))
+        if (!$this->sTplFolder  || !is_dir($this->sTplFolder) || !is_readable($this->sTplFolder))
             throw new GvException('Wrong template directory.');
         
     } // End function
@@ -103,6 +105,8 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
         if ($sTemplateFileName)
             return file_get_contents($this->sTplFolder.$sTemplateFileName);
 
+        return null;
+        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -141,9 +145,9 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
                     $sComplexAbsFileNameWithExt = $this->sTplFolder . $sName . $this->sTplFileNameExtension;
 
                     if (file_exists($sComplexAbsFileNameWithExt) && !is_dir($sComplexAbsFileNameWithExt))
-                        return $this->_aNameCache[$sName] = $sName . $this->sTplFileNameExtension;
+                        return $this->_aNameCache[$sName] = $sComplexAbsFileNameWithExt;
                     elseif (file_exists($sComplexAbsFileName) && !is_dir($sComplexAbsFileName))
-                        return $this->_aNameCache[$sName] = $sName;
+                        return $this->_aNameCache[$sName] = $sComplexAbsFileName;
 
                 } // End for
 
@@ -153,6 +157,8 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
 
         } // End else
 
+        return null;
+        
     } // End function
     //-----------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * File contains base and final class for including files.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -11,6 +11,8 @@
  */
 
 /**
+ * Base and final class for including files.
+ *
  * TODO: Проблема переинициализации кэша кода, если кэш включен и файл был изменен.
  * TODO: Вырезание php тэгов только из начала и конца файла при кэшировании.
  * 
@@ -92,14 +94,23 @@ final class GvInclude
 
     /**
      * List of metadata about inclueded files.
+     *
      * @var array
      */
     private $_aIncludeMeta;
     //-----------------------------------------------------------------------------
 
     /**
+     * List of mtime for files.
+     *
+     * @var array
+     */
+    private $_aModifiedTime;
+    //-----------------------------------------------------------------------------
+
+    /**
      * List of metadata about skip files.
-     * This files will not include.
+     * This files will not includes.
      * 
      * @var array
      */
@@ -107,15 +118,17 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Flag of first loading cache.
+     * The flag that cache is loading.
+     * At this state, no files will be included through this instance.
      *
      * @var bool
      */
-    private $_bFirstLoadCache;
+    private $_bLoadingCache;
     //-----------------------------------------------------------------------------
 
     /**
-     * Flag of changed cache.
+     * Flag that cache was changed.
+     * If cache was changed, it will be saved on exit.
      * 
      * @var bool
      */
@@ -123,7 +136,15 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Flag of enabled cache.
+     * Flag that cache is already loaded.
+     *
+     * @var bool
+     */
+    private $_bCacheLoaded;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Configuration parameter that cache of code files is enabled.
      * 
      * @var bool
      */
@@ -150,19 +171,20 @@ final class GvInclude
     /**
      * Private singleton constructor of {@see GvInclude}.
      * Initialize member fields.
-     *
-     * @return void
      */
     private function __construct()
     {
         $this->_sCacheCodeFilePath = GV_PATH_CACHE.'include.inc.php';
         $this->_sCacheMetaFilePath = GV_PATH_CACHE.'include.dat';
 
+        $this->_aModifiedTime = array();
         $this->_aIncludeMeta = array();
         $this->_aSkipIncludeMeta = array();
-        $this->_bFirstLoadCache = true;
+
+        $this->_bCacheEnabled = true;
+        $this->_bLoadingCache = false;
+        $this->_bCacheLoaded = false;
         $this->_bCacheChanged = false;
-        $this->_bCacheEnabled = false;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -175,6 +197,7 @@ final class GvInclude
      */
     public function __destruct()
     {
+        // Save cache if need.
         if ($this->_bCacheChanged && $this->_bCacheEnabled)
             $this->_saveCache();
         
@@ -200,39 +223,80 @@ final class GvInclude
     /**
      * Include code file.
      *
-     * @param string $sFileName File name for adding to skip list.
+     * @param string $sFileName Name of file for include.
      *
      * @return bool True on success.
      */
     public function includeFile($sFileName)
     {
-        // On first call of this function, try to load data from cache, then change
-        // flag of first function call.
+        // On first call of this function, try to load data from cache, then set
+        // flag that cache is loaded.
         // Do not load the cache in the class constructor. This can lead to recursion in
-        // constructor if the code from cache use {@see GvInclude}.
-        if ($this->_bCacheEnabled && $this->_bFirstLoadCache) {
-            $this->_bFirstLoadCache = false;
+        // constructor if some code from cache use {@see GvInclude}.
+        if ($this->_bCacheEnabled && !$this->_bCacheLoaded && !$this->_bLoadingCache) {
+            $this->_bLoadingCache = true;
             $this->_loadCache();
+            $this->_bLoadingCache = false;
+            $this->_bCacheLoaded = true;
         }
-        
+
         // Build metadata for file.
         $aMeta = $this->_buildMeta($sFileName);
         if (!$aMeta)
             return false;
-        
+
         // If file is not included, include file and add include metadata.
         // Otherwise, do nothing.
         $aMeta = $this->_buildMeta($sFileName);
         $bIncluded = isset($this->_aIncludeMeta[$aMeta['hash']]);
         $bSkip = isset($this->_aSkipIncludeMeta[$aMeta['hash']]);
-        if (!$bIncluded && !$bSkip) {
-            $this->_bCacheChanged = true;
+
+        // No action for skipped files or on loading cache.
+        if ($bSkip || $this->_bLoadingCache)
+            return false;
+
+        // Include file if it is not included.
+        if (!$bIncluded) {
+            include $aMeta['path'];
+
+            // Save metadata only after include files for adding metadata first
+            // for nested includes.
             $this->_aIncludeMeta[$aMeta['hash']] = $aMeta;
-            include $sFileName;
+            $this->_bCacheChanged = true;
             return true;
         }
 
         return false;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Short alias to {@see GvInclude::includeFile} function.
+     *
+     * @param string $sFileName Name of file for include.
+     *
+     * @return bool True on success.
+     * @static
+     */
+    public static function i($sFileName)
+    {
+        return self::instance()->includeFile($sFileName);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Short alias to {@see GvInclude::skipFile} function.
+     *
+     * @param string $sFileName Name of file for adding to skip-list.
+     *
+     * @return bool True on success.
+     * @static
+     */
+    public static function s($sFileName)
+    {
+        return self::instance()->skipFile($sFileName);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -243,7 +307,7 @@ final class GvInclude
      *
      * @param string $sFileName File name for adding to skip list.
      *
-     * @return bool True of successful operation.
+     * @return bool True of success.
      */
     public function skipFile($sFileName)
     {
@@ -272,9 +336,38 @@ final class GvInclude
             return false;
 
         $this->_aIncludeMeta = unserialize(file_get_contents($this->_sCacheMetaFilePath));
-        require $this->_sCacheCodeFilePath;
-		return true;
-		
+        if (!is_array($this->_aIncludeMeta))
+            return false;
+
+        // Check changes for cached files.
+        foreach ($this->_aIncludeMeta as $aMeta) {
+            $nMtime = isset($this->_aModifiedTime[$aMeta['hash']])
+                    ? $this->_aModifiedTime[$aMeta['hash']]
+                    : $this->_aModifiedTime[$aMeta['hash']] = filemtime($aMeta['path']);
+
+            if ($aMeta['mtime'] < $nMtime) {
+                echo "Cahnged ".$aMeta['path']."<br/>";
+                $this->_aIncludeMeta = array();
+                return false;
+            }
+        }
+
+        include $this->_sCacheCodeFilePath;
+        return true;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Remove files of cache.
+     * 
+     * @return void
+     */
+    private function _clearCache()
+    {
+        unlink($this->_sCacheCodeFilePath);
+        unlink($this->_sCacheMetaFilePath);
+        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -290,9 +383,9 @@ final class GvInclude
         // Check, is cache enabled.
         if (!$this->_bCacheEnabled)
             return;
-        
+
         $sCodeContent = '<?php'.PHP_EOL;
-        foreach (array_reverse($this->_aIncludeMeta) as $aMeta) {
+        foreach ($this->_aIncludeMeta as $aMeta) {
             $sFileContent = file_get_contents($aMeta['path']);
 
             // Cut php open and close tags.
@@ -306,7 +399,8 @@ final class GvInclude
         // Create cache directory, if not exists.
         $sCacheDir = dirname($this->_sCacheCodeFilePath);
         if (!file_exists($sCacheDir))
-            mkdir($sCacheDir, 0666, true);
+            if (!mkdir($sCacheDir, 0666, true))
+                return;
 
         file_put_contents($this->_sCacheCodeFilePath, $sCodeContent, LOCK_EX);
         file_put_contents($this->_sCacheMetaFilePath, serialize($this->_aIncludeMeta), LOCK_EX);
@@ -327,17 +421,18 @@ final class GvInclude
         // Correct file path.
         $sFileName = self::correctPath($sFileName);
 
-        // Check the existence of file for include by relative or absolute path.
         // If file is not exists, do nothing.
-        if (!$this->isAbsolutePath($sFileName))
-            $sFileName = GV_PATH_BASE.$sFileName;
         if (!file_exists($sFileName))
             return null;
 
+        $sHash = md5($sFileName);
+        $nMtime = isset($this->_aModifiedTime[$sHash])
+                    ? $this->_aModifiedTime[$sHash]
+                    : $this->_aModifiedTime[$sHash] = filemtime($sFileName);
         return array(
-            'hash'  => md5($sFileName),
-            'mtime' => filemtime($sFileName),
-            'path'  => $sFileName,
+            'hash'   => $sHash,
+            'mtime'  => $nMtime,
+            'path'   => $sFileName
         );
 
     } // End function
@@ -353,9 +448,14 @@ final class GvInclude
      */
     public static function correctPath($sFileName)
     {
-        return (GV_DS === '/')
+        $sFileName = (GV_DS === '/')
             ? str_replace('\\', GV_DS, $sFileName)
             : str_replace('/', GV_DS, $sFileName);
+
+        if (!self::isAbsolutePath($sFileName))
+            $sFileName = GV_PATH_BASE.$sFileName;
+
+        return $sFileName;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -387,11 +487,10 @@ final class GvInclude
      *             May contain %class% placeholder. It will be replaced by specified class name.
      * - [base]  - Base class name.
      * - [args]  - Arguments to constructor.
+     * 
+     * @param array $aParams     Paramenters for creating object.
+     * @param int   &$nErrorCode Output error code.
      *
-     *
-     * @param array $aParams
-     * @param int   &$nErrorCode
-
      * @return mixed
      * @static
      */
@@ -405,7 +504,7 @@ final class GvInclude
             $sPathTpl = str_replace('%class%', $sClassName, $sPathTpl);
 
             // Try to include file by builded path.
-            if (!GvInclude::instance()->includeFile($sPathTpl)) {
+            if (!GvInclude::i($sPathTpl)) {
                 $nErrorCode = self::ERRROR_FILE_INCLUDE;
                 return null;
             }
@@ -434,19 +533,19 @@ final class GvInclude
             }
         }
 
-		// Create object instance.
+        // Create object instance.
         $aArguments = isset($aParams['args']) ? $aParams['args'] : null;
-		try {
+        try {
             if ($aArguments) {
                 $cObj = $cRc->newInstanceArgs($aArguments);
             } else {
                 $cObj = new $sClassName;
             }
-		} catch (Exception $cEx) {
+        } catch (Exception $cEx) {
             //echo($cEx->getMessage());
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
-			return null;
-		}
+            return null;
+        }
 
         $nErrorCode = self::ERRROR_NONE;
         return $cObj;

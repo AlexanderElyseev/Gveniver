@@ -1,6 +1,26 @@
 <?php
+/**
+ * File contains base abstract class for data provider.
+ *
+ * @category  Gveniver
+ * @package   Template
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
-
+/**
+ * Base abstract class for data provider.
+ *
+ * @category  Gveniver
+ * @package   Template
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ * @abstract
+ */
 abstract class DataProvider
 {
     /**
@@ -26,8 +46,6 @@ abstract class DataProvider
      *
      * @param GvKernel $cKernel  Current kernel.
      * @param array    $aOptions Options for provider.
-     *
-     * @return void
      */
     public function __construct(GvKernel $cKernel, array $aOptions)
     {

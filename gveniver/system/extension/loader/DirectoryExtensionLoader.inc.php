@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/system/extension/loader/ExtensionLoader.inc.php');
+GvInclude::i('system/extension/loader/ExtensionLoader.inc.php');
 
 /**
  * Loader class for kernel extensions.
@@ -52,7 +52,7 @@ class DirectoryExtensionLoader extends ExtensionLoader
         parent::__construct($cKernel);
 
         // Register kernel extension directory.
-        $this->_registerExtDir(GV_PATH_BASE.'gveniver'.GV_DS.'extension'.GV_DS);
+        $this->_registerExtDir(GV_PATH_BASE.'extension'.GV_DS);
 
         // Register extension directory from profile configuration.
         $this->_registerExtDir($this->cKernel->cConfig->get('Profile/Path/AbsExtension'));

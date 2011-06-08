@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains kernel extension class for debugging.
+ * File contains test kernel extension.
  *
  * @category  Gveniver
  * @package   Extension
@@ -13,7 +13,7 @@
 GvInclude::i('system/extension/SimpleExtension.inc.php');
 
 /**
- * Kernel extension class for debugging.
+ * Test kernel extension class.
  *
  * @category  Gveniver
  * @package   Extension
@@ -22,19 +22,21 @@ GvInclude::i('system/extension/SimpleExtension.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvDebugExt extends SimpleExtension
+class TestExt extends SimpleExtension
 {
     /**
-     * Returns current trace content from tracing module.
-     *  
+     * Test extension method.
+     * 
+     * @param string $v Arg1.
+     * @param string $f Arg2.
+     *
      * @return string
      */
-    public function getTrace()
+    public function tESt($v, $f)
     {
-        return $this->cKernel->trace->getTraceAsString();
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
+        //var_dump(func_get_args());
+        return 'this is test';
+    }
+    
 } // End class
 //-----------------------------------------------------------------------------

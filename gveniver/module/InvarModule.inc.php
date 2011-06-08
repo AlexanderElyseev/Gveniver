@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains invar kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::i('GvKernelModule.inc.php');
 
 /**
- *
+ * Invar kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -100,7 +100,7 @@ class InvarModule extends GvKernelModule
         $this->_cLoader = GvInclude::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/InvarModule/LoaderClass'),
-                'path'  => 'gveniver/system/invar/loader/%class%.inc.php'
+                'path'  => 'system/invar/loader/%class%.inc.php'
             ),
             $nErrCode
         );
@@ -240,7 +240,7 @@ class InvarModule extends GvKernelModule
      */
     public function getEx($sName, $nTarget = self::TARGET_FIRST_GET, array $aCheck = array(), &$cRef = null)
     {
-        GvKernel::instance()->trace->addLine('[%s] Extended load invar ("%s") from request.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Extended load invar ("%s") from request.', __CLASS__, $sName);
 
         $bByRef = func_num_args() == 4;
         $mValue = null;
@@ -256,14 +256,14 @@ class InvarModule extends GvKernelModule
         // Check value of invar and return result.
         $bCheckResult = $this->_filter($mValue, $aCheck);
         if (!$bCheckResult) {
-            GvKernel::instance()->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
+            $this->cKernel->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
             if ($bByRef)
                 return false;
 
             return null;
         }
 
-        GvKernel::instance()->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
 
         if ($bByRef) {
             if ($bCheckResult)
@@ -287,13 +287,13 @@ class InvarModule extends GvKernelModule
      */
     public function post($sName, &$cRef = null)
     {
-        GvKernel::instance()->trace->addLine('[%s] Load invar ("%s") from POST.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Load invar ("%s") from POST.', __CLASS__, $sName);
 
         $bByRef = func_num_args() == 2;
 
         // Try to Load from GET.
         if (array_key_exists($sName, $this->_aPost['post'])) {
-            GvKernel::instance()->trace->addLine('[%s] Invar ("%s") loaded from POST.', __CLASS__, $sName);
+            $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from POST.', __CLASS__, $sName);
 
             if (!$bByRef)
                 return $this->_aPost['post'][$sName];
@@ -303,7 +303,7 @@ class InvarModule extends GvKernelModule
         }
 
         // Invar value not loaded.
-        GvKernel::instance()->trace->addLine('[%s] Invar ("%s") not loaded from POST.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Invar ("%s") not loaded from POST.', __CLASS__, $sName);
 
         if (!$bByRef)
             return null;
@@ -316,16 +316,16 @@ class InvarModule extends GvKernelModule
     /**
      * Extended variant of loading value of invar parameter by name from POST reguest.
      *
-     * @param string $sName   Name of invar for loading value.
-     * @param array  $aCheck  Array of parameters for checking.
-     * @param mixed  &$cRef   Reference variable for loading value.
+     * @param string $sName  Name of invar for loading value.
+     * @param array  $aCheck Array of parameters for checking.
+     * @param mixed  &$cRef  Reference variable for loading value.
      * If specified, load result by reference. Return result of operation.
      *
      * @return bool|mixed
      */
     public function postEx($sName, array $aCheck = array(), &$cRef = null)
     {
-        GvKernel::instance()->trace->addLine('[%s] Extended load invar ("%s") from POST.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Extended load invar ("%s") from POST.', __CLASS__, $sName);
 
         $bByRef = func_num_args() == 3;
         $mValue = null;
@@ -341,14 +341,14 @@ class InvarModule extends GvKernelModule
         // Check value of invar and return result.
         $bCheckResult = $this->_filter($mValue, $aCheck);
         if (!$bCheckResult) {
-            GvKernel::instance()->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
+            $this->cKernel->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
             if ($bByRef)
                 return false;
 
             return null;
         }
 
-        GvKernel::instance()->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
+        $this->cKernel->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
 
         if ($bByRef) {
             if ($bCheckResult)
@@ -370,8 +370,8 @@ class InvarModule extends GvKernelModule
      * - "options" - Filter options.
      * - "cache"   - Is need to save check result into cache.
      *
-     * @param mixed $mValue Value of invar for check.
-     * @param array $aCheck Parameters of invar for check.
+     * @param mixed &$mValue Value of invar for check.
+     * @param array $aCheck  Parameters of invar for check.
      *
      * @return boolean
      */

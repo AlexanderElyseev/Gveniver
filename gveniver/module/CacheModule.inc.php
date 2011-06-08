@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * File contains cache kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -10,10 +10,10 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::instance()->includeFile('gveniver/GvKernelModule.inc.php');
+GvInclude::i('GvKernelModule.inc.php');
 
 /**
- *
+ * Cache kernel module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -63,8 +63,12 @@ class CacheModule extends GvKernelModule
     //-----------------------------------------------------------------------------
 
     /**
-     * @param  $sProviderName
-     * @return void
+     * Returns cache provider by name.
+     *
+     * @param string $sProviderName Name of cache provider.
+     * If it is not specified, returns default cache provider.
+     *
+     * @return CacheProvider
      */
     public function getProvider($sProviderName = null)
     {
@@ -154,7 +158,7 @@ class CacheModule extends GvKernelModule
         $cProvider = GvInclude::createObject(
             array(
                 'class' => $sClassname,
-                'path'  => 'gveniver/system/cache/provider/%class%.inc.php',
+                'path'  => 'system/cache/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
             $nErrCode
