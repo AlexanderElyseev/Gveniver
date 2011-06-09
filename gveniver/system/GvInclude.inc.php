@@ -343,7 +343,6 @@ final class GvInclude
                     : $this->_aModifiedTime[$aMeta['hash']] = filemtime($aMeta['path']);
 
             if ($aMeta['mtime'] < $nMtime) {
-                echo "Cahnged ".$aMeta['path']."<br/>";
                 $this->_aIncludeMeta = array();
                 return false;
             }

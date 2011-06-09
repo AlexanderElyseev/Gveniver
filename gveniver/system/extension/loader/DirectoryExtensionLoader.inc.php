@@ -29,6 +29,14 @@ GvInclude::i('system/extension/loader/ExtensionLoader.inc.php');
 class DirectoryExtensionLoader extends ExtensionLoader
 {
     /**
+     * Force caching of export data.
+     *
+     * @var boolean
+     */
+    private $_bForceExportCache;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Path to extension folder.
      * 
      * @var string
@@ -56,6 +64,9 @@ class DirectoryExtensionLoader extends ExtensionLoader
 
         // Register extension directory from profile configuration.
         $this->_registerExtDir($this->cKernel->cConfig->get('Profile/Path/AbsExtension'));
+
+        // Load caching settings.
+        $this->_bForceExportCache = GvKernel::toBoolean($this->cKernel->cConfig->get('Kernel/EnableCache'));
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -105,7 +116,6 @@ class DirectoryExtensionLoader extends ExtensionLoader
     {
         // Load extension in registered directories.
         foreach ($this->_aExtensionFolderList as $sExtensionFolder) {
-            
             // Build extension class name.
             $sExtensionClassName = $sExtensionName;
             $sExtensionFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.$sExtensionClassName.'.inc.php';
@@ -132,6 +142,11 @@ class DirectoryExtensionLoader extends ExtensionLoader
                 continue;
             }
 
+            // Load extension configuration.
+            $sExtensionExportFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.'export.xml';
+            if (file_exists($sExtensionExportFileName) && is_readable($sExtensionExportFileName))
+                $cExt->getConfig()->mergeXmlFile($sExtensionExportFileName, $this->_bForceExportCache);
+            
             $this->cKernel->trace->addLine('[%s] Extension ("%s") successfully loaded.', __CLASS__, $sExtensionName);
             return $cExt;
 

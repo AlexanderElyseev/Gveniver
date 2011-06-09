@@ -24,6 +24,14 @@
 abstract class GvKernelExtension
 {
     /**
+     * Configuration of extension.
+     *
+     * @var GvConfig
+     */
+    private $_cConfig;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Current kernel of extension.
      *
      * @var GvKernel
@@ -34,14 +42,13 @@ abstract class GvKernelExtension
 
     /**
      * Base extension constructor.
-     * Load extension data with specific logic.
      *
      * @param GvKernel $cKernel Current kernel.
      */
     public function __construct(GvKernel $cKernel)
     {
-        // Save current kernel.
         $this->cKernel = $cKernel;
+        $this->_cConfig = new GvConfig();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -59,12 +66,26 @@ abstract class GvKernelExtension
     //-----------------------------------------------------------------------------
 
     /**
+     * Getter for extension configuration.
+     * 
+     * @return GvConfig
+     */
+    public function getConfig()
+    {
+        return $this->_cConfig;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Add resource to the profile.
      *
      * @return void
      */
     public function addResource()
     {
+        throw new NotImplementedException();
+        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -77,6 +98,8 @@ abstract class GvKernelExtension
      */
     public function addHandler(ExtensionHandler $cHandler)
     {
+        throw new NotImplementedException();
+        
     } // End function
     //-----------------------------------------------------------------------------
 

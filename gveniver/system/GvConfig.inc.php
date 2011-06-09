@@ -47,11 +47,12 @@ class GvConfig
      * 
      * !!! It is important that first load data and then read cache parameters. !!!
      *
-     * @param string $sConfigFile Path configuration XML file.
-     * 
+     * @param string  $sConfigFile Path configuration XML file.
+     * @param boolean $bForceCache Force caching of this file.
+     *
      * @return boolean Returns true on success.
      */
-    public function mergeXmlFile($sConfigFile)
+    public function mergeXmlFile($sConfigFile, $bForceCache = null)
     {
         $sConfigFile = GvInclude::correctPath($sConfigFile);
         if (!file_exists($sConfigFile))
@@ -73,7 +74,7 @@ class GvConfig
         $this->_merge($aConfig);
 
         // Save cache if need.
-        $bCacheEnabled = GvKernel::toBoolean($this->get('Kernel/EnableCache'));
+        $bCacheEnabled = is_null($bForceCache) ? GvKernel::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
         if ($bCacheEnabled) {
             $sCacheDir = dirname($sCacheFile);
             if (!file_exists($sCacheDir))
