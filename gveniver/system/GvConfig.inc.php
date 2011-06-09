@@ -89,7 +89,7 @@ class GvConfig
         if ($bCacheEnabled) {
             $sCacheDir = dirname($sCacheFile);
             if (!file_exists($sCacheDir))
-                mkdir($sCacheDir, 0666, true);
+                mkdir($sCacheDir, 0777, true);
 
             file_put_contents($sCacheFile, serialize($aConfig), LOCK_EX);
         }

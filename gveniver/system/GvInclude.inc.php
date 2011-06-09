@@ -13,9 +13,6 @@
 /**
  * Base and final class for including files.
  *
- * TODO: Проблема переинициализации кэша кода, если кэш включен и файл был изменен.
- * TODO: Вырезание php тэгов только из начала и конца файла при кэшировании.
- * 
  * Provide Singleton design pattern.
  *
  * @category  Gveniver
@@ -181,7 +178,7 @@ final class GvInclude
         $this->_aIncludeMeta = array();
         $this->_aSkipIncludeMeta = array();
 
-        $this->_bCacheEnabled = true;
+        $this->_bCacheEnabled = is_dir(GV_PATH_CACHE) && is_writable(GV_PATH_CACHE);
         $this->_bLoadingCache = false;
         $this->_bCacheLoaded = false;
         $this->_bCacheChanged = false;
