@@ -65,8 +65,9 @@ final class GvKernel
      */
     public function __construct($sProfile)
     {
-        // Initialize and load confiuration.
+        // Initialize and load base configuration.
         $this->cConfig = new GvConfig();
+        $this->cConfig->mergeXmlFile(GV_PATH_BASE.GvConst::CONFIG_XML_FILE);
 
         // Initialization of environment.
         $this->initEnvironment();

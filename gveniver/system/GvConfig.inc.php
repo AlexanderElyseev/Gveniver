@@ -27,7 +27,7 @@ class GvConfig
      *
      * @var array
      */
-    private $_aConfig;
+    private $_aConfig = array();
     //-----------------------------------------------------------------------------
 
     /**
@@ -35,30 +35,17 @@ class GvConfig
      *
      * @var array
      */
-    private $_aCache;
+    private $_aCache = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
-
-    /**
-     * Class constructor.
-     * Load configuration parameters.
-     */
-    public function __construct()
-    {
-        // Initialize base configuration.
-        $this->_aConfig = array();
-
-        // Try to load configuration from main configuration XML file.
-        $this->mergeXmlFile(GV_PATH_BASE.GvConst::CONFIG_XML_FILE);
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
+    
     /**
      * Build array of configuration parameters from XML file and merge with current.
+     *
      * First, trying to load configuration from cache file. If cache is incorrect, parse
      * XML configuration file and save to cache by serialization of loaded data.
-     * It is important taht at first load data and then read cache parameters.
+     * 
+     * !!! It is important that first load data and then read cache parameters. !!!
      *
      * @param string $sConfigFile Path configuration XML file.
      * 
@@ -66,6 +53,7 @@ class GvConfig
      */
     public function mergeXmlFile($sConfigFile)
     {
+        $sConfigFile = GvInclude::correctPath($sConfigFile);
         if (!file_exists($sConfigFile))
             return false;
 
