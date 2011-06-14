@@ -78,27 +78,15 @@ abstract class GvKernelExtension
     //-----------------------------------------------------------------------------
 
     /**
-     * Add resource to the profile.
+     * Load resource of extension by name with spwcified locale.
      *
-     * @return void
-     */
-    public function addResource()
-    {
-        throw new NotImplementedException();
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Add handler to the profile.
+     * @param string $sResourceName Name of resource for load.
+     * @param string $sLocale       Target locale of resource.
      *
-     * @param ExtensionHandler $cHandler Handler to add.
-     * 
-     * @return void
+     * @return mixed
      */
-    public function addHandler(ExtensionHandler $cHandler)
+    public function getResource($sResourceName, $sLocale = null)
     {
-        throw new NotImplementedException();
         
     } // End function
     //-----------------------------------------------------------------------------
