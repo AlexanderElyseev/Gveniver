@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/log/provider/LogProvider.inc.php');
+namespace Gveniver\Log;
+\Gveniver\Loader::i('system/log/provider/LogProvider.inc.php');
 
 /**
  * Log provider class for saving log data to email.
@@ -54,10 +54,10 @@ class EmailLogProvider extends LogProvider
      * Class constructor.
      * Initialize member fields.
      *
-     * @param Kernel\Kernel $cKernel     Current kernel.
-     * @param array         $aConfigData Configuration data for provider.
+     * @param \Gveniver\Kernel\Kernel $cKernel     Current kernel.
+     * @param array                   $aConfigData Configuration data for provider.
      */
-    public function __construct(Kernel\Kernel $cKernel, array $aConfigData)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aConfigData)
     {
         // Use parent constructor.
         parent::__construct($cKernel, $aConfigData);
@@ -67,7 +67,7 @@ class EmailLogProvider extends LogProvider
         $bExistsSubject = isset($aConfigData['Subject']) && is_string($aConfigData['Subject']);
         
         if (!$bExistsRecipient || !$bExistsFrom || !$bExistsSubject)
-            throw new Exception\Exception('One ore more of configuration parameters not loaded.');
+            throw new \Gveniver\Exception\Exception('One ore more of configuration parameters not loaded.');
 
         $this->_sRecipient = $aConfigData['Recipient'];
         $this->_sSender = $aConfigData['Sender'];

@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/log/provider/LogProvider.inc.php');
+namespace Gveniver\Log;
+\Gveniver\Loader::i('system/log/provider/LogProvider.inc.php');
 
 /**
  * Base logger class.
@@ -64,9 +64,7 @@ class Log
     /**
      * Class constructor.
      * 
-     * @param int $nLevel Target log level.
-     *
-     * @return void
+     * @param int $nLevel Target log level. Bitwise mask.
      */
     public function __construct($nLevel)
     {

@@ -53,7 +53,7 @@ class LogModule extends Module
         $this->cKernel->trace->addLine('[%s] Common log level: %d.', __CLASS__, $nCommonLogLevel);
 
         // Build base log object.
-        $this->_cLog = new \Gveniver\Log($nCommonLogLevel);
+        $this->_cLog = new \Gveniver\Log\Log($nCommonLogLevel);
 
          // Load configuration of log providers.
         $aProviders = $this->cKernel->cConfig->get('Module/LogModule/Providers');
@@ -72,6 +72,7 @@ class LogModule extends Module
                 $cProvider = \Gveniver\Loader::createObject(
                     array(
                         'class' => $sClassName,
+                        'ns'    => '\\Gveniver\\Log',
                         'path'  => 'system/log/provider/%class%.inc.php',
                         'args'  => array($this->cKernel, $aProviderData)
                     ),
