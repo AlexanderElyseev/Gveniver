@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Template;
-\Gveniver\Loader::i('system/template/factory/BaseTemplateFactory.inc.php');
+\Gveniver\Loader::i('system/template/factory/TemplateFactory.inc.php');
 
 /**
  * Base abstract template factory class.
@@ -24,7 +24,7 @@ namespace Gveniver\Template;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseFileTemplateFactory extends BaseTemplateFactory
+abstract class FileTemplateFactory extends TemplateFactory
 {
     /**
      * Cache of template file names.

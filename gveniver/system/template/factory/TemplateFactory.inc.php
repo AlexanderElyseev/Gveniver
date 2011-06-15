@@ -24,7 +24,7 @@ namespace Gveniver\Template;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class BaseTemplateFactory
+abstract class TemplateFactory
 {
     /**
      * Current kernel.

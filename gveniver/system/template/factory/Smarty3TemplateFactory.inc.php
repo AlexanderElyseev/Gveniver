@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Template;
-\Gveniver\Loader::i('system/template/factory/BaseFileTemplateFactory.inc.php');
+\Gveniver\Loader::i('system/template/factory/FileTemplateFactory.inc.php');
 \Gveniver\Loader::i('system/template/Smarty3Template.inc.php');
 
 /**
@@ -24,7 +24,7 @@ namespace Gveniver\Template;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Smarty3TemplateFactory extends BaseFileTemplateFactory
+class Smarty3TemplateFactory extends FileTemplateFactory
 {
     /**
      * Smarty object.

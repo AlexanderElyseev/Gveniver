@@ -28,7 +28,7 @@ class TemplateModule extends Module
     /**
      * Current factory for templating system.
      *
-     * @var BaseTemplateFactory
+     * @var TemplateFactory
      */
     private $_cFactory;
     //-----------------------------------------------------------------------------
