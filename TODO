@@ -23,7 +23,7 @@ Todo list for project.
     3.1. Base architecture.                                                                         [--]
     3.2. Log providers for files and emails.                                                        [--]
 4. Extensions.                                                                                      [--]
-    4.1. GvProfileExt - extension for getting various profile data.                                 [--]
+    4.1. ProfileExt - extension for getting various profile data.                                 [--]
         4.1.1. Output and cache scripts.                                                            [--]
         4.1.2. Output and cache styles.                                                             [--]
         4.1.3. Html meta data.                                                                      [--]

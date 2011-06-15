@@ -23,7 +23,7 @@ namespace Gveniver\Extension;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvDebugExt extends SimpleExtension
+class DebugExt extends SimpleExtension
 {
     /**
      * Returns current trace content from tracing module.

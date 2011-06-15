@@ -26,7 +26,7 @@ namespace Gveniver\Extension;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvProfileExt extends SimpleExtension
+class ProfileExt extends SimpleExtension
 {
     /**
      * Array of configuration parameters for extension.

@@ -41,12 +41,6 @@ if [ "$FILES" == "" ]; then
     exit 0
 fi
 
-# Create temporary copy of staging area.
-if [ -e $TMP_STAGING ]; then
-    rm -rf $TMP_STAGING
-fi
-mkdir $TMP_STAGING
-
 # Match files against whitelist.
 FILES_TO_CHECK=""
 for FILE in $FILES
@@ -70,6 +64,12 @@ else
     IGNORE=""
 fi
 
+# Create temporary copy of staging area.
+if [ -e $TMP_STAGING ]; then
+    rm -rf $TMP_STAGING
+fi
+mkdir $TMP_STAGING
+
 # Copy contents of staged version of files to temporary staging area
 # because we only want the staged version that will be commited and not
 # the version in the working directory.
@@ -85,7 +85,7 @@ do
     STAGED_FILES="$STAGED_FILES $REPOSITORY_PATH$TMP_STAGING/$FILE"
 done
 
-OUTPUT=$(exec "$PHP_BIN" "$PHPCS_FILE" -s -n --standard=$PHPCS_CODING_STANDARD $IGNORE $STAGED_FILES)
+OUTPUT=$(exec "$PHP_BIN" "$PHPCS_FILE" -s -n --standard=$PHPCS_CODING_STANDARD $IGNORE $REPOSITORY_PATH$TMP_STAGING)
 RETVAL=$?
 
 # Delete temporary copy of staging area.
