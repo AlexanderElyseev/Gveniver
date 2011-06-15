@@ -17,17 +17,14 @@
             {/if}
         {/foreach}
 
-{*        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>*}
-{*        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>*}
-        <script type="text/javascript">
+       <script type="text/javascript">
             {literal}
-            $(function() {
-                $('#id_div_trace').hide();
-                $('#id_link_trace').click(function(event) {
-                    $('#id_div_trace').toggle();
-                    event.preventDefault();
-                });
-            });
+            var v = function() {
+                if (document.getElementById("id_div_trace").style.display == 'none')
+                    document.getElementById("id_div_trace").style.display = 'block';
+                else
+                    document.getElementById("id_div_trace").style.display = 'none'
+            };
             {/literal}
         </script>
         <meta http-equiv="Content-Type" content="{gv ext=GvProfileExt act=GetContentType}" />
@@ -37,8 +34,8 @@
 	</head>
 	<body>
         This is dummy profile and its main page.<br/>
-        <a href="#" id="id_link_trace">Trace</a>
-        <div id="id_div_trace">
+        <a href="#" id="id_link_trace" onclick="v(); return false;">Trace</a>
+        <div id="id_div_trace" style="display:none;">
             {gv ext=GvDebugExt act=getTrace}
         </div>
         <br/>
