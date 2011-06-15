@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
+namespace Gveniver\Cache;
 
 /**
  * Base abstract cache provider class.
@@ -46,10 +46,10 @@ abstract class CacheProvider
      * Base constructor.
      * Initialize member fields.
      *
-     * @param Kernel\Kernel $cKernel  Current kernel.
-     * @param array         $aOptions Options for cache provider.
+     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
+     * @param array                   $aOptions Options for cache provider.
      */
-    public function __construct(Kernel\Kernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
     {
         $this->cKernel = $cKernel;
         $this->aOptions = $aOptions;

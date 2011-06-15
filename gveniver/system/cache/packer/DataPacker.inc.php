@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
+namespace Gveniver\Cache;
 
 /**
  * Base abstract class for packing data.

@@ -10,9 +10,9 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/cache/packer/DataPacker.inc.php');
-Loader::i('system/cache/packer/lib/class.JavaScriptPacker.php');
+namespace Gveniver\Cache;
+\Gveniver\Loader::i('system/cache/packer/DataPacker.inc.php');
+\Gveniver\Loader::i('system/cache/packer/lib/class.JavaScriptPacker.php');
 
 /**
  * Class for packing JavaScript data.

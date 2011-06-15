@@ -159,6 +159,7 @@ class CacheModule extends Module
         $cProvider = \Gveniver\Loader::createObject(
             array(
                 'class' => $sClassname,
+                'ns'    => '\\Gveniver\Cache\\',
                 'path'  => 'system/cache/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),

@@ -128,7 +128,7 @@ class GvProfileExt extends SimpleExtension
             // Check script cache.
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            if (!\Gveniver\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
+            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                 return null;
 
             $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
@@ -163,7 +163,10 @@ class GvProfileExt extends SimpleExtension
             $sScriptAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsScript');
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            $cCacheSplitter = new \Gveniver\FileSplitter($sCacheAbsPath.$sCacheFile, new \Gveniver\ScriptPacker());
+            $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
+                $sCacheAbsPath.$sCacheFile,
+                new \Gveniver\Cache\ScriptPacker()
+            );
             foreach ($aList as $aScript)
                 $cCacheSplitter->addFile($sScriptAbsPath.$aScript['FileName']);
 
@@ -263,7 +266,7 @@ class GvProfileExt extends SimpleExtension
             $aRet = array();
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
-                if (!\Gveniver\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
+                if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
 
                 $aRet[] = array(
@@ -310,7 +313,10 @@ class GvProfileExt extends SimpleExtension
             // Save each group of styles.
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
-                $cCacheSplitter = new \Gveniver\FileSplitter($sCacheAbsPath.$sCacheFile, new \Gveniver\StylePacker());
+                $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
+                    $sCacheAbsPath.$sCacheFile,
+                    new \Gveniver\Cache\StylePacker()
+                );
                 foreach ($aSameConditions as $aSameConditionStyle)
                     $cCacheSplitter->addFile($sStyleAbsPath.$aSameConditionStyle['FileName']);
 
