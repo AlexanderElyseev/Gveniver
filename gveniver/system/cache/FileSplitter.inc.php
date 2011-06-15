@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i("system/cache/packer/DataPacker.inc.php");
+namespace Gveniver;
+Loader::i("system/cache/packer/DataPacker.inc.php");
 
 /**
  * Base class for splitting files.
@@ -68,7 +69,7 @@ class FileSplitter
     public function __construct($sOutputFileName, DataPacker $cPacker = null)
     {
         // Checks.
-        $sOutputFileName = GvInclude::correctPath($sOutputFileName);
+        $sOutputFileName = Loader::correctPath($sOutputFileName);
         $sOutputDir = dirname($sOutputFileName);
         if (!file_exists($sOutputDir))
             if (!mkdir($sOutputDir, null, true))
@@ -122,7 +123,7 @@ class FileSplitter
      */
     public function addFile($sFileName)
     {
-        $sFileName = GvInclude::correctPath($sFileName);
+        $sFileName = Loader::correctPath($sFileName);
         if (!file_exists($sFileName) || is_dir($sFileName))
             return false;
 

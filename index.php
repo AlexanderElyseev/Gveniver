@@ -19,7 +19,7 @@ require_once '/var/www/lib/Smarty-3.0.7/libs/Smarty.class.php';
 // Include Gveniver Framework.
 require_once 'gveniver/init.inc.php';
 
-$cDummyKernel = new GvKernel('Dummy');
+$cDummyKernel = new Gveniver\Kernel\Kernel('Dummy');
 //$cDummyKernel->template;
 //$cDummyKernel->invar;
 //$cDummyKernel->data;

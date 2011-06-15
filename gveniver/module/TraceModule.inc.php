@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Tracing kernel module class.
@@ -22,7 +23,7 @@ GvInclude::i('GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class TraceModule extends GvKernelModule
+class TraceModule extends Module
 {
     /**
      * List of messages.
@@ -49,7 +50,7 @@ class TraceModule extends GvKernelModule
     protected function init()
     {
         $this->_aMessages = array();
-        $this->_bDebug = GvKernel::toBoolean(
+        $this->_bDebug = Kernel::toBoolean(
             $this->cKernel->cConfig->get(
                 array('Kernel', 'Debug')
             )

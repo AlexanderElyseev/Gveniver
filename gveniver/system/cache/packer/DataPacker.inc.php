@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Base abstract class for packing data.
  *

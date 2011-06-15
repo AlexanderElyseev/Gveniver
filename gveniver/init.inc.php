@@ -20,24 +20,6 @@ define('GV_OS_WIN', stripos(PHP_OS, 'win') !== false);          // Is running on
 define('GV_CLI', stripos(php_sapi_name(), 'cli') !== false);    // Is running on CLI?
 define('GV_EOL', GV_CLI ? "\n" : '<br/>');                      // End of line.
 
-require 'system/GvConst.inc.php';
-require 'system/GvInclude.inc.php';
-require 'system/GvExtendCommon.inc.php';
-require 'system/GvConfig.inc.php';
-require 'system/GvKernel.inc.php';
-require 'system/GvKernelModule.inc.php';
-require 'system/GvKernelProfile.inc.php';
-require 'system/GvKernelExtension.inc.php';
-
-GvInclude::s('system/GvConst.inc.php');
-GvInclude::s('system/GvInclude.inc.php');
-GvInclude::s('system/GvExtendCommon.inc.php');
-GvInclude::s('system/GvConfig.inc.php');
-GvInclude::s('system/GvKernel.inc.php');
-GvInclude::s('system/GvKernelModule.inc.php');
-GvInclude::s('system/GvKernelProfile.inc.php');
-GvInclude::s('system/GvKernelExtension.inc.php');
-
-GvInclude::i('system/exception/ArgumentException.inc.php');
-GvInclude::i('system/exception/NotImplementedException.inc.php');
-GvInclude::i('system/exception/SqlException.inc.php');
+require 'system/Loader.inc.php';
+Gveniver\Loader::i('system/ExtendCommon.inc.php');
+Gveniver\Loader::i('system/kernel/Kernel.inc.php');

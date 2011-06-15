@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Extension;
+
 /**
  * Base abstract kernel extension class.
  *
@@ -21,12 +23,12 @@
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class GvKernelExtension
+abstract class Extension
 {
     /**
      * Configuration of extension.
      *
-     * @var GvConfig
+     * @var \Gveniver\Config
      */
     private $_cConfig;
     //-----------------------------------------------------------------------------
@@ -34,7 +36,7 @@ abstract class GvKernelExtension
     /**
      * Current kernel of extension.
      *
-     * @var GvKernel
+     * @var \Gveniver\Kernel\Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -43,12 +45,12 @@ abstract class GvKernelExtension
     /**
      * Base extension constructor.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
-        $this->_cConfig = new GvConfig();
+        $this->_cConfig = new \Gveniver\Config();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -68,7 +70,7 @@ abstract class GvKernelExtension
     /**
      * Getter for extension configuration.
      * 
-     * @return GvConfig
+     * @return \Gveniver\Config
      */
     public function getConfig()
     {

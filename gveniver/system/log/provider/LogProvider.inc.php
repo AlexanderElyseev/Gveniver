@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Base abstract log provider class for saving log data.
  *
@@ -66,7 +68,7 @@ abstract class LogProvider
     /**
      * Current kernel.
      *
-     * @var GvKernel
+     * @var Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -84,12 +86,10 @@ abstract class LogProvider
      * Base constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel     Current kernel.
-     * @param array    $aConfigData Configuration data of provider.
-     *
-     * @return void
+     * @param Kernel\Kernel $cKernel     Current kernel.
+     * @param array         $aConfigData Configuration data of provider.
      */
-    public function __construct(GvKernel $cKernel, array $aConfigData)
+    public function __construct(Kernel\Kernel $cKernel, array $aConfigData)
     {
         $this->cKernel = $cKernel;
         $this->aConfigData = $aConfigData;

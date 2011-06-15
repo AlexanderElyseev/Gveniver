@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Base abstract class for template objects factory.
  * 
@@ -27,7 +29,7 @@ abstract class BaseTemplateFactory
     /**
      * Current kernel.
      * 
-     * @var GvKernel
+     * @var Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -45,9 +47,9 @@ abstract class BaseTemplateFactory
      * Base constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(Kernel\Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
         

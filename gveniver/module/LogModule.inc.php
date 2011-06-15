@@ -10,8 +10,9 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
-GvInclude::i('system/log/Log.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
+\Gveniver\Loader::i('system/log/Log.inc.php');
 
 /**
  * Kernel module class for log subsystem.
@@ -23,7 +24,7 @@ GvInclude::i('system/log/Log.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class LogModule extends GvKernelModule
+class LogModule extends Module
 {
     /**
      * Logger object.
@@ -52,7 +53,7 @@ class LogModule extends GvKernelModule
         $this->cKernel->trace->addLine('[%s] Common log level: %d.', __CLASS__, $nCommonLogLevel);
 
         // Build base log object.
-        $this->_cLog = new Log($nCommonLogLevel);
+        $this->_cLog = new \Gveniver\Log($nCommonLogLevel);
 
          // Load configuration of log providers.
         $aProviders = $this->cKernel->cConfig->get('Module/LogModule/Providers');
@@ -68,7 +69,7 @@ class LogModule extends GvKernelModule
                 // Load provider object dynamically.
                 $sClassName = $aProviderData['Class'];
                 $nLogProvider = isset($aProviderData['Level']) ? $aProviderData['Level'] : null;
-                $cProvider = GvInclude::createObject(
+                $cProvider = \Gveniver\Loader::createObject(
                     array(
                         'class' => $sClassName,
                         'path'  => 'system/log/provider/%class%.inc.php',

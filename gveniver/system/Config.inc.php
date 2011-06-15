@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Class for loader of configuration parameters.
  * 
@@ -20,7 +22,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvConfig
+class Config
 {
     /**
      * List of configuration parameters.
@@ -54,7 +56,7 @@ class GvConfig
      */
     public function mergeXmlFile($sConfigFile, $bForceCache = null)
     {
-        $sConfigFile = GvInclude::correctPath($sConfigFile);
+        $sConfigFile = Loader::correctPath($sConfigFile);
         if (!file_exists($sConfigFile))
             return false;
 
@@ -74,7 +76,7 @@ class GvConfig
         $this->_merge($aConfig);
 
         // Save cache if need.
-        $bCacheEnabled = is_null($bForceCache) ? GvKernel::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
+        $bCacheEnabled = is_null($bForceCache) ? Kernel\Kernel::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
         if ($bCacheEnabled) {
             $sCacheDir = dirname($sCacheFile);
             if (!file_exists($sCacheDir))
@@ -91,11 +93,11 @@ class GvConfig
     /**
      * Recursive function for building configuration using SimpleXML library.
      *
-     * @param SimpleXMLElement $cXml Element to parse.
+     * @param \SimpleXMLElement $cXml Element to parse.
      *
      * @return array
      */
-    private function _buildXmlConfig(SimpleXMLElement $cXml)
+    private function _buildXmlConfig(\SimpleXMLElement $cXml)
     {
         $aTarget = array();
         foreach ($cXml->children() as $cParameter) {

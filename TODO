@@ -9,6 +9,7 @@ Todo list for project.
     0.4. Run over njinx and fcgi.                                                                   [--]
     0.5. Fatal errors handling. Clear caches.                                                       [--]
     0.6. Correct processing of cache code files (<?php, ?>, etc)                                    [--]
+    0.7. PHAR archives support.                                                                     [--]
 1. Data module.                                                                                     [--]
     1.1. Base architecture.                                                                         [ok]
     1.2. Data providers for mysql and mongodb.                                                      [ok]

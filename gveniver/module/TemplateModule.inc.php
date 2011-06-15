@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Template kernel module class.
@@ -22,7 +23,7 @@ GvInclude::i('GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class TemplateModule extends GvKernelModule
+class TemplateModule extends Module
 {
     /**
      * Current factory for templating system.
@@ -41,11 +42,12 @@ class TemplateModule extends GvKernelModule
     protected function init()
     {
         $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
-
+        
         // Load factory for template subsystem.
-        $this->_cFactory = GvInclude::createObject(
+        $this->_cFactory = \Gveniver\Loader::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/TemplateModule/FactoryClass'),
+                'ns'    => '\\Gveniver\\',
                 'path'  => 'system/template/factory/%class%.inc.php',
                 'args'  => array($this->cKernel)
             ),
@@ -53,9 +55,10 @@ class TemplateModule extends GvKernelModule
         );
         if (!$this->_cFactory) {
              $this->cKernel->trace->addLine(
-                 '[%s] Error in create template factory, with code: %d.',
+                 '[%s] Error in create template factory, with code: %d ("%s").',
                  __CLASS__,
-                 $nErrCode
+                 $nErrCode,
+                 \Gveniver\Loader::getErrorInfo($nErrCode)
              );
             return false;
         }

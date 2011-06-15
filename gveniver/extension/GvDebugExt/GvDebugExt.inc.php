@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/extension/SimpleExtension.inc.php');
+namespace Gveniver\Extension;
+\Gveniver\Loader::i('system/extension/SimpleExtension.inc.php');
 
 /**
  * Kernel extension class for debugging.

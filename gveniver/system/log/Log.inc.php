@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/log/provider/LogProvider.inc.php');
+namespace Gveniver;
+Loader::i('system/log/provider/LogProvider.inc.php');
 
 /**
  * Base logger class.

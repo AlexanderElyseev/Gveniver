@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/extension/loader/ExtensionLoader.inc.php');
+namespace Gveniver\Extension;
+\Gveniver\Loader::i('system/extension/loader/ExtensionLoader.inc.php');
 
 /**
  * Loader class for kernel extensions.
@@ -50,11 +51,11 @@ class DirectoryExtensionLoader extends ExtensionLoader
      * Register directories with extensions: by profile configuration and
      * base kernel extensiosn.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      *
-     * @throws GvException
+     * @throws Exception
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Execute parent constructor.
         parent::__construct($cKernel);
@@ -66,7 +67,7 @@ class DirectoryExtensionLoader extends ExtensionLoader
         $this->_registerExtDir($this->cKernel->cConfig->get('Profile/Path/AbsExtension'));
 
         // Load caching settings.
-        $this->_bForceExportCache = GvKernel::toBoolean($this->cKernel->cConfig->get('Kernel/EnableCache'));
+        $this->_bForceExportCache = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Kernel/EnableCache'));
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -110,7 +111,7 @@ class DirectoryExtensionLoader extends ExtensionLoader
      *
      * @param string $sExtensionName Name of extension for loading.
      *
-     * @return GvKernelExtension Returns null on error.
+     * @return Extension Returns null on error.
      */
     protected function load($sExtensionName)
     {
@@ -123,9 +124,10 @@ class DirectoryExtensionLoader extends ExtensionLoader
             $this->cKernel->trace->addLine('[%s] Loading extension ("%s") in "%s".', __CLASS__, $sExtensionName, $sExtensionFileName);
 
             // Dynamically load extension.
-            $cExt = GvInclude::createObject(
+            $cExt = \Gveniver\Loader::createObject(
                 array(
                     'class' => $sExtensionClassName,
+                    'ns'    => '\\Gveniver\\Extension',
                     'path'  => $sExtensionFileName,
                     'args'  => array($this->cKernel)
                 ),

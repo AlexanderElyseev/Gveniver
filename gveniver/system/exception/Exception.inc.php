@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Exception;
+
 /**
  * Base system exception class.
  *
@@ -20,7 +22,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvException extends Exception
+class Exception extends \Exception
 {
     /**
      * Class constructor.

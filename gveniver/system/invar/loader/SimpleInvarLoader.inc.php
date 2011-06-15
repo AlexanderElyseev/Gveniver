@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/invar/loader/InvarLoader.inc.php');
+namespace Gveniver;
+Loader::i('system/invar/loader/InvarLoader.inc.php');
 
 /**
  * Simple invar loader class.

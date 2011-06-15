@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/cache/provider/FileCacheProvider.inc.php');
+namespace Gveniver;
+Loader::i('system/cache/provider/FileCacheProvider.inc.php');
 
 /**
  * Cache provider class with files and memory.

@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Class of extension kernel module.
@@ -22,7 +23,7 @@ GvInclude::i('GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class ExtensionModule extends GvKernelModule
+class ExtensionModule extends Module
 {
     /**
      * Current loader for extensions.
@@ -42,9 +43,10 @@ class ExtensionModule extends GvKernelModule
         $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
         // Try to create extension loader.
-        $this->_cLoader = GvInclude::createObject(
+        $this->_cLoader = \Gveniver\Loader::createObject(
             array(
                 'class' => 'DirectoryExtensionLoader',
+                'ns'    => '\\Gveniver\\Extension',
                 'path'  => 'system/extension/loader/%class%.inc.php',
                 'args'  => array($this->cKernel)
             ),
@@ -52,9 +54,10 @@ class ExtensionModule extends GvKernelModule
         );
         if (!$this->_cLoader) {
              $this->cKernel->trace->addLine(
-                 '[%s] Error in create extension loader, with code: %d.',
+                 '[%s] Error in create extension loader, with code: %d ("%s").',
                  __CLASS__,
-                 $nErrCode
+                 $nErrCode,
+                 \Gveniver\Loader::getErrorInfo($nErrCode)
              );
             return false;
         }
@@ -73,7 +76,7 @@ class ExtensionModule extends GvKernelModule
      * If specified, then the extension loads to variable by refernce and returns
      * result of operation (boolean). Otherwise, returns template.
      *
-     * @return GvKernelExtension|bool
+     * @return Extension|bool
      */
     public function getExtension($sExtensionName, &$cRef = null)
     {

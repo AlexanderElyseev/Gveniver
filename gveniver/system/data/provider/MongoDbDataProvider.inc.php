@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-
-GvInclude::i('system/data/provider/DataProvider.inc.php');
+namespace Gveniver;
+Loader::i('system/data/provider/DataProvider.inc.php');
 
 /**
  * Class for data provider over MongoDb.

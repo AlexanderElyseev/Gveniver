@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/log/provider/LogProvider.inc.php');
+namespace Gveniver;
+Loader::i('system/log/provider/LogProvider.inc.php');
 
 /**
  * Log provider class for saving log data to some PHP stream.
@@ -37,18 +38,16 @@ class StreamLogProvider extends LogProvider
      * Class constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel     Current kernel.
-     * @param array    $aConfigData Configuration data for provider.
-     *
-     * @return void
+     * @param Kernel\Kernel $cKernel     Current kernel.
+     * @param array         $aConfigData Configuration data for provider.
      */
-    public function __construct(GvKernel $cKernel, array $aConfigData)
+    public function __construct(Kernel\Kernel $cKernel, array $aConfigData)
     {
         // Use parent constructor.
         parent::__construct($cKernel, $aConfigData);
 
         if (!isset($aConfigData['StreamName']) || !is_string($aConfigData['StreamName']))
-            throw new GvException('Log stream name must be specified.');
+            throw new \Gveniver\Exception\Exception('Log stream name must be specified.');
         
         $this->_sStreamName = $aConfigData['StreamName'];
 

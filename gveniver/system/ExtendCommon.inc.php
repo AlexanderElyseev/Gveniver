@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Recursive merging of arrays.
  * If key for merge is numeric, element append to list, no over write.
@@ -19,7 +21,6 @@
 // @codingStandardsIgnoreStart
 function array_merge_recursive_distinct()
 // @codingStandardsIgnoreEnd
-
 {
     $arrays = func_get_args();
     $base = array_shift($arrays);
@@ -50,12 +51,11 @@ function array_merge_recursive_distinct()
 //-----------------------------------------------------------------------------
 
 /**
- * Аналог стандартной php функции explode, но работающая
- * с учетом экранирования спецсимволов - разделителей.
+ * Analogue of standard PHP function with support of escaped delimiters.
  *
  * <code>
  * <?php
- *        $result = explode_escaped(',', 'string, piece, group\, item\, item2, next\,asd');
+ *        $result = explode_ex(',', 'string, piece, group\, item\, item2, next\,asd');
  *        print_r($result);
  *        ?>
  *        Will give:
@@ -68,8 +68,8 @@ function array_merge_recursive_distinct()
  *        )
  * </code>
  * 
- * @param string $delimiter Разделитель.
- * @param string $string    Строка.
+ * @param string $delimiter Delimiter for exploding.
+ * @param string $string    String for analyze.
  * 
  * @return array
  */
@@ -93,27 +93,10 @@ function explode_ex($delimiter, $string)
         } else $fixed[] = trim($exploded[$k]);
     }
     return $fixed;
+
 } // End function
 //-----------------------------------------------------------------------------
 
-/**
- * Расширенное экранирование символов для документиооборота.
- * 
- * @param string $sText Текст для экранирования.
- * 
- * @return string
- */
-// @codingStandardsIgnoreStart
-function addslashes_ex($sText)
-// @codingStandardsIgnoreEnd
-{
-    $sText = str_replace(':', '\:', $sText);
-    $sText = str_replace(',', '\,', $sText);
-    return $sText;
-    
-} // End function
-//-----------------------------------------------------------------------------
- 
 /**
  * Function to strip tags and attributes, but with allowable attributes.
  * 
