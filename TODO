@@ -23,7 +23,7 @@ Todo list for project.
     3.1. Base architecture.                                                                         [--]
     3.2. Log providers for files and emails.                                                        [--]
 4. Extensions.                                                                                      [--]
-    4.1. ProfileExt - extension for getting various profile data.                                 [--]
+    4.1. ProfileExt - extension for getting various profile data.                                   [--]
         4.1.1. Output and cache scripts.                                                            [--]
         4.1.2. Output and cache styles.                                                             [--]
         4.1.3. Html meta data.                                                                      [--]
@@ -35,3 +35,4 @@ Todo list for project.
          Use attributes for converting parameters in specified type.                                [--]
 7. Deploy.                                                                                          [--]
     7.1. Use some builder (ant?).                                                                   [--]
+    7.2. Automatically minimize scripts and styles with builder.                                    [--]
