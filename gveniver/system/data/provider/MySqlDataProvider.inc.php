@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/data/provider/DataProvider.inc.php');
+namespace Gveniver\Data;
+\Gveniver\Loader::i('system/data/provider/DataProvider.inc.php');
 
 /**
  * Class for data provider over MySql.

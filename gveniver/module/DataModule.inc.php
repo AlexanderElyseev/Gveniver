@@ -159,6 +159,7 @@ class DataModule extends Module
         $cProvider = \Gveniver\Loader::createObject(
             array(
                 'class' => $sClassname,
+                'ns'    => '\\Gveniver\\Data',
                 'path'  => 'system/data/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
