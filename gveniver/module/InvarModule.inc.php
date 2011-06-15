@@ -101,7 +101,7 @@ class InvarModule extends Module
         $this->_cLoader = \Gveniver\Loader::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/InvarModule/LoaderClass'),
-                'ns'    => '\\Gveniver\\',
+                'ns'    => '\\Gveniver\\Invar',
                 'path'  => 'system/invar/loader/%class%.inc.php'
             ),
             $nErrCode

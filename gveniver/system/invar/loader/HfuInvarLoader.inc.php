@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/invar/loader/InvarLoader.inc.php');
+namespace Gveniver\Invar;
+\Gveniver\Loader::i('system/invar/loader/InvarLoader.inc.php');
 
 /**
  * Human-friendly url invar loader class.
@@ -36,7 +36,7 @@ class HfuInvarLoader extends InvarLoader
     public function analyzeRequest()
     {
         // Explode request invars by url separator.
-        $aRequestInvars = explode_ex('/', isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '');
+        $aRequestInvars = \Gveniver\explode_ex('/', isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '');
         
         // Filter empty values from begin and end of list.
         if (count($aRequestInvars) > 0) {

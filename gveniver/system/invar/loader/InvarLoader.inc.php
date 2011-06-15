@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('Module.inc.php');
+namespace Gveniver\Invar;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Base abstract class for loader of invars.
