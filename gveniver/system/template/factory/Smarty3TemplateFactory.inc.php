@@ -10,9 +10,9 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/template/factory/BaseFileTemplateFactory.inc.php');
-Loader::i('system/template/Smarty3Template.inc.php');
+namespace Gveniver\Template;
+\Gveniver\Loader::i('system/template/factory/BaseFileTemplateFactory.inc.php');
+\Gveniver\Loader::i('system/template/Smarty3Template.inc.php');
 
 /**
  * Template factory class for Smarty template system.
@@ -38,11 +38,12 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
     /**
      * Class constructor. Initialize Smarty system.
      *
-     * @param Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      * 
-     * @throws Exception
+     * @throws \Gveniver\Exception\Exception Throws if Smarty library not loaded or
+     * loaded incorrectly.
      */
-    public function __construct(Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Use base constructor.
         parent::__construct($cKernel);

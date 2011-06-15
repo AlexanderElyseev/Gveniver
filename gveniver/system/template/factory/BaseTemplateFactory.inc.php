@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
+namespace Gveniver\Template;
 
 /**
  * Base abstract class for template objects factory.
@@ -47,9 +47,9 @@ abstract class BaseTemplateFactory
      * Base constructor.
      * Initialize member fields.
      *
-     * @param Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
         

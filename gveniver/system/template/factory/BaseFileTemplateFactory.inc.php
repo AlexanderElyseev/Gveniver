@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/template/factory/BaseTemplateFactory.inc.php');
+namespace Gveniver\Template;
+\Gveniver\Loader::i('system/template/factory/BaseTemplateFactory.inc.php');
 
 /**
  * Base abstract template factory class.
@@ -63,11 +63,12 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
      * Class constructor.
      * Initialize member fields. Load parameters of template subsystem from configuration.
      *
-     * @param Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      *
-     * @throws Exception
+     * @throws \Gveniver\Exception\Exception Throws if directory with templates not loaded
+     * correctly.
      */
-    public function __construct(Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Execute parent constructor.
         parent::__construct($cKernel);

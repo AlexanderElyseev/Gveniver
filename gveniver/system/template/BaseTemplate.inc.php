@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
+namespace Gveniver\Template;
 
 /**
  * Base abstract class for templates, used in system.

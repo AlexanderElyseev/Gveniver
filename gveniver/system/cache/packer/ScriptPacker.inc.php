@@ -36,7 +36,7 @@ class ScriptPacker extends DataPacker
      */
     public function pack($sData)
     {
-        $cPacker = new JavaScriptPacker($sData, 0);
+        $cPacker = new \JavaScriptPacker($sData, 0);
         return $cPacker->pack().";\n";
 
     } // End function

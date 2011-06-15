@@ -47,7 +47,7 @@ class TemplateModule extends Module
         $this->_cFactory = \Gveniver\Loader::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/TemplateModule/FactoryClass'),
-                'ns'    => '\\Gveniver\\',
+                'ns'    => '\\Gveniver\\Template',
                 'path'  => 'system/template/factory/%class%.inc.php',
                 'args'  => array($this->cKernel)
             ),

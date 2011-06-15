@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver;
-Loader::i('system/template/BaseTemplate.inc.php');
+namespace Gveniver\Template;
+\Gveniver\Loader::i('system/template/BaseTemplate.inc.php');
 
 /**
  * Template class for Smarty template system.
@@ -38,7 +38,7 @@ class Smarty3Template extends BaseTemplate
      * Class constructor.
      * Initialize system template by smarty object and template name.
      *
-     * @param \Smarty &$cSmarty      Base Smarty for initialization.
+     * @param \Smarty &$cSmarty      Base Smarty object for initialization.
      * @param string  $sTemplateName Full path to template file.
      */
     public function __construct(\Smarty &$cSmarty, $sTemplateName)
