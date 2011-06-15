@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Template;
-\Gveniver\Loader::i('system/template/BaseTemplate.inc.php');
+\Gveniver\Loader::i('system/template/Template.inc.php');
 
 /**
  * Template class for Smarty template system.
@@ -23,7 +23,7 @@ namespace Gveniver\Template;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Smarty3Template extends BaseTemplate
+class Smarty3Template extends Template
 {
     /**
      * Smarty compiled template.

@@ -61,7 +61,7 @@ abstract class TemplateFactory
      *
      * @param string $sTemplateName Name of template for loading.
      *
-     * @return BaseTemplate
+     * @return Template
      */
     public function load($sTemplateName)
     {
@@ -78,7 +78,7 @@ abstract class TemplateFactory
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return BaseTemplate
+     * @return Template
      * @abstract
      */
     protected abstract function build($sTemplateName);

@@ -128,7 +128,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return BaseTemplate|null
+     * @return Template|null
      */
     protected function build($sTemplateName)
     {

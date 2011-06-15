@@ -23,7 +23,7 @@ namespace Gveniver\Template;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseTemplate
+abstract class Template
 {
     /**
      * Parse template with specified data.

@@ -77,7 +77,7 @@ class TemplateModule extends Module
      * If specified, then the template loads to variable by refernce and returns
      * result of operation (boolean). Otherwise, returns template.
      *
-     * @return BaseTemplate|boolean Returns template instance or boolean result of
+     * @return Template|boolean Returns template instance or boolean result of
      * loading operation if specified reference varaible.
      */
     public function getTemplate($sTemplateName, &$cRef = null)
@@ -102,7 +102,7 @@ class TemplateModule extends Module
 
     /**
      * Parse template by template name and template data.
-     * If need to parse template object, use {@see BaseTemplate::parse}.
+     * If need to parse template object, use {@see Template::parse}.
      *
      * @param string $sTemplateName Name of template to parse.
      * @param array  $aData         Template data.
