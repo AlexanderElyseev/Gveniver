@@ -10,8 +10,9 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/template/factory/BaseFileTemplateFactory.inc.php');
-GvInclude::i('system/template/Smarty3Template.inc.php');
+namespace Gveniver\Template;
+\Gveniver\Loader::i('system/template/factory/FileTemplateFactory.inc.php');
+\Gveniver\Loader::i('system/template/Smarty3Template.inc.php');
 
 /**
  * Template factory class for Smarty template system.
@@ -23,7 +24,7 @@ GvInclude::i('system/template/Smarty3Template.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Smarty3TemplateFactory extends BaseFileTemplateFactory
+class Smarty3TemplateFactory extends FileTemplateFactory
 {
     /**
      * Smarty object.
@@ -37,23 +38,24 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
     /**
      * Class constructor. Initialize Smarty system.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      * 
-     * @throws GvException
+     * @throws \Gveniver\Exception\Exception Throws if Smarty library not loaded or
+     * loaded incorrectly.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Use base constructor.
         parent::__construct($cKernel);
 
         // Check, is SMarty is exists on system.
         if (!class_exists('Smarty'))
-            throw new GvException('Smarty is not installed.');
+            throw new \Gveniver\Exception\Exception('Smarty is not installed.');
         
         // Initialize smarty.
-        $this->_cSmarty = new Smarty();
+        $this->_cSmarty = new \Smarty();
         if (!$this->_reinstallSmarty())
-            throw new GvException('Smarty configuration failed.');
+            throw new \Gveniver\Exception\Exception('Smarty configuration failed.');
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -88,8 +90,8 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
         $this->_cSmarty->left_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterBegin');
         $this->_cSmarty->right_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterEnd');
         $this->_cSmarty->registerPlugin('function', 'gv', array($this, 'extension'));
-        $this->_cSmarty->registerPlugin('modifier', 'upper', 'strtoupper_ex');
-        $this->_cSmarty->registerPlugin('modifier', 'lower', 'strtolower_ex');
+        $this->_cSmarty->registerPlugin('modifier', 'upper', '\\Gveniver\\strtoupper_ex');
+        $this->_cSmarty->registerPlugin('modifier', 'lower', '\\Gveniver\\strtolower_ex');
         $this->_cSmarty->registerPlugin('modifier', 'substr', 'mb_substr');
         return true;
         
@@ -126,7 +128,7 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return BaseTemplate|null
+     * @return Template|null
      */
     protected function build($sTemplateName)
     {
@@ -163,15 +165,20 @@ class Smarty3TemplateFactory extends BaseFileTemplateFactory
             $this->cKernel->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
             return null;
         }
-
+        
         // Load extension.
         $cExt = $cExtModule->getExtension($sExtensionName);
-        if (!$cExt instanceof GvKernelExtension) {
+        if (!$cExt instanceof \Gveniver\Extension\Extension) {
             $this->cKernel->trace->addLine(
                 '[%s] Extension ("%s") not found for Smarty query.',
                 __CLASS__,
                 $sExtensionName
             );
+
+            // Fill variable if specified.
+            if ($sVarName)
+                $cSmarty->assign($sVarName, null);
+
             return null;
         }
         

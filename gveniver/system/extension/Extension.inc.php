@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Extension;
+
 /**
  * Base abstract kernel extension class.
  *
@@ -21,12 +23,20 @@
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class GvKernelExtension
+abstract class Extension
 {
+    /**
+     * Configuration of extension.
+     *
+     * @var \Gveniver\Config
+     */
+    private $_cConfig;
+    //-----------------------------------------------------------------------------
+
     /**
      * Current kernel of extension.
      *
-     * @var GvKernel
+     * @var \Gveniver\Kernel\Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -34,14 +44,13 @@ abstract class GvKernelExtension
 
     /**
      * Base extension constructor.
-     * Load extension data with specific logic.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
-        // Save current kernel.
         $this->cKernel = $cKernel;
+        $this->_cConfig = new \Gveniver\Config();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -59,24 +68,28 @@ abstract class GvKernelExtension
     //-----------------------------------------------------------------------------
 
     /**
-     * Add resource to the profile.
-     *
-     * @return void
+     * Getter for extension configuration.
+     * 
+     * @return \Gveniver\Config
      */
-    public function addResource()
+    public function getConfig()
     {
+        return $this->_cConfig;
+        
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Add handler to the profile.
+     * Load resource of extension by name with spwcified locale.
      *
-     * @param ExtensionHandler $cHandler Handler to add.
-     * 
-     * @return void
+     * @param string $sResourceName Name of resource for load.
+     * @param string $sLocale       Target locale of resource.
+     *
+     * @return mixed
      */
-    public function addHandler(ExtensionHandler $cHandler)
+    public function getResource($sResourceName, $sLocale = null)
     {
+        
     } // End function
     //-----------------------------------------------------------------------------
 

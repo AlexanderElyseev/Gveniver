@@ -10,6 +10,11 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('system/Config.inc.php');
+\Gveniver\Loader::i('system/kernel/Module.inc.php');
+\Gveniver\Loader::i('system/kernel/Profile.inc.php');
+
 /**
  * Base and final class of kernel.
  *
@@ -22,12 +27,12 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-final class GvKernel
+final class Kernel
 {
     /**
      * Configuration of kernel.
      *
-     * @var GvConfig
+     * @var Config
      */
     public $cConfig;
     //-----------------------------------------------------------------------------
@@ -35,7 +40,7 @@ final class GvKernel
     /**
      * Profile of kernel.
      *
-     * @var GvKernelProfile
+     * @var Profile
      */
     private $_cProfile;
     //-----------------------------------------------------------------------------
@@ -58,15 +63,16 @@ final class GvKernel
     //-----------------------------------------------------------------------------
 
     /**
-     * Constructor of {@see GvKernel} class.
+     * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
      * @param string $sProfile Path to kernel profile dir or name of kernel profile.
      */
     public function __construct($sProfile)
     {
-        // Initialize and load confiuration.
-        $this->cConfig = new GvConfig();
+        // Initialize and load base configuration.
+        $this->cConfig = new \Gveniver\Config();
+        $this->cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
 
         // Initialization of environment.
         $this->initEnvironment();
@@ -74,7 +80,7 @@ final class GvKernel
         // Load profile.
         $this->_cProfile = $this->_loadProfile($sProfile);
         if (!$this->_cProfile)
-            throw new GvException(sprintf('Kernel profile with name "%s" not found.', $sProfile));
+            throw new \Gveniver\Exception\Exception(sprintf('Kernel profile with name "%s" not found.', $sProfile));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -85,13 +91,13 @@ final class GvKernel
      *
      * @param string $sName Parameter name for reading.
      *
-     * @return GvKernelModule Null on error.
+     * @return Module Null on error.
      */
     public function __get($sName)
     {
         $cModule = $this->getModule($sName);
         if (!$cModule)
-            throw new GvException(sprintf('Module ("%s") not loaded.', $sName));
+            throw new \Gveniver\Exception\Exception(sprintf('Module ("%s") not loaded.', $sName));
 
         return $cModule;
 
@@ -105,7 +111,7 @@ final class GvKernel
      */
     public function initEnvironment()
     {
-        $this->trace->addLine('[%s] Start initialize environement of the kernel.', __CLASS__);
+        $this->trace->addLine('[%s] Initializing environement of the kernel.', __CLASS__);
 
         // Error reporting.
         $nErrorReporting = $this->cConfig->get('Kernel/ErrorReporting');
@@ -166,16 +172,18 @@ final class GvKernel
             if ($bDeflateSupport) {
                 // Defalte compression.
                 header('Content-Encoding: deflate');
-                ob_start('GvKernel::obHandlerDeflate');
+                ob_start('Kernel::obHandlerDeflate');
             } elseif ($bGzipSupport) {
                 // Gzip compression.
                 header('Content-Encoding: gzip');
-                ob_start('GvKernel::obHandlerGzip');
+                ob_start('Kernel::obHandlerGzip');
             } else
                 // No compression.
                 ob_start();
 
         } // End if
+
+        $this->trace->addLine('[%s] Environement of the kernel successfully initialized.', __CLASS__);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -187,7 +195,7 @@ final class GvKernel
      * If directory is specified, load from directory. Otherwise, load from base profile directory
      * with specified profile name.
      *
-     * @return GvKernelProfile|null Returns kernel profile by specified name or null, if module not loaded.
+     * @return Profile|null Returns kernel profile by specified name or null, if module not loaded.
      */
     private function _loadProfile($sProfile)
     {
@@ -212,7 +220,7 @@ final class GvKernel
         }
 
         // Include profile file with class, if target class is not exists.
-        $cProfileClass = $sProfile.'KernelProfile';
+        $cProfileClass = '\\Gveniver\\Kernel\\'.$sProfile.'KernelProfile';
         if (!class_exists($cProfileClass)) {
             $this->trace->addLine(
                 '[%s] Profile class ("%s") is not exists. Start of including file: "%s".',
@@ -221,7 +229,7 @@ final class GvKernel
                 $sProfilePhpFile
             );
 
-            GvInclude::i($sProfilePhpFile);
+            \Gveniver\Loader::i($sProfilePhpFile);
             if (!class_exists($cProfileClass)) {
                 $this->trace->addLine(
                     '[%s] Profile class ("%s") is not exists after including file ("%s").',
@@ -234,8 +242,12 @@ final class GvKernel
         }
 
         // Profile class must extend base profile class.
-        if (!in_array('GvKernelProfile', class_parents($cProfileClass))) {
-            $this->trace->addLine('[%s] Profile class ("%s") must extends base profile class.', __CLASS__, $cProfileClass);
+        if (!in_array('Gveniver\\Kernel\\Profile', class_parents($cProfileClass))) {
+            $this->trace->addLine(
+                '[%s] Profile class ("%s") must extends base profile class.',
+                __CLASS__,
+                $cProfileClass
+            );
             return null;
         }
         $this->trace->addLine('[%s] Profile class ("%s") successfully loaded.', __CLASS__, $cProfileClass);
@@ -243,8 +255,13 @@ final class GvKernel
         // Create instance of profile.
         try {
             $cProfile = new $cProfileClass($this);
-        } catch (Exception $cEx) {
-            $this->trace->addLine('[%s] Exception in profile ("%s") constructor: "%s".', __CLASS__, $sProfile, $cEx->getMessage());
+        } catch (\Gveniver\Exception\Exception $cEx) {
+            $this->trace->addLine(
+                '[%s] Exception in profile ("%s") constructor: "%s".',
+                __CLASS__,
+                $sProfile,
+                $cEx->getMessage()
+            );
             return null;
         }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $cProfileClass);
@@ -275,10 +292,13 @@ final class GvKernel
      *
      * @param string $sModuleName Name of module for loading.
      *
-     * @return GvKernelModule|null Returns kernel module by specified name or null, if module not loaded.
+     * @return Module|null Returns kernel module by specified name or null, if module not loaded.
      */
     private function _loadModule($sModuleName)
     {
+        // Append system namespace.
+        $sModuleClassName = 'Gveniver\\Kernel\\'.$sModuleName;
+
         // If was an attempt of loading module, only return saved result.
         if (array_key_exists($sModuleName, $this->_aModules))
             return $this->_aModules[$sModuleName];
@@ -287,16 +307,16 @@ final class GvKernel
         $this->_aModules[$sModuleName] = null;
 
         // If module class is not exists, include module file.
-        if (!class_exists($sModuleName))
-            if (!GvInclude::i('module'.GV_DS.$sModuleName.'.inc.php'))
+        if (!class_exists($sModuleClassName))
+            if (!\Gveniver\Loader::i('module'.GV_DS.$sModuleName.'.inc.php'))
                 return null;
 
         // After including module file, class of module must exists.
-        if (!class_exists($sModuleName))
+        if (!class_exists($sModuleClassName))
             return null;
-
+        
         // Class of module must extends base kernel module class.
-        if (!in_array('GvKernelModule', class_parents($sModuleName)))
+        if (!in_array('Gveniver\\Kernel\\Module', class_parents($sModuleClassName)))
             return null;
 
         // Check module relations.
@@ -308,8 +328,8 @@ final class GvKernel
 
         // Try to create new instance of kernel module.
         try {
-            $cModule = new $sModuleName($this);
-        } catch (GvException $cEx) {
+            $cModule = new $sModuleClassName($this);
+        } catch (Exception $cEx) {
             return null;
         }
 
@@ -326,7 +346,7 @@ final class GvKernel
      *
      * @param string $sModuleName Name of module. May be short (ex. trace -> TraceModule).
      *
-     * @return GvKernelModule|null
+     * @return Module|null
      */
     public function getModule($sModuleName)
     {
@@ -352,7 +372,7 @@ final class GvKernel
     /**
      * Returns current kernel profile.
      *
-     * @return GvKernelProfile
+     * @return Profile
      */
     public function getProfile()
     {

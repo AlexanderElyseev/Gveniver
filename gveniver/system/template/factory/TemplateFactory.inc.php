@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Template;
+
 /**
  * Base abstract class for template objects factory.
  * 
@@ -22,12 +24,12 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class BaseTemplateFactory
+abstract class TemplateFactory
 {
     /**
      * Current kernel.
      * 
-     * @var GvKernel
+     * @var Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -45,9 +47,9 @@ abstract class BaseTemplateFactory
      * Base constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
         
@@ -59,7 +61,7 @@ abstract class BaseTemplateFactory
      *
      * @param string $sTemplateName Name of template for loading.
      *
-     * @return BaseTemplate
+     * @return Template
      */
     public function load($sTemplateName)
     {
@@ -76,7 +78,7 @@ abstract class BaseTemplateFactory
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return BaseTemplate
+     * @return Template
      * @abstract
      */
     protected abstract function build($sTemplateName);

@@ -10,12 +10,11 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Base and final class for including files.
  *
- * TODO: Проблема переинициализации кэша кода, если кэш включен и файл был изменен.
- * TODO: Вырезание php тэгов только из начала и конца файла при кэшировании.
- * 
  * Provide Singleton design pattern.
  *
  * @category  Gveniver
@@ -25,7 +24,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-final class GvInclude
+final class Loader
 {
     /**
      * Error code. No errors.
@@ -85,9 +84,9 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Singleton instance of {@see GvInclude}.
+     * Singleton instance of {@see Loader}.
      *
-     * @var GvInclude
+     * @var Loader
      */
     private static $_cInstance;
     //-----------------------------------------------------------------------------
@@ -169,7 +168,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Private singleton constructor of {@see GvInclude}.
+     * Private singleton constructor of {@see Loader}.
      * Initialize member fields.
      */
     private function __construct()
@@ -181,7 +180,7 @@ final class GvInclude
         $this->_aIncludeMeta = array();
         $this->_aSkipIncludeMeta = array();
 
-        $this->_bCacheEnabled = true;
+        $this->_bCacheEnabled = false;is_dir(GV_PATH_CACHE) && is_writable(GV_PATH_CACHE);
         $this->_bLoadingCache = false;
         $this->_bCacheLoaded = false;
         $this->_bCacheChanged = false;
@@ -205,9 +204,9 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns current singleton instance of {@see GvInclude}.
+     * Returns current singleton instance of {@see Loader}.
      *
-     * @return GvInclude
+     * @return Loader
      * @static
      */
     public static function instance()
@@ -232,7 +231,7 @@ final class GvInclude
         // On first call of this function, try to load data from cache, then set
         // flag that cache is loaded.
         // Do not load the cache in the class constructor. This can lead to recursion in
-        // constructor if some code from cache use {@see GvInclude}.
+        // constructor if some code from cache use {@see Loader}.
         if ($this->_bCacheEnabled && !$this->_bCacheLoaded && !$this->_bLoadingCache) {
             $this->_bLoadingCache = true;
             $this->_loadCache();
@@ -272,7 +271,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Short alias to {@see GvInclude::includeFile} function.
+     * Short alias to {@see Loader::includeFile} function.
      *
      * @param string $sFileName Name of file for include.
      *
@@ -287,7 +286,7 @@ final class GvInclude
     //-----------------------------------------------------------------------------
 
     /**
-     * Short alias to {@see GvInclude::skipFile} function.
+     * Short alias to {@see Loader::skipFile} function.
      *
      * @param string $sFileName Name of file for adding to skip-list.
      *
@@ -303,7 +302,7 @@ final class GvInclude
 
     /**
      * Add file to skip list.
-     * These files will not be included at {@see GvInclude::includeFile}.
+     * These files will not be included at {@see Loader::includeFile}.
      *
      * @param string $sFileName File name for adding to skip list.
      *
@@ -346,7 +345,6 @@ final class GvInclude
                     : $this->_aModifiedTime[$aMeta['hash']] = filemtime($aMeta['path']);
 
             if ($aMeta['mtime'] < $nMtime) {
-                echo "Cahnged ".$aMeta['path']."<br/>";
                 $this->_aIncludeMeta = array();
                 return false;
             }
@@ -485,6 +483,7 @@ final class GvInclude
      * - class   - Class name for create object.
      * - path    - Path to include file, if class not exists.
      *             May contain %class% placeholder. It will be replaced by specified class name.
+     * - [ns]    - Name space for class.
      * - [base]  - Base class name.
      * - [args]  - Arguments to constructor.
      * 
@@ -496,21 +495,31 @@ final class GvInclude
      */
     public static function createObject(array $aParams, &$nErrorCode = null)
     {
-        // Include class file, if class is not exists.
         $sClassName = isset($aParams['class']) ? $aParams['class'] : null;
+        if (!$sClassName) {
+            $nErrorCode = self::ERRROR_CLASS_NOT_EXISTS;
+            return null;
+        }
+
+        // Automatically append last namespace delimiter.
+        $sNameSpace = isset($aParams['ns']) ? $aParams['ns'] : null;
+        if ($sNameSpace && $sNameSpace[strlen($sNameSpace) - 1] !== '\\')
+            $sNameSpace .= '\\';
+
+        // Include class file, if class is not exists.
         if (!class_exists($sClassName)) {
             // Build path to file by template.
             $sPathTpl = isset($aParams['path']) ? $aParams['path'] : null;
             $sPathTpl = str_replace('%class%', $sClassName, $sPathTpl);
 
             // Try to include file by builded path.
-            if (!GvInclude::i($sPathTpl)) {
+            if (!self::i($sPathTpl)) {
                 $nErrorCode = self::ERRROR_FILE_INCLUDE;
                 return null;
             }
-
-            // Check. Class must exists after including.
-            if (!class_exists($sClassName)) {
+            
+            // Class must exists after including.
+            if (!class_exists($sNameSpace.$sClassName)) {
                 $nErrorCode = self::ERRROR_CLASS_NOT_EXISTS;
                 return null;
             }
@@ -518,7 +527,7 @@ final class GvInclude
         } // End if
 
         // Class cannot be abstract.
-        $cRc = new ReflectionClass($sClassName);
+        $cRc = new \ReflectionClass($sNameSpace.$sClassName);
         if ($cRc->isAbstract()) {
             $nErrorCode = self::ERRROR_ABSTRACT_CLASS;
             return null;
@@ -539,16 +548,54 @@ final class GvInclude
             if ($aArguments) {
                 $cObj = $cRc->newInstanceArgs($aArguments);
             } else {
-                $cObj = new $sClassName;
+                $cObj = $cRc->newInstance();
             }
-        } catch (Exception $cEx) {
-            //echo($cEx->getMessage());
+        } catch (\Exception $cEx) {
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
             return null;
         }
 
         $nErrorCode = self::ERRROR_NONE;
         return $cObj;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Returns description of error by code.
+     *
+     * @param int $nErrorCode Code of error.
+     *
+     * @return string
+     * @static
+     */
+    public static function getErrorInfo($nErrorCode)
+    {
+        switch ($nErrorCode)
+        {
+        case self::ERRROR_ABSTRACT_CLASS:
+            return "Specified class is abstract.";
+
+        case self::ERRROR_CLASS_NOT_EXISTS:
+            return "Specified class is not exists.";
+
+        case self::ERRROR_CONSTRUCTOR:
+            return "Error in constructor of object.";
+
+        case self::ERRROR_FILE_INCLUDE:
+            return "Error in including file.";
+
+        case self::ERRROR_NONE:
+            return "No errors.";
+
+        case self::ERRROR_WRONG_BASE_CLASS:
+            return "Wrong base class.";
+
+        case self::ERRROR_UNKNOWN:
+        default:
+            return "Unknown error.";
+
+        } // End switch
 
     } // End function
     //-----------------------------------------------------------------------------

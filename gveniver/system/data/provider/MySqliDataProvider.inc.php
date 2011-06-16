@@ -11,7 +11,8 @@
  */
 
 
-GvInclude::i('system/data/provider/DataProvider.inc.php');
+namespace Gveniver\Data;
+\Gveniver\Loader::i('system/data/provider/DataProvider.inc.php');
 
 /**
  * Class for data provider over MySqli.
@@ -54,7 +55,7 @@ class MySqliDataProvider extends DataProvider
         $sDb = isset($this->aOptions['Database']) ? $this->aOptions['Database'] : array();
 
         // Try to connect.
-        $this->_cConnection = new mysqli($sHost, $sUser, $sPassword, $sDb);
+        $this->_cConnection = new \mysqli($sHost, $sUser, $sPassword, $sDb);
         if ($this->_cConnection->connect_error)
             return false;
 

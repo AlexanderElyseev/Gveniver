@@ -10,6 +10,9 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('system/exception/Exception.inc.php');
+
 /**
  * Base abstract kernel profile class.
  *
@@ -21,28 +24,30 @@
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class GvKernelModule
+abstract class Module
 {
     /**
      * Reference to current kernel.
      *
-     * @var GvKernel
+     * @var Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
-     * Constructor of {@see GvKernelModule} class.
+     * Constructor of {@see Module} class.
      * Initialize new instance of profile by kernel.
      *
-     * @param GvKernel $cKernel Kernel of profile.
+     * @param Kernel $cKernel Kernel of profile.
      */
-    public final function __construct(GvKernel $cKernel)
+    public final function __construct(Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
         if (!$this->init())
-            throw new GvException('Initialization of module failed.');
+            throw new \Gveniver\Exception\Exception(
+                sprintf('Initialization of module "%s" failed.', get_class($this))
+            );
 
     } // End function
     //-----------------------------------------------------------------------------

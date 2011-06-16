@@ -11,7 +11,8 @@
  */
 
 
-GvInclude::i('system/data/provider/DataProvider.inc.php');
+namespace Gveniver\Data;
+\Gveniver\Loader::i('system/data/provider/DataProvider.inc.php');
 
 /**
  * Class for data provider over PDO system.
@@ -55,9 +56,9 @@ class PdoDataProvider extends DataProvider
 
         // Try to connect.
         try {
-            $this->_cPdo = new PDO($sDsn, $sUser, $sPassword, $aOptions);
+            $this->_cPdo = new \PDO($sDsn, $sUser, $sPassword, $aOptions);
             return true;
-        } catch (Exception $cEx) {
+        } catch (\Gveniver\Exception\Exception $cEx) {
             return false;
         }
 

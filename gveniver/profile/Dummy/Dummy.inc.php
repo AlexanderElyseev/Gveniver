@@ -11,6 +11,8 @@
  * @link       http://prof-club.ru
  */
 
+namespace Gveniver\Kernel;
+
 /**
  * Dummy profile class.
  *
@@ -24,7 +26,7 @@
  * @license    http://prof-club.ru/license.txt Prof-Club License
  * @link       http://prof-club.ru
  */
-class DummyKernelProfile extends GvKernelProfile
+class DummyKernelProfile extends Profile
 {
     /**
      * Start profile logic.

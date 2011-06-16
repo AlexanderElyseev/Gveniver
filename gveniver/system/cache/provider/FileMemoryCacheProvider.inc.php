@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/cache/provider/FileCacheProvider.inc.php');
+namespace Gveniver\Cache;
+\Gveniver\Loader::i('system/cache/provider/FileCacheProvider.inc.php');
 
 /**
  * Cache provider class with files and memory.
@@ -73,7 +74,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
      * Save data to cache.
      *
      * @param mixed  $mData         Data to save.
-     * @param strin  $sCacheId      Identifier of cache.
+     * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
      * @param int    $nTtl          Time to live for cache.
      *

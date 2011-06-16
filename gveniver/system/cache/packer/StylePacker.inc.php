@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/cache/packer/DataPacker.inc.php');
+namespace Gveniver\Cache;
+\Gveniver\Loader::i('system/cache/packer/DataPacker.inc.php');
 
 /**
  * Class for packing CSS style data.

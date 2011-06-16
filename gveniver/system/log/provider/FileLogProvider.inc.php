@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/log/provider/LogProvider.inc.php');
+namespace Gveniver\Log;
+\Gveniver\Loader::i('system/log/provider/LogProvider.inc.php');
 
 /**
  * Log provider class for saving log data to file.
@@ -37,18 +38,16 @@ class FileLogProvider extends LogProvider
      * Class constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel     Current kernel.
-     * @param array    $aConfigData Configuration data for provider.
-     *
-     * @return void
+     * @param \Gveniver\Kernel\Kernel $cKernel     Current kernel.
+     * @param array                   $aConfigData Configuration data for provider.
      */
-    public function __construct(GvKernel $cKernel, array $aConfigData)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aConfigData)
     {
         // Use parent constructor.
         parent::__construct($cKernel, $aConfigData);
 
         if (!isset($aConfigData['FileName']) || !is_string($aConfigData['FileName']))
-            throw new GvException('Log file name must be specified.');
+            throw new \Gveniver\Exception\Exception('Log file name must be specified.');
         
         $this->_sFileName = $aConfigData['FileName'];
 
@@ -65,7 +64,7 @@ class FileLogProvider extends LogProvider
     public function save(array $aData)
     {
         // Convert to absolute path.
-        if (!GvInclude::isAbsolutePath($this->_sFileName))
+        if (!\Gveniver\Loader::isAbsolutePath($this->_sFileName))
             $this->_sFileName = GV_PATH_BASE.$this->_sFileName;
 
         // Check permissions to write in log directory.

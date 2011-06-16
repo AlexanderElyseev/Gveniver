@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Data kernel module class.
@@ -22,7 +23,7 @@ GvInclude::i('GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class DataModule extends GvKernelModule
+class DataModule extends Module
 {
     /**
      * Array of {@see DataProvider} for access to data.
@@ -155,9 +156,10 @@ class DataModule extends GvKernelModule
      */
     private function _loadProvider($sClassname, array $aOptions)
     {
-        $cProvider = GvInclude::createObject(
+        $cProvider = \Gveniver\Loader::createObject(
             array(
                 'class' => $sClassname,
+                'ns'    => '\\Gveniver\\Data',
                 'path'  => 'system/data/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),

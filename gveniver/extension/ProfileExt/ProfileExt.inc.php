@@ -10,10 +10,11 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/extension/SimpleExtension.inc.php');
-GvInclude::i('system/cache/FileSplitter.inc.php');
-GvInclude::i('system/cache/packer/StylePacker.inc.php');
-GvInclude::i('system/cache/packer/ScriptPacker.inc.php');
+namespace Gveniver\Extension;
+\Gveniver\Loader::i('system/extension/SimpleExtension.inc.php');
+\Gveniver\Loader::i('system/cache/FileSplitter.inc.php');
+\Gveniver\Loader::i('system/cache/packer/StylePacker.inc.php');
+\Gveniver\Loader::i('system/cache/packer/ScriptPacker.inc.php');
 
 /**
  * Kernel extension class for access to profile data.
@@ -25,7 +26,7 @@ GvInclude::i('system/cache/packer/ScriptPacker.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvProfileExt extends SimpleExtension
+class ProfileExt extends SimpleExtension
 {
     /**
      * Array of configuration parameters for extension.
@@ -39,23 +40,23 @@ class GvProfileExt extends SimpleExtension
     /**
      * Overloaded class constructor.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Base parent constructor.
         parent::__construct($cKernel);
 
         // Configuration parameters.
-        $this->_aConfig['UseConfigScript'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Kernel/UseConfigScript'));
+        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Kernel/UseConfigScript'));
         $this->_aConfig['ConfigScriptSection'] = $this->cKernel->cConfig->get('Kernel/ConfigScriptSection');
         $this->_aConfig['InvarSectionKey'] = $this->cKernel->cConfig->get('Kernel/InvarSectionKey');
 
-        $this->_aConfig['CacheScripts'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheScript'));
-        $this->_aConfig['CacheStyles'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheStyle'));
+        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheScript'));
+        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheStyle'));
 
-        $this->_aConfig['UseScriptTemplate'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/UseScriptTemplate'));
-        $this->_aConfig['UseStyleTemplate'] = GvKernel::toBoolean($this->cKernel->cConfig->get('Profile/UseStyleTemplate'));
+        $this->_aConfig['UseScriptTemplate'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/UseScriptTemplate'));
+        $this->_aConfig['UseStyleTemplate'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/UseStyleTemplate'));
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -127,7 +128,7 @@ class GvProfileExt extends SimpleExtension
             // Check script cache.
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
+            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                 return null;
 
             $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
@@ -135,7 +136,7 @@ class GvProfileExt extends SimpleExtension
                 array('FileName' => $sScriptCacheWebPath.$sCacheFile)
             );
 
-        } catch (Exception $cEx) {
+        } catch (\Gveniver\Exception\Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
@@ -162,13 +163,16 @@ class GvProfileExt extends SimpleExtension
             $sScriptAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsScript');
             $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile, new ScriptPacker());
+            $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
+                $sCacheAbsPath.$sCacheFile,
+                new \Gveniver\Cache\ScriptPacker()
+            );
             foreach ($aList as $aScript)
                 $cCacheSplitter->addFile($sScriptAbsPath.$aScript['FileName']);
 
             $cCacheSplitter->save();
 
-        } catch (Exception $cEx) {
+        } catch (\Gveniver\Exception\Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
@@ -262,7 +266,7 @@ class GvProfileExt extends SimpleExtension
             $aRet = array();
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
-                if (!FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
+                if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
 
                 $aRet[] = array(
@@ -274,7 +278,7 @@ class GvProfileExt extends SimpleExtension
 
             return $aRet;
 
-        } catch (Exception $cEx) {
+        } catch (\Gveniver\Exception\Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
@@ -309,7 +313,10 @@ class GvProfileExt extends SimpleExtension
             // Save each group of styles.
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
-                $cCacheSplitter = new FileSplitter($sCacheAbsPath.$sCacheFile, new StylePacker());
+                $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
+                    $sCacheAbsPath.$sCacheFile,
+                    new \Gveniver\Cache\StylePacker()
+                );
                 foreach ($aSameConditions as $aSameConditionStyle)
                     $cCacheSplitter->addFile($sStyleAbsPath.$aSameConditionStyle['FileName']);
 
@@ -317,7 +324,7 @@ class GvProfileExt extends SimpleExtension
 
             } // End foreach
 
-        } catch (Exception $cEx) {
+        } catch (\Gveniver\Exception\Exception $cEx) {
             $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 

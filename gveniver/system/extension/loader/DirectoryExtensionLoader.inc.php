@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/extension/loader/ExtensionLoader.inc.php');
+namespace Gveniver\Extension;
+\Gveniver\Loader::i('system/extension/loader/ExtensionLoader.inc.php');
 
 /**
  * Loader class for kernel extensions.
@@ -29,6 +30,14 @@ GvInclude::i('system/extension/loader/ExtensionLoader.inc.php');
 class DirectoryExtensionLoader extends ExtensionLoader
 {
     /**
+     * Force caching of export data.
+     *
+     * @var boolean
+     */
+    private $_bForceExportCache;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Path to extension folder.
      * 
      * @var string
@@ -42,11 +51,11 @@ class DirectoryExtensionLoader extends ExtensionLoader
      * Register directories with extensions: by profile configuration and
      * base kernel extensiosn.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      *
-     * @throws GvException
+     * @throws Exception
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Execute parent constructor.
         parent::__construct($cKernel);
@@ -56,6 +65,9 @@ class DirectoryExtensionLoader extends ExtensionLoader
 
         // Register extension directory from profile configuration.
         $this->_registerExtDir($this->cKernel->cConfig->get('Profile/Path/AbsExtension'));
+
+        // Load caching settings.
+        $this->_bForceExportCache = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Kernel/EnableCache'));
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -99,13 +111,12 @@ class DirectoryExtensionLoader extends ExtensionLoader
      *
      * @param string $sExtensionName Name of extension for loading.
      *
-     * @return GvKernelExtension Returns null on error.
+     * @return Extension Returns null on error.
      */
     protected function load($sExtensionName)
     {
         // Load extension in registered directories.
         foreach ($this->_aExtensionFolderList as $sExtensionFolder) {
-            
             // Build extension class name.
             $sExtensionClassName = $sExtensionName;
             $sExtensionFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.$sExtensionClassName.'.inc.php';
@@ -113,9 +124,10 @@ class DirectoryExtensionLoader extends ExtensionLoader
             $this->cKernel->trace->addLine('[%s] Loading extension ("%s") in "%s".', __CLASS__, $sExtensionName, $sExtensionFileName);
 
             // Dynamically load extension.
-            $cExt = GvInclude::createObject(
+            $cExt = \Gveniver\Loader::createObject(
                 array(
                     'class' => $sExtensionClassName,
+                    'ns'    => '\\Gveniver\\Extension',
                     'path'  => $sExtensionFileName,
                     'args'  => array($this->cKernel)
                 ),
@@ -132,6 +144,11 @@ class DirectoryExtensionLoader extends ExtensionLoader
                 continue;
             }
 
+            // Load extension configuration.
+            $sExtensionExportFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.'export.xml';
+            if (file_exists($sExtensionExportFileName) && is_readable($sExtensionExportFileName))
+                $cExt->getConfig()->mergeXmlFile($sExtensionExportFileName, $this->_bForceExportCache);
+            
             $this->cKernel->trace->addLine('[%s] Extension ("%s") successfully loaded.', __CLASS__, $sExtensionName);
             return $cExt;
 

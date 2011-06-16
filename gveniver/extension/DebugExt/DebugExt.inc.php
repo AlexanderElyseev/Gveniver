@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/extension/SimpleExtension.inc.php');
+namespace Gveniver\Extension;
+\Gveniver\Loader::i('system/extension/SimpleExtension.inc.php');
 
 /**
  * Kernel extension class for debugging.
@@ -22,7 +23,7 @@ GvInclude::i('system/extension/SimpleExtension.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvDebugExt extends SimpleExtension
+class DebugExt extends SimpleExtension
 {
     /**
      * Returns current trace content from tracing module.

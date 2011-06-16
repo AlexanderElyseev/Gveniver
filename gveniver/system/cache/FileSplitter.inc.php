@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i("system/cache/packer/DataPacker.inc.php");
+namespace Gveniver\Cache;
+\Gveniver\Loader::i("system/cache/packer/DataPacker.inc.php");
 
 /**
  * Base class for splitting files.
@@ -68,13 +69,17 @@ class FileSplitter
     public function __construct($sOutputFileName, DataPacker $cPacker = null)
     {
         // Checks.
-        $sOutputFileName = GvInclude::correctPath($sOutputFileName);
+        $sOutputFileName = \Gveniver\Loader::correctPath($sOutputFileName);
         $sOutputDir = dirname($sOutputFileName);
         if (!file_exists($sOutputDir))
             if (!mkdir($sOutputDir, null, true))
-                throw new ArgumentException(sprintf('[%s] Error in creating file directory!', __CLASS__));
+                throw new \Gveniver\Exception\ArgumentException(
+                    sprintf('[%s] Error in creating file directory!', __CLASS__)
+                );
         if (!file_exists($sOutputDir) || !is_dir($sOutputDir) || !is_writable($sOutputDir))
-            throw new ArgumentException(sprintf('[%s] Incorrect target cache file name or path!', __CLASS__));
+            throw new \Gveniver\Exception\ArgumentException(
+                sprintf('[%s] Incorrect target cache file name or path!', __CLASS__)
+            );
 
         $this->_sOutputFileName = $sOutputFileName;
         $this->_cPacker = $cPacker;
@@ -122,7 +127,7 @@ class FileSplitter
      */
     public function addFile($sFileName)
     {
-        $sFileName = GvInclude::correctPath($sFileName);
+        $sFileName = \Gveniver\Loader::correctPath($sFileName);
         if (!file_exists($sFileName) || is_dir($sFileName))
             return false;
 

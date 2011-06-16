@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver;
+
 /**
  * Class for loader of configuration parameters.
  * 
@@ -20,14 +22,14 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class GvConfig
+class Config
 {
     /**
      * List of configuration parameters.
      *
      * @var array
      */
-    private $_aConfig;
+    private $_aConfig = array();
     //-----------------------------------------------------------------------------
 
     /**
@@ -35,37 +37,26 @@ class GvConfig
      *
      * @var array
      */
-    private $_aCache;
+    private $_aCache = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
-
-    /**
-     * Class constructor.
-     * Load configuration parameters.
-     */
-    public function __construct()
-    {
-        // Initialize base configuration.
-        $this->_aConfig = array();
-
-        // Try to load configuration from main configuration XML file.
-        $this->mergeXmlFile(GV_PATH_BASE.GvConst::CONFIG_XML_FILE);
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
+    
     /**
      * Build array of configuration parameters from XML file and merge with current.
+     *
      * First, trying to load configuration from cache file. If cache is incorrect, parse
      * XML configuration file and save to cache by serialization of loaded data.
-     * It is important taht at first load data and then read cache parameters.
-     *
-     * @param string $sConfigFile Path configuration XML file.
      * 
+     * !!! It is important that first load data and then read cache parameters. !!!
+     *
+     * @param string  $sConfigFile Path configuration XML file.
+     * @param boolean $bForceCache Force caching of this file.
+     *
      * @return boolean Returns true on success.
      */
-    public function mergeXmlFile($sConfigFile)
+    public function mergeXmlFile($sConfigFile, $bForceCache = null)
     {
+        $sConfigFile = Loader::correctPath($sConfigFile);
         if (!file_exists($sConfigFile))
             return false;
 
@@ -85,11 +76,11 @@ class GvConfig
         $this->_merge($aConfig);
 
         // Save cache if need.
-        $bCacheEnabled = GvKernel::toBoolean($this->get('Kernel/EnableCache'));
+        $bCacheEnabled = is_null($bForceCache) ? Kernel\Kernel::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
         if ($bCacheEnabled) {
             $sCacheDir = dirname($sCacheFile);
             if (!file_exists($sCacheDir))
-                mkdir($sCacheDir, 0666, true);
+                mkdir($sCacheDir, 0777, true);
 
             file_put_contents($sCacheFile, serialize($aConfig), LOCK_EX);
         }
@@ -102,11 +93,11 @@ class GvConfig
     /**
      * Recursive function for building configuration using SimpleXML library.
      *
-     * @param SimpleXMLElement $cXml Element to parse.
+     * @param \SimpleXMLElement $cXml Element to parse.
      *
      * @return array
      */
-    private function _buildXmlConfig(SimpleXMLElement $cXml)
+    private function _buildXmlConfig(\SimpleXMLElement $cXml)
     {
         $aTarget = array();
         foreach ($cXml->children() as $cParameter) {

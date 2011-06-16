@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Cache kernel module class.
@@ -22,7 +23,7 @@ GvInclude::i('GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class CacheModule extends GvKernelModule
+class CacheModule extends Module
 {
     /**
      * Array of {@see CacheProvider} for access to cached data.
@@ -155,9 +156,10 @@ class CacheModule extends GvKernelModule
      */
     private function _loadProvider($sClassname, array $aOptions)
     {
-        $cProvider = GvInclude::createObject(
+        $cProvider = \Gveniver\Loader::createObject(
             array(
                 'class' => $sClassname,
+                'ns'    => '\\Gveniver\Cache\\',
                 'path'  => 'system/cache/provider/%class%.inc.php',
                 'args'  => array($this->cKernel, $aOptions)
             ),
@@ -194,7 +196,7 @@ class CacheModule extends GvKernelModule
         // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new GvException('Default cache provider not loaded.');
+            throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
 
         // Load data from cache by default provider.
         $mData = null;
@@ -229,7 +231,7 @@ class CacheModule extends GvKernelModule
         // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new GvException('Default cache provider not loaded.');
+            throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
 
         // Save data to cache by default provider.
         return $cProvider->set($mData, $sCacheId, $sCacheGroupId, $nTtl);
@@ -249,7 +251,7 @@ class CacheModule extends GvKernelModule
         // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new GvException('Default cache provider not loaded.');
+            throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
 
         // Flush cache data by default provider.
         return $cProvider->flush($sCacheGroupId);

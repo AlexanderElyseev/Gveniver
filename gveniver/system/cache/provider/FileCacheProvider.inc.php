@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/cache/provider/CacheProvider.inc.php');
+namespace Gveniver\Cache;
+\Gveniver\Loader::i('system/cache/provider/CacheProvider.inc.php');
 
 /**
  * File cache provider class.
@@ -36,12 +37,10 @@ class FileCacheProvider extends CacheProvider
     /**
      * Class constructor.
      *
-     * @param GvKernel $cKernel  Current kernel.
-     * @param array    $aOptions Options for cache provider.
-     *
-     * @return void
+     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
+     * @param array                   $aOptions Options for cache provider.
      */
-    public function __construct(GvKernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
     {
         // Use parent constructor.
         parent::__construct($cKernel, $aOptions);
@@ -49,7 +48,7 @@ class FileCacheProvider extends CacheProvider
         // Load cache folder.
         $this->_sBaseCacheDirectory = (string)$this->cKernel->cConfig->get('Profile/Path/AbsCache');
         if (!$this->_sBaseCacheDirectory || !file_exists($this->_sBaseCacheDirectory) || !is_dir($this->_sBaseCacheDirectory))
-            throw new GvException('Wrong cache directory.');
+            throw new \Gveniver\Exception\Exception('Wrong cache directory.');
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -86,7 +85,7 @@ class FileCacheProvider extends CacheProvider
      * Save data to cache.
      *
      * @param mixed  $mData         Data to save.
-     * @param strin  $sCacheId      Identifier of cache.
+     * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
      * @param int    $nTtl          Time to live for cache.
      *

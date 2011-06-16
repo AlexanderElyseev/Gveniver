@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/exception/GvException.inc.php');
+namespace Gveniver\Exception;
+\Gveniver\Loader::i('system/exception/Exception.inc.php');
 
 /**
  * Not implemented exception class for Gveniver system.
@@ -22,7 +23,7 @@ GvInclude::i('system/exception/GvException.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class NotImplementedException extends GvException
+class NotImplementedException extends Exception
 {
 } // End class
 //-----------------------------------------------------------------------------

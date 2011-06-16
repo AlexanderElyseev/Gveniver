@@ -10,6 +10,9 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Extension;
+\Gveniver\Loader::i('system/extension/Extension.inc.php');
+
 /**
  * Class of simple kernel extension.
  * Without export data.
@@ -21,7 +24,7 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class SimpleExtension extends GvKernelExtension
+class SimpleExtension extends Extension
 {
     /**
      * Query to extension.
@@ -43,7 +46,7 @@ class SimpleExtension extends GvKernelExtension
         }
 
         // Method must be public.
-        $cRefl = new ReflectionMethod($this, $sAction);
+        $cRefl = new \ReflectionMethod($this, $sAction);
         if (!$cRefl->isPublic()) {
             $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not public.', __CLASS__, $sAction);
             return null;

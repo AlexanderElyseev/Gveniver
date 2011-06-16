@@ -11,6 +11,8 @@
  * @link       http://prof-club.ru
  */
 
+namespace Gveniver\Kernel;
+
 /**
  * Base abstract kernel profile class.
  * 
@@ -24,24 +26,24 @@
  * @license    http://prof-club.ru/license.txt Prof-Club License
  * @link       http://prof-club.ru
  */
-abstract class GvKernelProfile
+abstract class Profile
 {
     /**
      * Reference to current kernel.
      *
-     * @var GvKernel
+     * @var Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
-     * Constructor of {@see GvKernelProfile} class.
+     * Constructor of {@see Profile} class.
      * Initialize new instance of profile by kernel.
      *
-     * @param GvKernel $cKernel Kernel of profile.
+     * @param Kernel $cKernel Kernel of profile.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
 

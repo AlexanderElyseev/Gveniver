@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Extension;
+
 /**
  * Base abstract class for loader of extensions.
  *
@@ -26,7 +28,7 @@ abstract class ExtensionLoader
     /**
      * Current kernel.
      *
-     * @var GvKernel
+     * @var \Gveniver\Kernel\Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -48,9 +50,9 @@ abstract class ExtensionLoader
      * Base class constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         $this->cKernel = $cKernel;
                 
@@ -62,7 +64,7 @@ abstract class ExtensionLoader
      *
      * @param string $sExtensionName Name of extension for loading.
      * 
-     * @return GvKernelExtension|boolean
+     * @return Extension|boolean
      */
     public function get($sExtensionName)
     {
@@ -71,7 +73,8 @@ abstract class ExtensionLoader
         // First, try to load extension from cache by name.
         if (array_key_exists($sExtensionName, $this->_aNameHash)) {
             $this->cKernel->trace->addLine('[%s] Extension ("%s") loaded from cache.', __CLASS__, $sExtensionName);
-            return $this->_aExtensions[$this->_aNameHash[$sExtensionName]];
+            $nId = $this->_aNameHash[$sExtensionName];
+            return $this->_aExtensions[$nId];
         }
 
         // Load extension.
@@ -99,7 +102,7 @@ abstract class ExtensionLoader
      * 
      * @param string $sExtensionName Name of extension for loading.
      *
-     * @return GvKernelExtension Returns null on error.
+     * @return Extension Returns null on error.
      * @abstract
      */
     protected abstract function load($sExtensionName);

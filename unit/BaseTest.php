@@ -39,7 +39,7 @@ class InitTest extends PHPUnit_Framework_TestCase
     /**
      * Test initialization of kernel with not existed profile.
      *
-     * @expectedException GvException
+     * @expectedException Exception
      * @return void
      */
     public function testWrongProfile()

@@ -10,8 +10,9 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/cache/packer/DataPacker.inc.php');
-GvInclude::i('system/cache/packer/lib/class.JavaScriptPacker.php');
+namespace Gveniver\Cache;
+\Gveniver\Loader::i('system/cache/packer/DataPacker.inc.php');
+\Gveniver\Loader::i('system/cache/packer/lib/class.JavaScriptPacker.php');
 
 /**
  * Class for packing JavaScript data.
@@ -35,7 +36,7 @@ class ScriptPacker extends DataPacker
      */
     public function pack($sData)
     {
-        $cPacker = new JavaScriptPacker($sData, 0);
+        $cPacker = new \JavaScriptPacker($sData, 0);
         return $cPacker->pack().";\n";
 
     } // End function

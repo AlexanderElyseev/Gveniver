@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/template/factory/BaseTemplateFactory.inc.php');
+namespace Gveniver\Template;
+\Gveniver\Loader::i('system/template/factory/TemplateFactory.inc.php');
 
 /**
  * Base abstract template factory class.
@@ -23,7 +24,7 @@ GvInclude::i('system/template/factory/BaseTemplateFactory.inc.php');
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseFileTemplateFactory extends BaseTemplateFactory
+abstract class FileTemplateFactory extends TemplateFactory
 {
     /**
      * Cache of template file names.
@@ -62,11 +63,12 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
      * Class constructor.
      * Initialize member fields. Load parameters of template subsystem from configuration.
      *
-     * @param GvKernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
      *
-     * @throws GvException
+     * @throws \Gveniver\Exception\Exception Throws if directory with templates not loaded
+     * correctly.
      */
-    public function __construct(GvKernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
     {
         // Execute parent constructor.
         parent::__construct($cKernel);
@@ -74,7 +76,7 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
         // Template files extension.
         $sExt = $this->cKernel->cConfig->get('Module/TemplateModule/Ext');
         if (!$sExt)
-            throw new GvException('Extension of template files not loaded from configuration.');
+            throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
         $this->sTplFileNameExtension = ($sExt[0] != '.') ? '.'.$sExt : $sExt;
 
         // Template files separator.
@@ -82,12 +84,12 @@ abstract class BaseFileTemplateFactory extends BaseTemplateFactory
             array('Module/TemplateModule/Separator')
         );
         if (!$this->sTplFileNameSeparator)
-            throw new GvException('Extension of template files not loaded from configuration.');
+            throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
 
         // Template folder.
         $this->sTplFolder = $this->cKernel->cConfig->get('Profile/Path/AbsTemplate');
         if (!$this->sTplFolder  || !is_dir($this->sTplFolder) || !is_readable($this->sTplFolder))
-            throw new GvException('Wrong template directory.');
+            throw new \Gveniver\Exception\Exception('Wrong template directory.');
         
     } // End function
     //-----------------------------------------------------------------------------

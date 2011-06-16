@@ -10,8 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-
-GvInclude::i('system/data/provider/DataProvider.inc.php');
+namespace Gveniver\Data;
+\Gveniver\Loader::i('system/data/provider/DataProvider.inc.php');
 
 /**
  * Class for data provider over MongoDb.
@@ -48,7 +48,7 @@ class MongoDbDataProvider extends DataProvider
         }
 
         // Create new MongoDb instance.
-        $this->_cMongo = new Mongo();
+        $this->_cMongo = new \Mongo();
         if (!$this->_cMongo)
             return false;
 

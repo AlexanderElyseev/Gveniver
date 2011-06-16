@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('system/cache/provider/CacheProvider.inc.php');
+namespace Gveniver\Cache;
+\Gveniver\Loader::i('system/cache/provider/CacheProvider.inc.php');
 
 /**
  * Cache provider class for memcached system.
@@ -36,23 +37,23 @@ class MemcachedCacheProvider extends CacheProvider
     /**
      * Class constructor.
      *
-     * @param GvKernel $cKernel  Current kernel.
-     * @param array    $aOptions Options for cache provider.
+     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
+     * @param array                   $aOptions Options for cache provider.
      */
-    public function __construct(GvKernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
     {
         // Use parent constructor.
         parent::__construct($cKernel, $aOptions);
 
         // Check for existing Mecached PHP extension.
         if (!class_exists('Memcache'))
-            throw new GvException('Memcache PHP extension not loaded.');
+            throw new \Gveniver\Exception\Exception('Memcache PHP extension not loaded.');
 
-        $this->_cMemcace = new Memcache();
+        $this->_cMemcace = new \Memcache();
 
         // Adding  servers.
         if (!isset($this->aOptions['Servers']))
-            throw new GvException('Memcache servers not loaded.');
+            throw new \Gveniver\Exception\Exception('Memcache servers not loaded.');
 
         foreach ($this->aOptions['Servers'] as $aServerData) {
             //$sServerName = isset($aServerData['Name']) ? $aServerData['Name'] : null;

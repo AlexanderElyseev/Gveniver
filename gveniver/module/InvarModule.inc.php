@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-GvInclude::i('GvKernelModule.inc.php');
+namespace Gveniver\Kernel;
+\Gveniver\Loader::i('Module.inc.php');
 
 /**
  * Invar kernel module class.
@@ -22,7 +23,7 @@ GvInclude::i('GvKernelModule.inc.php');
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class InvarModule extends GvKernelModule
+class InvarModule extends Module
 {
     /**
      * Target for loading invar parameter for request.
@@ -97,9 +98,10 @@ class InvarModule extends GvKernelModule
         $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
 
         // Load factory for template subsystem.
-        $this->_cLoader = GvInclude::createObject(
+        $this->_cLoader = \Gveniver\Loader::createObject(
             array(
                 'class' => $this->cKernel->cConfig->get('Module/InvarModule/LoaderClass'),
+                'ns'    => '\\Gveniver\\Invar',
                 'path'  => 'system/invar/loader/%class%.inc.php'
             ),
             $nErrCode
@@ -294,7 +296,7 @@ class InvarModule extends GvKernelModule
         // Try to Load from GET.
         if (array_key_exists($sName, $this->_aPost['post'])) {
             $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from POST.', __CLASS__, $sName);
-
+            
             if (!$bByRef)
                 return $this->_aPost['post'][$sName];
 

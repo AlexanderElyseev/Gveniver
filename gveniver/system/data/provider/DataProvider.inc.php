@@ -10,6 +10,8 @@
  * @link      http://prof-club.ru
  */
 
+namespace Gveniver\Data;
+
 /**
  * Base abstract class for data provider.
  *
@@ -26,7 +28,7 @@ abstract class DataProvider
     /**
      * Current kernel.
      *
-     * @var GvKernel
+     * @var Kernel
      */
     protected $cKernel;
     //-----------------------------------------------------------------------------
@@ -44,17 +46,17 @@ abstract class DataProvider
      * Base constructor.
      * Initialize member fields.
      *
-     * @param GvKernel $cKernel  Current kernel.
-     * @param array    $aOptions Options for provider.
+     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
+     * @param array                   $aOptions Options for provider.
      */
-    public function __construct(GvKernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
     {
         $this->cKernel = $cKernel;
         $this->aOptions = $aOptions;
 
         // Try to connect.
         if (!$this->connect())
-            throw new GvException('Error in connection to data source.');
+            throw new \Gveniver\Exception\Exception('Error in connection to data source.');
 
     } // End function
     //-----------------------------------------------------------------------------
