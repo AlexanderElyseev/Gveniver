@@ -27,6 +27,7 @@
         <SectionList>
 			<Default>
                 <ActList>
+                    <Act><Value>v</Value><FileName>act_index_v.tpl</FileName></Act>
                     <Default><FileName>act_index.tpl</FileName></Default>
                 </ActList>
                 <Author>http://example.com/</Author>
@@ -49,6 +50,7 @@
 			<List>
 				<Section>
 					<ActList>
+                        <Act><Value>v</Value><FileName>act_index_v.tpl</FileName></Act>
 						<Default><FileName>act_index.tpl</FileName></Default>
 					</ActList>
                     <MainTemplate>main_enter_index.tpl</MainTemplate>

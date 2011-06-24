@@ -161,6 +161,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         $sExtensionName = isset($aParams['ext']) ? $aParams['ext'] : null;
         $sExtensionHandlerName = isset($aParams['act']) ? $aParams['act'] : null;
         $sVarName = isset($aParams['var']) ? $aParams['var'] : null;
+        $sFormat = isset($aParams['format']) ? $aParams['format'] : null;
         if (!$sExtensionName || !$sExtensionHandlerName) {
             $this->cKernel->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
             return null;
@@ -186,7 +187,8 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         unset($aParams['ext']);
         unset($aParams['act']);
         unset($aParams['var']);
-        $sRet = $cExt->query($sExtensionHandlerName, $aParams);
+        unset($aParams['format']);
+        $sRet = $cExt->query($sExtensionHandlerName, $aParams, $sFormat);
 
         // Assign result to specified variable.
         if ($sVarName) {

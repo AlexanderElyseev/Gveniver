@@ -36,3 +36,5 @@ Todo list for project.
 7. Deploy.                                                                                          [--]
     7.1. Use some builder (ant?).                                                                   [--]
     7.2. Automatically minimize scripts and styles with builder.                                    [--]
+8. Redurection module.																				[--]
+	8.1. Create module.																				[--]

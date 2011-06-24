@@ -63,31 +63,16 @@ class TraceModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
-     * Return all current trace information as text string.
+     * Return all current trace information.
      * 
-     * @return string
+     * @return array
      */
-    public function getTraceAsString()
+    public function getTrace()
     {
-        $sRet = '';
         if (!$this->_bDebug)
-            return $sRet;
+            return array();
 
-        // Build full trace messages.
-        foreach ($this->_aMessages as $aMessage)
-            $sRet .= sprintf(
-                '[%s %s s. (+%s s.), %.2f KiB (%s%.2f KiB)] %s%s',
-                $aMessage['time'],
-                round($aMessage['dtime'], 4),
-                round($aMessage['etime'], 4),
-                $aMessage['memory'] / 1024,
-                $aMessage['ememory'] >= 0 ? '+' : '',
-                $aMessage['ememory'] / 1024,
-                $aMessage['text'],
-                GV_EOL
-            );
-  
-        return $sRet;
+        return $this->_aMessages;
 
     } // End function
     //-----------------------------------------------------------------------------

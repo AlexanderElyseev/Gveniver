@@ -413,14 +413,22 @@ abstract class Profile
 
         // Load for section and default action.
         $aSectionList = array();
-        if ($sSectionName)
+        if ($sSectionName && !$sAct)
             if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']['Default']['FileName']))
                         return $aSection['ActList']['Default']['FileName'];
 
+        // Load for default section and action.
+        $aDefaultSection = array();
+        $this->cKernel->cConfig->get('Profile/SectionList/Default', $aDefaultSection);
+        if (!$sSectionName && $sAct)
+            if (isset($aDefaultSection['ActList']))
+                foreach ($aDefaultSection['ActList'] as $aAction)
+                    if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['FileName']))
+                        return $aAction['FileName'];
 
-        // Load for default section.
+        // Load for default section and default action.
         $sTpl = '';
         if ($this->cKernel->cConfig->get('Profile/SectionList/Default/ActList/Default/FileName', $sTpl))
             return $sTpl;
