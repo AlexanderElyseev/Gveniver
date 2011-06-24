@@ -1,0 +1,11 @@
+<Extension>
+    <ActList>
+        <Act>
+            <Name>getTrace</Name>
+            <FormatList>
+                <Format><Name>string</Name><Method>getTraceAsString</Method></Format>
+                <Format><Name>array</Name><Method>getTrace</Method></Format>
+            </FormatList>
+        </Act>
+    </ActList>
+</Extension>

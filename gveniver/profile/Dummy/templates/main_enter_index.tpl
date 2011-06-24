@@ -41,7 +41,7 @@
         <div>
             <a href="#" onclick="v('id_div_trace'); return false;">Trace</a>
             <div id="id_div_trace" style="display:none;">
-                {gv ext=GvDebugExt act=getTrace}
+                {gv ext=GvDebugExt act=getTrace format=string}
             </div>
         </div>
 

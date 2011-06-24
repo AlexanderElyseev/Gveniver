@@ -32,21 +32,53 @@ class SimpleExtension extends Extension
      *
      * @param string $sAction Name of action handler.
      * @param array  $aParams Arguments to extension.
+     * @param string $sFormat Output format name.
      *
      * @return mixed
      */
-    public function query($sAction, $aParams = array())
+    public function query($sAction, $aParams = array(), $sFormat = null)
     {
         $this->cKernel->trace->addLine('[%s] Executing query: "%s".', __CLASS__, $sAction);
 
+        // Load name of method by specified output format.
+        $sMethodName = null;
+        if ($sFormat) {
+            $aActList = $this->getConfig()->get('Extension/ActList');
+            if (is_array($aActList)) {
+                foreach ($this->getConfig()->get('Extension/ActList') as $aAction) {
+                    if (isset($aAction['Name']) && $aAction['Name'] == $sAction && isset($aAction['FormatList'])) {
+                        foreach ($aAction['FormatList'] as $aFormat) {
+
+                            if (isset($aFormat['Method']) && isset($aFormat['Name']) && $aFormat['Name'] == $sFormat) {
+                                $sMethodName = $aFormat['Method'];
+                                break 2;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!$sMethodName) {
+                $this->cKernel->trace->addLine(
+                    '[%s] Handler for query ("%s") and format ("%s") is not found.',
+                    __CLASS__,
+                    $sAction,
+                    $sFormat
+                );
+                return null;
+            }
+
+        } else
+            $sMethodName = $sAction;
+
         // Check existence of method.
-        if (!method_exists($this, $sAction)) {
+        if (!method_exists($this, $sMethodName)) {
             $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not found.', __CLASS__, $sAction);
             return null;
         }
 
         // Method must be public.
-        $cRefl = new \ReflectionMethod($this, $sAction);
+        $cRefl = new \ReflectionMethod($this, $sMethodName);
         if (!$cRefl->isPublic()) {
             $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not public.', __CLASS__, $sAction);
             return null;
@@ -54,7 +86,7 @@ class SimpleExtension extends Extension
         
         $this->cKernel->trace->addLine('[%s] Handler found for query: "%s".', __CLASS__, $sAction);
         
-        return call_user_func_array(array($this, $sAction), $aParams);
+        return call_user_func_array(array($this, $sMethodName), $aParams);
 
     } // End function
     //-----------------------------------------------------------------------------

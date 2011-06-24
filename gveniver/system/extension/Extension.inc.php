@@ -60,11 +60,12 @@ abstract class Extension
      *
      * @param string $sAction Name of action handler.
      * @param array  $aParams Arguments to extension.
+     * @param string $sFormat Output format name.
      *
      * @return mixed
      * @abstract
      */
-    public abstract function query($sAction, $aParams = array());
+    public abstract function query($sAction, $aParams = array(), $sFormat = null);
     //-----------------------------------------------------------------------------
 
     /**
