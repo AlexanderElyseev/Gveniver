@@ -62,6 +62,23 @@ class GvProfileExt extends SimpleExtension
     //-----------------------------------------------------------------------------
 
     /**
+     * Returns configuration parameters.
+     *
+     * @param string $sPath Path to configuration parameter.
+     *
+     * @return string|null
+     */
+    public function getKernelConfigVariable($sPath)
+    {
+        if ($sPath)
+            return $this->cKernel->cConfig->get($sPath);
+
+        return null;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Returns result of parsing template for current action.
      *
      * @return string|null Result of parsing or null on error.

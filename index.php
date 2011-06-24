@@ -13,22 +13,20 @@
 $begin = microtime(true);
 //-----------------------------------------------------------------------------
 
-// Include Smarty.
-require_once '/var/www/lib/Smarty-3.0.7/libs/Smarty.class.php';
-
 // Include Gveniver Framework.
 require_once 'gveniver/init.inc.php';
 
-$cDummyKernel = new Gveniver\Kernel\Kernel('Dummy');
-//$cDummyKernel->template;
-//$cDummyKernel->invar;
-//$cDummyKernel->data;
-//$cDummyKernel->trace;
-//$cDummyKernel->extension;
-//$cDummyKernel->cache;
-//$cDummyKernel->log;
+// Include Smarty.
+require_once '/var/www/lib/Smarty-3.0.7/libs/Smarty.class.php';
+
+// Include Propel.
+//set_include_path('/var/www/profclub/eas/data/propel/build/classes/'.PATH_SEPARATOR.get_include_path());
+//require_once 'propel/Propel.php';
+//require_once 'ProfClubPDO.php';
+//Propel::init('/var/www/profclub/eas/data/propel/build/conf/profclub-conf.php');
 
 // Start profile and output result content.
+$cDummyKernel = new Gveniver\Kernel\Kernel('Dummy');
 echo $cDummyKernel->getProfile()->start();
 
 //-----------------------------------------------------------------------------
