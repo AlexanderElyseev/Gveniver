@@ -1,34 +1,55 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <title>{gv ext=ProfileExt act=getTitle} - {gv ext=ProfileExt act=getSubTitle}</title>
-        {gv ext=ProfileExt act=getScripts}
-        {gv ext=ProfileExt act=getStyles}
-{*        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>*}
-{*        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>*}
+        <title>{gv ext=GvProfileExt act=getTitle} - {gv ext=GvProfileExt act=getSubTitle}</title>
+
+        {gv ext=GvProfileExt act=getScripts var=scriptList}
+        {foreach from=$scriptList item=script}
+            <script type="text/javascript" src="{$script.FileName}"></script>
+        {/foreach}
+
+        {gv ext=GvProfileExt act=getStyles var=styleList}
+        {foreach from=$styleList item=style}
+            {if $style.Condition}
+                <!--[if {$style.Condition}]><link rel="stylesheet" type="text/css" href="{$style.FileName}" /><![endif]-->
+            {else}
+                <link rel="stylesheet" type="text/css" href="{$style.FileName}" />
+            {/if}
+        {/foreach}
+
         <script type="text/javascript">
             {literal}
-            $(function() {
-                $('#id_div_trace').hide();
-                $('#id_link_trace').click(function(event) {
-                    $('#id_div_trace').toggle();
-                    event.preventDefault();
-                });
-            });
+            var v = function(sId) {
+                if (document.getElementById(sId).style.display == 'none')
+                    document.getElementById(sId).style.display = 'block';
+                else
+                    document.getElementById(sId).style.display = 'none'
+            };
             {/literal}
         </script>
-        <meta http-equiv="Content-Type" content="{gv ext=ProfileExt act=GetContentType}" />
-		<meta name="keywords" content="{gv ext=ProfileExt act=GetKeywords}" />
-		<meta name="robots" content="{gv ext=ProfileExt act=GetRobots}" />
-		<meta name="author" content="{gv ext=ProfileExt act=GetAuthor}" />
+        <meta http-equiv="Content-Type" content="{gv ext=GvProfileExt act=GetContentType}" />
+		<meta name="keywords" content="{gv ext=GvProfileExt act=GetKeywords}" />
+		<meta name="robots" content="{gv ext=GvProfileExt act=GetRobots}" />
+		<meta name="author" content="{gv ext=GvProfileExt act=GetAuthor}" />
 	</head>
 	<body>
-        This is dummy profile and its main page.<br/>
+        This is dummy profile and its index page.<br/>
         INDEX!<br/>
-        <a href="#" id="id_link_trace">Trace</a>
-        <div id="id_div_trace">
-            {gv ext=DebugExt act=getTrace}
+        <a href="/gv/">Enter</a> | <a href="/gv/section/index/">Index</a> | <a href="/gv/section/index/action/v/">V</a>
+        <br/><br/>
+
+        <div>
+            <a href="#" onclick="v('id_div_trace'); return false;">Trace</a>
+            <div id="id_div_trace" style="display:none;">
+                {gv ext=GvDebugExt act=getTrace}
+            </div>
         </div>
-        <br/>
+
+        <div>
+            <a href="#" onclick="v('id_div_content'); return false;">Content</a>
+            <div id="id_div_content" style="display:none;">
+                {gv ext=GvProfileExt act=parseActTemplate}
+            </div>
+        </div>
 	</body>
 </html>

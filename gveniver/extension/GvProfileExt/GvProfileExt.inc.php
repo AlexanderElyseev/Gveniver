@@ -26,7 +26,7 @@ namespace Gveniver\Extension;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class ProfileExt extends SimpleExtension
+class GvProfileExt extends SimpleExtension
 {
     /**
      * Array of configuration parameters for extension.
@@ -62,6 +62,42 @@ class ProfileExt extends SimpleExtension
     //-----------------------------------------------------------------------------
 
     /**
+     * Returns result of parsing template for current action.
+     *
+     * @return string|null Result of parsing or null on error.
+     */
+    public function parseActTemplate()
+    {
+        $cProfile = $this->cKernel->getProfile();
+        $sSectionName = $cProfile->getCurrentSectionName();
+        $sActionValue = $cProfile->getCurrentAction();
+        $sTemplateName = $cProfile->getActTemplate($sSectionName, $sActionValue);
+        if ($sTemplateName)
+            return  $this->cKernel->template->parseTemplate($sTemplateName);
+
+        return null;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Parse template by name.
+     *
+     * @param string $sTemplateName Name of template for parsing.
+     * @param array  $aParams       Parameters fot parsing template.
+     *
+     * @return string|null  Result of parsing or null on error.
+     */
+    public function parseTemplate($sTemplateName, $aParams = array())
+    {
+        return $sTemplateName
+            ? $this->cKernel->template->parseTemplate($sTemplateName, $aParams)
+            : null;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Returns list scripts for current section and action.
      *
      * @return array
@@ -82,7 +118,7 @@ class ProfileExt extends SimpleExtension
         $cProfile = $this->cKernel->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
-        $aScriptDataList = $this->cKernel->getProfile()->getScriptList(
+        $aScriptDataList = $cProfile->getScriptList(
             $sSectionName,
             $sActionValue
         );

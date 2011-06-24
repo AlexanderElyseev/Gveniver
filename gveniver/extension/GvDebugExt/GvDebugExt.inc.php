@@ -23,7 +23,7 @@ namespace Gveniver\Extension;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class DebugExt extends SimpleExtension
+class GvDebugExt extends SimpleExtension
 {
     /**
      * Returns current trace content from tracing module.
@@ -34,6 +34,20 @@ class DebugExt extends SimpleExtension
     {
         return $this->cKernel->trace->getTraceAsString();
 
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Return value of debug state flag.
+     *
+     * @return bool True if debug is enabled.
+     */
+    public function isDebug()
+    {
+        return $this->cKernel->toBoolean(
+            $this->cKernel->cConfig->get('Kernel/Debug')
+        );
+        
     } // End function
     //-----------------------------------------------------------------------------
 
