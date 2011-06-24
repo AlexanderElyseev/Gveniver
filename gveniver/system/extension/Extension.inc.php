@@ -78,7 +78,7 @@ abstract class Extension
         
     } // End function
     //-----------------------------------------------------------------------------
-
+    
     /**
      * Load resource of extension by name with spwcified locale.
      *
@@ -89,6 +89,29 @@ abstract class Extension
      */
     public function getResource($sResourceName, $sLocale = null)
     {
+        // Load list with all resources.
+        $aResourceList = array();
+        if (!$this->_cConfig->get('Extension/ResourceList', $aResourceList))
+            return null;
+
+        // Load with name of resource and specified locale.
+        if ($sResourceName && $sLocale)
+            foreach ($aResourceList as $aResource)
+                if (isset($aResource['Value'])
+                    && isset($aResource['Name']) && $aResource['Name'] == $sResourceName
+                    && isset($aResource['Locale']) && $aResource['Locale'] == $sLocale
+                )
+                    return $aResource['Value'];
+
+        // Load only with name of resource.
+        if ($sResourceName)
+            foreach ($aResourceList as $aResource)
+                if (isset($aResource['Value'])
+                    && isset($aResource['Name']) && $aResource['Name'] == $sResourceName
+                )
+                    return $aResource['Value'];
+
+        return null;
         
     } // End function
     //-----------------------------------------------------------------------------
