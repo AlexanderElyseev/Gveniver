@@ -208,6 +208,7 @@ final class Kernel
         if (is_dir($sProfile)) {
             $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfile);
             $sProfilePath = $sProfile;
+            $sProfile = basename($sProfile);
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfile);
 
