@@ -85,6 +85,12 @@ class InvarModule extends Module
      */
     private $_aPost = array();
     //-----------------------------------------------------------------------------
+
+    private $_sSectionKey;
+    private $_sSectionKeyTpl;
+    private $_sActionKey;
+    private $_sActionKeyTpl;
+    private $_sAbsWebPath;
     //-----------------------------------------------------------------------------
 
 
@@ -122,6 +128,20 @@ class InvarModule extends Module
 
         $this->_aPost['post'] = &$_POST;
         $this->_aPost['checked'] = array();
+
+        // Load settings.
+        $this->_sSectionKey = $this->cKernel->cConfig->get('Module/InvarModule/SectionKeyName');
+        $this->_sSectionKeyTpl = $this->cKernel->cConfig->get('Module/InvarModule/SectionKeyTemplate');
+        $this->_sActionKey = $this->cKernel->cConfig->get('Module/InvarModule/ActionKeyName');
+        $this->_sActionKeyTpl = $this->cKernel->cConfig->get('Module/InvarModule/ActionKeyTemplate');
+        $this->_sAbsWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsRootWeb');
+        if (!$this->_sAbsWebPath
+            || !$this->_sActionKey || !$this->_sSectionKey
+            || !$this->_sActionKeyTpl || !$this->_sSectionKeyTpl
+        ) {
+            $this->cKernel->trace->addLine('[%s] Some configuration parameters not loaded.', __CLASS__);
+            return false;
+        }
 
         $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
@@ -393,12 +413,27 @@ class InvarModule extends Module
      * Create link with current invars loader by specified request parameters.
      *
      * @param array $aParams Request arguments.
-     * 
+     *
      * @return string
      */
     public function getLink(array $aParams)
     {
-        return $this->cKernel->cConfig->get('Profile/Path/AbsRootWeb').$this->_cLoader->buildRequest($aParams);
+        // Rebuild special placeholders for section and action keys.
+        $aRebuildedParams = array();
+        foreach ($aParams as $k => $v) {
+            $key = $k;
+            if ($key == $this->_sSectionKeyTpl)
+                $key = $this->_sSectionKey;
+            elseif ($key == $this->_sActionKeyTpl)
+                $key = $this->_sActionKey;
+
+            $aRebuildedParams[$key] = $v;
+
+        } // End foreach
+
+        ksort($aRebuildedParams);
+
+        return $this->_sAbsWebPath.$this->_cLoader->buildRequest($aRebuildedParams);
 
     } // End function
     //-----------------------------------------------------------------------------

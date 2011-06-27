@@ -92,7 +92,9 @@
         </TemplateModule>
         <InvarModule>
             <SectionKeyName>section</SectionKeyName>
+            <SectionKeyTemplate>%section%</SectionKeyTemplate>
             <ActionKeyName>action</ActionKeyName>
+            <ActionKeyTemplate>%action%</ActionKeyTemplate>
             <LoaderClass>HfuInvarLoader</LoaderClass>
         </InvarModule>
     </Module>
