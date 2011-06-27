@@ -66,13 +66,18 @@ final class Kernel
      * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @param string $sProfile Path to kernel profile dir or name of kernel profile.
+     * @param string $sProfile               Path to kernel profile dir or name of kernel profile.
+     * @param string $sApplicationConfigFile Path to XML configuration file for application.
      */
-    public function __construct($sProfile)
+    public function __construct($sProfile, $sApplicationConfigFile = null)
     {
         // Initialize and load base configuration.
         $this->cConfig = new \Gveniver\Config();
         $this->cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
+
+        // Append application configuration, if specified.
+        if ($sApplicationConfigFile)
+            $this->cConfig->mergeXmlFile($sApplicationConfigFile);
 
         // Initialization of environment.
         $this->initEnvironment();

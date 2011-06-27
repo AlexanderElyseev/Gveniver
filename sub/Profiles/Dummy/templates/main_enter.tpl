@@ -41,14 +41,14 @@
         <br/><br/>
 
         <div>
-            <a href="#" onclick="v('id_div_trace'); return false;">Trace</a>
+            <a href="main_enter.tpl#" onclick="v('id_div_trace'); return false;">Trace</a>
             <div id="id_div_trace" style="display:none;">
                 {gv ext=GvDebugExt act=getTrace format=string}
             </div>
         </div>
 
         <div>
-            <a href="#" onclick="v('id_div_content'); return false;">Content</a>
+            <a href="main_enter.tpl#" onclick="v('id_div_content'); return false;">Content</a>
             <div id="id_div_content" style="display:none;">
                 {gv ext=GvProfileExt act=parseActTemplate}
             </div>
