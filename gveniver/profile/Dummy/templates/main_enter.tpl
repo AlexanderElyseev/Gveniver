@@ -34,7 +34,10 @@
 	</head>
 	<body>
         This is dummy profile and its main page.<br/>
-        <a href="/gv/">Enter</a> | <a href="/gv/action/v/">V</a> | <a href="/gv/section/index/">Index</a>
+        <a href="/gv/">Enter</a>
+        | <a href="/gv/action/v/">V</a>
+        | <a href="/gv/section/index/">Index</a>
+        | <a href="{gv ext=GvInvarExt act=getLink arg=['section' => 'index']}">{gv ext=GvInvarExt act=getLink arg=['section' => 'index']}</a>
         <br/><br/>
 
         <div>

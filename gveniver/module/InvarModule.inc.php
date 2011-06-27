@@ -389,5 +389,19 @@ class InvarModule extends Module
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Create link with current invars loader by specified request parameters.
+     *
+     * @param array $aParams Request arguments.
+     * 
+     * @return string
+     */
+    public function getLink(array $aParams)
+    {
+        return $this->cKernel->cConfig->get('Profile/Path/AbsRootWeb').$this->_cLoader->buildRequest($aParams);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
 } // End class
 //-----------------------------------------------------------------------------
