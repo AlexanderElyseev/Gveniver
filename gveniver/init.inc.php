@@ -13,7 +13,6 @@ define('GV_EXEC', 1);                                           // Execution fla
 define('GV_DS', DIRECTORY_SEPARATOR);                           // Directory separator.
 define('GV_PATH_BASE', dirname(__FILE__).GV_DS);                // Gveniver base path.
 define('GV_PATH_CACHE', GV_PATH_BASE.'cache'.GV_DS);            // Server cache directory path.
-define('GV_PATH_PROFILE', GV_PATH_BASE.'profile'.GV_DS);        // Server profile directory path.
 define('GV_DATE_NOW', date('Y-m-d H:i:s'));                     // Current date as string.
 define('GV_TIME_NOW', time());                                  // Current time at integer.
 define('GV_OS_WIN', stripos(PHP_OS, 'win') !== false);          // Is running on Windows?

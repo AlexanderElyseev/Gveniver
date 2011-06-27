@@ -210,7 +210,8 @@ final class Kernel
             $sProfilePath = $sProfile;
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfile);
-            $sProfilePath = GV_PATH_BASE.'profile'.GV_DS.$sProfile.GV_DS;
+
+            $sProfilePath = \Gveniver\Loader::correctPath($this->cConfig->get('Kernel/ProfilePath')).$sProfile.GV_DS;
             if (!is_dir($sProfilePath)) {
                 $this->trace->addLine('[%s] Profile directory ("%s") is not exists.', __CLASS__, $sProfilePath);
                 return null;
