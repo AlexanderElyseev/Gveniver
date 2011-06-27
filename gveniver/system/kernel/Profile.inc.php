@@ -60,21 +60,31 @@ abstract class Profile
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns name of current section.
+     * Return name of current section.
      *
      * @return string
-     * @abstract
      */
-    public abstract function getCurrentSectionName();
+    public function getCurrentSectionName()
+    {
+        return $this->cKernel->invar->get(
+            $this->cKernel->cConfig->get('Module/InvarModule/SectionKeyName')
+        );
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
      * Returns value of current action.
      *
      * @return string
-     * @abstract
      */
-    public abstract function getCurrentAction();
+    public function getCurrentAction()
+    {
+        return $this->cKernel->invar->get(
+            $this->cKernel->cConfig->get('Module/InvarModule/ActionKeyName')
+        );
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**

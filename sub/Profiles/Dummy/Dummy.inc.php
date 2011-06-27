@@ -47,34 +47,6 @@ class DummyKernelProfile extends Profile
 
     } // End function
     //-----------------------------------------------------------------------------
-    
-    /**
-     * Return name of current section.
-     *
-     * @return string
-     */
-    public function getCurrentSectionName()
-    {
-        return $this->cKernel->invar->get(
-            $this->cKernel->cConfig->get('Module/InvarModule/SectionKeyName')
-        );
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Returns value of current action.
-     *
-     * @return string
-     */
-    public function getCurrentAction()
-    {
-        return $this->cKernel->invar->get(
-            $this->cKernel->cConfig->get('Module/InvarModule/ActionKeyName')
-        );
 
-    } // End function
-    //-----------------------------------------------------------------------------
-    
 } // End class
 //-----------------------------------------------------------------------------
