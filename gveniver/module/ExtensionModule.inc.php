@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains class of extension kernel module.
+ * File contains class of extension module.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('Module.inc.php');
 
 /**
- * Class of extension kernel module.
+ * Class of extension module.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -34,13 +34,13 @@ class ExtensionModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
-     * Full initialization of kernel module.
+     * Full initialization of module.
      *
      * @return bool True on success.
      */
     protected function init()
     {
-        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
         // Try to create extension loader.
         $this->_cLoader = \Gveniver\Loader::createObject(
@@ -48,12 +48,12 @@ class ExtensionModule extends Module
                 'class' => 'DirectoryExtensionLoader',
                 'ns'    => '\\Gveniver\\Extension',
                 'path'  => 'system/extension/loader/%class%.inc.php',
-                'args'  => array($this->cKernel)
+                'args'  => array($this->getApplication())
             ),
             $nErrCode
         );
         if (!$this->_cLoader) {
-             $this->cKernel->trace->addLine(
+             $this->getApplication()->trace->addLine(
                  '[%s] Error in create extension loader, with code: %d ("%s").',
                  __CLASS__,
                  $nErrCode,
@@ -62,7 +62,7 @@ class ExtensionModule extends Module
             return false;
         }
 
-        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
         
     } // End function

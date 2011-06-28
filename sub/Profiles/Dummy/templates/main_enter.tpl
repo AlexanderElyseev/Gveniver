@@ -34,18 +34,21 @@
 	</head>
 	<body>
         This is dummy profile and its main page.<br/>
-        <a href="/gv/">Enter</a> | <a href="/gv/action/v/">V</a> | <a href="/gv/section/index/">Index</a>
+        <a href="/gv/">Enter</a>
+        | <a href="/gv/action/v/">V</a>
+        | <a href="/gv/section/index/">Index</a>
+        | <a href="{gv ext=GvInvarExt act=getLink arg=['section' => 'index']}">{gv ext=GvInvarExt act=getLink arg=['section' => 'index']}</a>
         <br/><br/>
 
         <div>
-            <a href="#" onclick="v('id_div_trace'); return false;">Trace</a>
+            <a href="main_enter.tpl#" onclick="v('id_div_trace'); return false;">Trace</a>
             <div id="id_div_trace" style="display:none;">
                 {gv ext=GvDebugExt act=getTrace format=string}
             </div>
         </div>
 
         <div>
-            <a href="#" onclick="v('id_div_content'); return false;">Content</a>
+            <a href="main_enter.tpl#" onclick="v('id_div_content'); return false;">Content</a>
             <div id="id_div_content" style="display:none;">
                 {gv ext=GvProfileExt act=parseActTemplate}
             </div>

@@ -54,13 +54,13 @@ class EmailLogProvider extends LogProvider
      * Class constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel     Current kernel.
-     * @param array                   $aConfigData Configuration data for provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aConfigData  Configuration data for provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aConfigData)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aConfigData)
     {
         // Use parent constructor.
-        parent::__construct($cKernel, $aConfigData);
+        parent::__construct($cApplication, $aConfigData);
         
         $bExistsRecipient = isset($aConfigData['Recipient']) && is_string($aConfigData['Recipient']);
         $bExistsFrom = isset($aConfigData['Sender']) && is_string($aConfigData['Sender']);

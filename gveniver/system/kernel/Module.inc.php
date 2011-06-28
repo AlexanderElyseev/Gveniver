@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains base abstract kernel profile class.
+ * File contains base abstract application profile class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('system/exception/Exception.inc.php');
 
 /**
- * Base abstract kernel profile class.
+ * Base abstract application profile class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -29,9 +29,9 @@ abstract class Module
     /**
      * Reference to current kernel.
      *
-     * @var Kernel
+     * @var Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
@@ -39,11 +39,11 @@ abstract class Module
      * Constructor of {@see Module} class.
      * Initialize new instance of profile by kernel.
      *
-     * @param Kernel $cKernel Kernel of profile.
+     * @param Application $cApplication Current application.
      */
-    public final function __construct(Kernel $cKernel)
+    public final function __construct(Application $cApplication)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
         if (!$this->init())
             throw new \Gveniver\Exception\Exception(
                 sprintf('Initialization of module "%s" failed.', get_class($this))
@@ -53,7 +53,19 @@ abstract class Module
     //-----------------------------------------------------------------------------
 
     /**
-     * Full initialization of kernel module.
+     * Getter for current application.
+     *
+     * @return Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Full initialization of module.
      *
      * @return bool True on success.
      * @abstract

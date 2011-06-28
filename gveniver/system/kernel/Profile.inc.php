@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains base abstract kernel profile class.
+ * File contains base abstract application profile class.
  * 
  * @category   Gveniver
  * @package    Kernel
@@ -14,7 +14,7 @@
 namespace Gveniver\Kernel;
 
 /**
- * Base abstract kernel profile class.
+ * Base abstract application profile class.
  * 
  * PHP version 5
  *
@@ -31,21 +31,33 @@ abstract class Profile
     /**
      * Reference to current kernel.
      *
-     * @var Kernel
+     * @var Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
      * Constructor of {@see Profile} class.
-     * Initialize new instance of profile by kernel.
+     * Initialize new instance of application profile.
      *
-     * @param Kernel $cKernel Kernel of profile.
+     * @param Application $cApplication Current application.
      */
-    public function __construct(Kernel $cKernel)
+    public function __construct(Application $cApplication)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
+    /**
+     * Getter for current application.
+     *
+     * @return Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -60,21 +72,31 @@ abstract class Profile
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns name of current section.
+     * Return name of current section.
      *
      * @return string
-     * @abstract
      */
-    public abstract function getCurrentSectionName();
+    public function getCurrentSectionName()
+    {
+        return $this->_cApplication->invar->get(
+            $this->_cApplication->getConfig()->get('Module/InvarModule/SectionKeyName')
+        );
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
      * Returns value of current action.
      *
      * @return string
-     * @abstract
      */
-    public abstract function getCurrentAction();
+    public function getCurrentAction()
+    {
+        return $this->_cApplication->invar->get(
+            $this->_cApplication->getConfig()->get('Module/InvarModule/ActionKeyName')
+        );
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
@@ -90,7 +112,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -101,14 +123,14 @@ abstract class Profile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ContentType']))
                         return $aSection['ContentType'];
 
         // Load for default section.
         $sContentType = '';
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/ContentType', $sContentType))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/ContentType', $sContentType))
             return $sContentType;
 
         return null;
@@ -126,7 +148,7 @@ abstract class Profile
      */
     public function addContentType($sContentType, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -144,7 +166,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -155,14 +177,14 @@ abstract class Profile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Author']))
                         return $aSection['Author'];
 
         // Load for default section.
         $sAuthor = '';
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/Author', $sAuthor))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Author', $sAuthor))
             return $sAuthor;
 
         return null;
@@ -180,7 +202,7 @@ abstract class Profile
      */
     public function addAuthor($sAuthor, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -198,7 +220,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -209,14 +231,14 @@ abstract class Profile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Robots']))
                         return $aSection['Robots'];
 
         // Load for default section.
         $sRobots = '';
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/Robots', $sRobots))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Robots', $sRobots))
             if (is_string($sRobots))
                 return $sRobots;
 
@@ -235,7 +257,7 @@ abstract class Profile
      */
     public function addRobots($sRobots, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -255,7 +277,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -266,14 +288,14 @@ abstract class Profile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Keywords']))
                         $sResult = ($sResult) ? ','.$aSection['Keywords'] : $aSection['Keywords'];
 
         // Load for default section.
         $sKeywords = '';
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/Keywords', $sKeywords))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Keywords', $sKeywords))
             $sResult .= ($sResult) ? ','.$sKeywords : $sKeywords;
 
         return $sResult;
@@ -292,7 +314,7 @@ abstract class Profile
      */
     public function addKeywords($sKeywords, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -308,7 +330,7 @@ abstract class Profile
      */
     public function addTitle($sTitle, $sSectionName = null, $sAct = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -324,7 +346,7 @@ abstract class Profile
      */
     public function addSubTitle($sSubTitle, $sSectionName = null, $sAct = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -339,7 +361,7 @@ abstract class Profile
      */
     public function addMainTemplate($sTemplate, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -355,7 +377,7 @@ abstract class Profile
      */
     public function addActTemplate($sTemplate, $sSectionName, $sAct = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -370,7 +392,7 @@ abstract class Profile
      */
     public function addScript($sScript, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -386,7 +408,7 @@ abstract class Profile
      */
     public function addStyle($sStyle, $sCondition, $sSectionName = null)
     {
-        throw new NotImplementedException();
+        throw new \Gveniver\Exception\NotImplementedException();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -404,7 +426,7 @@ abstract class Profile
         // Load by section and action.
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']))
                         foreach ($aSection['ActList'] as $aAction)
@@ -414,14 +436,14 @@ abstract class Profile
         // Load for section and default action.
         $aSectionList = array();
         if ($sSectionName && !$sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']['Default']['FileName']))
                         return $aSection['ActList']['Default']['FileName'];
 
         // Load for default section and action.
         $aDefaultSection = array();
-        $this->cKernel->cConfig->get('Profile/SectionList/Default', $aDefaultSection);
+        $this->_cApplication->getConfig()->get('Profile/SectionList/Default', $aDefaultSection);
         if (!$sSectionName && $sAct)
             if (isset($aDefaultSection['ActList']))
                 foreach ($aDefaultSection['ActList'] as $aAction)
@@ -430,7 +452,7 @@ abstract class Profile
 
         // Load for default section and default action.
         $sTpl = '';
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/ActList/Default/FileName', $sTpl))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/ActList/Default/FileName', $sTpl))
             return $sTpl;
 
         return null;
@@ -451,7 +473,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -462,14 +484,14 @@ abstract class Profile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['MainTemplate']))
                         return $aSection['MainTemplate'];
 
         // Load for default section.
         $sTpl = '';
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/MainTemplate', $sTpl))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/MainTemplate', $sTpl))
             return $sTpl;
 
         return null;
@@ -491,7 +513,7 @@ abstract class Profile
         $aActionSectionScripts = array();
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -503,14 +525,14 @@ abstract class Profile
         $aSectionScripts = array();
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ScriptList']))
                         $aSectionScripts = $aSection['ScriptList'];
 
         // Load for default section.
         $aBaseScripts = array();
-        $this->cKernel->cConfig->get('Profile/SectionList/Default/ScriptList', $aBaseScripts);
+        $this->_cApplication->getConfig()->get('Profile/SectionList/Default/ScriptList', $aBaseScripts);
 
         return array_merge($aBaseScripts, $aSectionScripts, $aActionSectionScripts);
 
@@ -531,7 +553,7 @@ abstract class Profile
         $aActionSectionStyles = array();
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -543,14 +565,14 @@ abstract class Profile
         $aSectionStyles = array();
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['StyleList']))
                         $aSectionStyles = $aSection['StyleList'];
 
         // Load for default section.
         $aBaseStyles = array();
-        $this->cKernel->cConfig->get('Profile/SectionList/Default/StyleList', $aBaseStyles);
+        $this->_cApplication->getConfig()->get('Profile/SectionList/Default/StyleList', $aBaseStyles);
 
         return array_merge($aBaseStyles, $aSectionStyles, $aActionSectionStyles);
 
@@ -570,7 +592,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -580,13 +602,13 @@ abstract class Profile
 
         // Load for section.
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName && isset($aSection['Title']))
                         return $aSection['Title'];
 
         // Load for default section.
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/Title', $sTitle))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Title', $sTitle))
             return $sTitle;
 
         return null;
@@ -607,7 +629,7 @@ abstract class Profile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -617,13 +639,13 @@ abstract class Profile
 
         // Load for section.
         if ($sSectionName)
-            if ($this->cKernel->cConfig->get('Profile/SectionList/List', $aSectionList))
+            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName && isset($aSection['SubTitle']))
                         return $aSection['SubTitle'];
 
         // Load for default section.
-        if ($this->cKernel->cConfig->get('Profile/SectionList/Default/SubTitle', $sSubTitle))
+        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/SubTitle', $sSubTitle))
             return $sSubTitle;
 
         return null;

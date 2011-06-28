@@ -37,13 +37,13 @@ class MemcachedCacheProvider extends CacheProvider
     /**
      * Class constructor.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
-     * @param array                   $aOptions Options for cache provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aOptions     Options for cache provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
         // Use parent constructor.
-        parent::__construct($cKernel, $aOptions);
+        parent::__construct($cApplication, $aOptions);
 
         // Check for existing Mecached PHP extension.
         if (!class_exists('Memcache'))
@@ -56,7 +56,6 @@ class MemcachedCacheProvider extends CacheProvider
             throw new \Gveniver\Exception\Exception('Memcache servers not loaded.');
 
         foreach ($this->aOptions['Servers'] as $aServerData) {
-            //$sServerName = isset($aServerData['Name']) ? $aServerData['Name'] : null;
             $sServerHost = isset($aServerData['Host']) ? $aServerData['Host'] : null;
             if (!$sServerHost)
                 continue;

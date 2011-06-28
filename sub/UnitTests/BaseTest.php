@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-require_once 'gveniver/init.inc.php';
+require_once '../gveniver/init.inc.php';
 
 /**
  * Unit test case class for testing initialization of kernel.
@@ -31,7 +31,7 @@ class InitTest extends PHPUnit_Framework_TestCase
      */
     public function testInit()
     {
-        new GvKernel('Dummy');
+        new Gveniver\Kernel\Application('Dummy');
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ class InitTest extends PHPUnit_Framework_TestCase
      */
     public function testWrongProfile()
     {
-        new GvKernel('WronProfileNameHere');
+        new Gveniver\Kernel\Application('WronProfileNameHere');
 
     } // End function
     //-----------------------------------------------------------------------------

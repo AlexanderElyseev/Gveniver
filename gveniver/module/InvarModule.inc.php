@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains invar kernel module class.
+ * File contains invar module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('Module.inc.php');
 
 /**
- * Invar kernel module class.
+ * Invar module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -85,29 +85,35 @@ class InvarModule extends Module
      */
     private $_aPost = array();
     //-----------------------------------------------------------------------------
+
+    private $_sSectionKey;
+    private $_sSectionKeyTpl;
+    private $_sActionKey;
+    private $_sActionKeyTpl;
+    private $_sAbsWebPath;
     //-----------------------------------------------------------------------------
 
 
     /**
-     * Full initialization of kernel module.
+     * Full initialization of module.
      *
      * @return bool True on success.
      */
     protected function init()
     {
-        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
         // Load factory for template subsystem.
         $this->_cLoader = \Gveniver\Loader::createObject(
             array(
-                'class' => $this->cKernel->cConfig->get('Module/InvarModule/LoaderClass'),
+                'class' => $this->getApplication()->getConfig()->get('Module/InvarModule/LoaderClass'),
                 'ns'    => '\\Gveniver\\Invar',
                 'path'  => 'system/invar/loader/%class%.inc.php'
             ),
             $nErrCode
         );
         if (!$this->_cLoader) {
-            $this->cKernel->trace->addLine(
+            $this->getApplication()->trace->addLine(
                 '[%s] Error in create invar loader, with code: %d.',
                 __CLASS__,
                 $nErrCode
@@ -123,7 +129,21 @@ class InvarModule extends Module
         $this->_aPost['post'] = &$_POST;
         $this->_aPost['checked'] = array();
 
-        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        // Load settings.
+        $this->_sSectionKey = $this->getApplication()->getConfig()->get('Module/InvarModule/SectionKeyName');
+        $this->_sSectionKeyTpl = $this->getApplication()->getConfig()->get('Module/InvarModule/SectionKeyTemplate');
+        $this->_sActionKey = $this->getApplication()->getConfig()->get('Module/InvarModule/ActionKeyName');
+        $this->_sActionKeyTpl = $this->getApplication()->getConfig()->get('Module/InvarModule/ActionKeyTemplate');
+        $this->_sAbsWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsRootWeb');
+        if (!$this->_sAbsWebPath
+            || !$this->_sActionKey || !$this->_sSectionKey
+            || !$this->_sActionKeyTpl || !$this->_sSectionKeyTpl
+        ) {
+            $this->getApplication()->trace->addLine('[%s] Some configuration parameters not loaded.', __CLASS__);
+            return false;
+        }
+
+        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
 
     } // End function
@@ -180,12 +200,12 @@ class InvarModule extends Module
             return false;
         }
 
-        $this->cKernel->trace->addLine('[%s] Load invar ("%s") from request (%d).', __CLASS__, $sName, $nTarget);
+        $this->getApplication()->trace->addLine('[%s] Load invar ("%s") from request (%d).', __CLASS__, $sName, $nTarget);
 
         // Try to load invar value from GET.
         if ($nTarget == self::TARGET_ONLY_GET) {
             if (array_key_exists($sName, $this->_aGet['get'])) {
-                $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from GET.', __CLASS__, $sName);
+                $this->getApplication()->trace->addLine('[%s] Invar ("%s") loaded from GET.', __CLASS__, $sName);
 
                 if (!$bByRef)
                     return $this->_aGet['get'][$sName];
@@ -196,7 +216,7 @@ class InvarModule extends Module
             // Try to load invar value from request.
         } elseif ($nTarget == self::TARGET_ONLY_REQUEST) {
             if (array_key_exists($sName, $this->_aGet['request'])) {
-                $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from request.', __CLASS__, $sName);
+                $this->getApplication()->trace->addLine('[%s] Invar ("%s") loaded from request.', __CLASS__, $sName);
 
                 if (!$bByRef)
                     return $this->_aGet['request'][$sName];
@@ -205,7 +225,7 @@ class InvarModule extends Module
                 return true;
             }
         } else {
-            $this->cKernel->trace->addLine(
+            $this->getApplication()->trace->addLine(
                 '[%s] Invar ("%s") not loaded. Wrong target (%d).',
                 __CLASS__,
                 $sName,
@@ -219,7 +239,7 @@ class InvarModule extends Module
         }
 
         // Invar value not loaded.
-        $this->cKernel->trace->addLine('[%s] Invar ("%s") not loaded from request.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Invar ("%s") not loaded from request.', __CLASS__, $sName);
 
         if (!$bByRef)
             return null;
@@ -242,7 +262,7 @@ class InvarModule extends Module
      */
     public function getEx($sName, $nTarget = self::TARGET_FIRST_GET, array $aCheck = array(), &$cRef = null)
     {
-        $this->cKernel->trace->addLine('[%s] Extended load invar ("%s") from request.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Extended load invar ("%s") from request.', __CLASS__, $sName);
 
         $bByRef = func_num_args() == 4;
         $mValue = null;
@@ -258,14 +278,14 @@ class InvarModule extends Module
         // Check value of invar and return result.
         $bCheckResult = $this->_filter($mValue, $aCheck);
         if (!$bCheckResult) {
-            $this->cKernel->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
+            $this->getApplication()->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
             if ($bByRef)
                 return false;
 
             return null;
         }
 
-        $this->cKernel->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
 
         if ($bByRef) {
             if ($bCheckResult)
@@ -289,13 +309,13 @@ class InvarModule extends Module
      */
     public function post($sName, &$cRef = null)
     {
-        $this->cKernel->trace->addLine('[%s] Load invar ("%s") from POST.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Load invar ("%s") from POST.', __CLASS__, $sName);
 
         $bByRef = func_num_args() == 2;
 
         // Try to Load from GET.
         if (array_key_exists($sName, $this->_aPost['post'])) {
-            $this->cKernel->trace->addLine('[%s] Invar ("%s") loaded from POST.', __CLASS__, $sName);
+            $this->getApplication()->trace->addLine('[%s] Invar ("%s") loaded from POST.', __CLASS__, $sName);
             
             if (!$bByRef)
                 return $this->_aPost['post'][$sName];
@@ -305,7 +325,7 @@ class InvarModule extends Module
         }
 
         // Invar value not loaded.
-        $this->cKernel->trace->addLine('[%s] Invar ("%s") not loaded from POST.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Invar ("%s") not loaded from POST.', __CLASS__, $sName);
 
         if (!$bByRef)
             return null;
@@ -327,7 +347,7 @@ class InvarModule extends Module
      */
     public function postEx($sName, array $aCheck = array(), &$cRef = null)
     {
-        $this->cKernel->trace->addLine('[%s] Extended load invar ("%s") from POST.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Extended load invar ("%s") from POST.', __CLASS__, $sName);
 
         $bByRef = func_num_args() == 3;
         $mValue = null;
@@ -343,14 +363,14 @@ class InvarModule extends Module
         // Check value of invar and return result.
         $bCheckResult = $this->_filter($mValue, $aCheck);
         if (!$bCheckResult) {
-            $this->cKernel->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
+            $this->getApplication()->trace->addLine('[%s] Filter invar ("%s") failed.', __CLASS__, $sName);
             if ($bByRef)
                 return false;
 
             return null;
         }
 
-        $this->cKernel->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
+        $this->getApplication()->trace->addLine('[%s] Filter invar ("%s") success.', __CLASS__, $sName);
 
         if ($bByRef) {
             if ($bCheckResult)
@@ -385,6 +405,35 @@ class InvarModule extends Module
         $mOptions = array_key_exists('options', $aCheck) ? $aCheck['options'] : null;
         $mValue = filter_var($mValue, $aCheck['filter'], $mOptions);
         return $mValue !== false;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Create link with current invars loader by specified request parameters.
+     *
+     * @param array $aParams Request arguments.
+     *
+     * @return string
+     */
+    public function getLink(array $aParams)
+    {
+        // Rebuild special placeholders for section and action keys.
+        $aRebuildedParams = array();
+        foreach ($aParams as $k => $v) {
+            $key = $k;
+            if ($key == $this->_sSectionKeyTpl)
+                $key = $this->_sSectionKey;
+            elseif ($key == $this->_sActionKeyTpl)
+                $key = $this->_sActionKey;
+
+            $aRebuildedParams[$key] = $v;
+
+        } // End foreach
+
+        ksort($aRebuildedParams);
+
+        return $this->_sAbsWebPath.$this->_cLoader->buildRequest($aRebuildedParams);
 
     } // End function
     //-----------------------------------------------------------------------------

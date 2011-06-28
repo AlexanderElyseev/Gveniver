@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains template kernel module class.
+ * File contains template module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('Module.inc.php');
 
 /**
- * Template kernel module class.
+ * Template module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -35,26 +35,26 @@ class TemplateModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
-     * Full initialization of kernel module.
+     * Full initialization of module.
      *
      * @return bool True on success.
      */
     protected function init()
     {
-        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
         
         // Load factory for template subsystem.
         $this->_cFactory = \Gveniver\Loader::createObject(
             array(
-                'class' => $this->cKernel->cConfig->get('Module/TemplateModule/FactoryClass'),
+                'class' => $this->getApplication()->getConfig()->get('Module/TemplateModule/FactoryClass'),
                 'ns'    => '\\Gveniver\\Template',
                 'path'  => 'system/template/factory/%class%.inc.php',
-                'args'  => array($this->cKernel)
+                'args'  => array($this->getApplication())
             ),
             $nErrCode
         );
         if (!$this->_cFactory) {
-             $this->cKernel->trace->addLine(
+             $this->getApplication()->trace->addLine(
                  '[%s] Error in create template factory, with code: %d ("%s").',
                  __CLASS__,
                  $nErrCode,
@@ -63,7 +63,7 @@ class TemplateModule extends Module
             return false;
         }
 
-        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
 
     } // End function
@@ -111,11 +111,11 @@ class TemplateModule extends Module
      */
     public function parseTemplate($sTemplateName, array $aData = array())
     {
-        $this->cKernel->trace->addLine('[%s] Start parse template ("%s").', __CLASS__, $sTemplateName);
+        $this->getApplication()->trace->addLine('[%s] Start parse template ("%s").', __CLASS__, $sTemplateName);
 
         $cTpl = $this->getTemplate($sTemplateName);
         if (!$cTpl) {
-            $this->cKernel->trace->addLine(
+            $this->getApplication()->trace->addLine(
                 '[%s] Template ("%s") not found.',
                 __CLASS__,
                 $sTemplateName

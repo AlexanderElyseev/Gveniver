@@ -10,6 +10,7 @@
         <ForceCompression>false</ForceCompression>
         <Locale>ru_RU</Locale>
         <PreferDeflate>0</PreferDeflate>
+        <ProfilePath>profile</ProfilePath>
         <StartSession>false</StartSession>
         <Timezone>Europe/Moscow</Timezone>
         <UseOutputBuffering>0</UseOutputBuffering>
@@ -92,7 +93,9 @@
         </TemplateModule>
         <InvarModule>
             <SectionKeyName>section</SectionKeyName>
+            <SectionKeyTemplate>%section%</SectionKeyTemplate>
             <ActionKeyName>action</ActionKeyName>
+            <ActionKeyTemplate>%action%</ActionKeyTemplate>
             <LoaderClass>HfuInvarLoader</LoaderClass>
         </InvarModule>
     </Module>

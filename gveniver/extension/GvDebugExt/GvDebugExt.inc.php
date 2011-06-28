@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains kernel extension class for debugging.
+ * File contains extension class for debugging.
  *
  * @category  Gveniver
  * @package   Extension
@@ -14,7 +14,7 @@ namespace Gveniver\Extension;
 \Gveniver\Loader::i('system/extension/SimpleExtension.inc.php');
 
 /**
- * Kernel extension class for debugging.
+ * Extension class for debugging.
  *
  * @category  Gveniver
  * @package   Extension
@@ -32,7 +32,7 @@ class GvDebugExt extends SimpleExtension
      */
     public function getTrace()
     {
-        return $this->cKernel->trace->getTrace();
+        return $this->getApplication()->trace->getTrace();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -70,8 +70,8 @@ class GvDebugExt extends SimpleExtension
      */
     public function isDebug()
     {
-        return $this->cKernel->toBoolean(
-            $this->cKernel->cConfig->get('Kernel/Debug')
+        return \Gveniver\Kernel\Application::toBoolean(
+            $this->getApplication()->getConfig()->get('Kernel/Debug')
         );
         
     } // End function

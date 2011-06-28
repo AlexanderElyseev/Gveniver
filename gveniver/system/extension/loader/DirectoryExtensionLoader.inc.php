@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains loader class for kernel extensions.
+ * File contains loader class for extensions.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,10 +14,10 @@ namespace Gveniver\Extension;
 \Gveniver\Loader::i('system/extension/loader/ExtensionLoader.inc.php');
 
 /**
- * Loader class for kernel extensions.
+ * Loader class for extensions.
  * 
  * Implements logic of loading extensions from specified directories.
- * By default, load from kernel extension directory and from directory
+ * By default, load from extension directory and from directory
  * at profile configuration.
  *
  * @category  Gveniver
@@ -51,23 +51,23 @@ class DirectoryExtensionLoader extends ExtensionLoader
      * Register directories with extensions: by profile configuration and
      * base kernel extensiosn.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
      *
      * @throws Exception
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
         // Execute parent constructor.
-        parent::__construct($cKernel);
+        parent::__construct($cApplication);
 
-        // Register kernel extension directory.
+        // Register extension directory.
         $this->_registerExtDir(GV_PATH_BASE.'extension'.GV_DS);
 
         // Register extension directory from profile configuration.
-        $this->_registerExtDir($this->cKernel->cConfig->get('Profile/Path/AbsExtension'));
+        $this->_registerExtDir($this->getApplication()->getConfig()->get('Profile/Path/AbsExtension'));
 
         // Load caching settings.
-        $this->_bForceExportCache = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Kernel/EnableCache'));
+        $this->_bForceExportCache = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Kernel/EnableCache'));
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -83,22 +83,22 @@ class DirectoryExtensionLoader extends ExtensionLoader
     {
         // Directory path must be string.
         if (!is_string($sDir)) {
-            $this->cKernel->trace->addLine('[%s] Wrong extension directory argument.',  __CLASS__, $sDir);
+            $this->getApplication()->trace->addLine('[%s] Wrong extension directory argument.',  __CLASS__, $sDir);
             return;
         }
 
         if (in_array($sDir, $this->_aExtensionFolderList)) {
-            $this->cKernel->trace->addLine('[%s] Extension directory ("%s") already registered.',  __CLASS__, $sDir);
+            $this->getApplication()->trace->addLine('[%s] Extension directory ("%s") already registered.',  __CLASS__, $sDir);
             return;
         }
 
         // Check directory and register.
         if ($sDir && file_exists($sDir) && is_dir($sDir) && is_readable($sDir)) {
-            $this->cKernel->trace->addLine('[%s] Extension directory ("%s") registered.',  __CLASS__, $sDir);
+            $this->getApplication()->trace->addLine('[%s] Extension directory ("%s") registered.',  __CLASS__, $sDir);
             array_unshift($this->_aExtensionFolderList, $sDir);
 
         } else {
-            $this->cKernel->trace->addLine('[%s] Wrong extension directory ("%s").',  __CLASS__, $sDir);
+            $this->getApplication()->trace->addLine('[%s] Wrong extension directory ("%s").',  __CLASS__, $sDir);
 
         } // End else
         
@@ -121,7 +121,7 @@ class DirectoryExtensionLoader extends ExtensionLoader
             $sExtensionClassName = $sExtensionName;
             $sExtensionFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.$sExtensionClassName.'.inc.php';
 
-            $this->cKernel->trace->addLine('[%s] Loading extension ("%s") in "%s".', __CLASS__, $sExtensionName, $sExtensionFileName);
+            $this->getApplication()->trace->addLine('[%s] Loading extension ("%s") in "%s".', __CLASS__, $sExtensionName, $sExtensionFileName);
 
             // Dynamically load extension.
             $cExt = \Gveniver\Loader::createObject(
@@ -129,12 +129,12 @@ class DirectoryExtensionLoader extends ExtensionLoader
                     'class' => $sExtensionClassName,
                     'ns'    => '\\Gveniver\\Extension',
                     'path'  => $sExtensionFileName,
-                    'args'  => array($this->cKernel)
+                    'args'  => array($this->getApplication())
                 ),
                 $nErrCode
             );
             if (!$cExt) {
-                $this->cKernel->trace->addLine(
+                $this->getApplication()->trace->addLine(
                     '[%s] Extension ("%s") not loaded loaded at "%s". Error code: %d.',
                     __CLASS__,
                     $sExtensionName,
@@ -149,12 +149,13 @@ class DirectoryExtensionLoader extends ExtensionLoader
             if (file_exists($sExtensionExportFileName) && is_readable($sExtensionExportFileName))
                 $cExt->getConfig()->mergeXmlFile($sExtensionExportFileName, $this->_bForceExportCache);
             
-            $this->cKernel->trace->addLine('[%s] Extension ("%s") successfully loaded.', __CLASS__, $sExtensionName);
+            $this->getApplication()->trace->addLine('[%s] Extension ("%s") successfully loaded.', __CLASS__, $sExtensionName);
             return $cExt;
 
         } // End foreach
  
-        $this->cKernel->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
+        $this->getApplication()->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
+        return null;
 
     } // End function
     //-----------------------------------------------------------------------------

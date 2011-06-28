@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains cache kernel module class.
+ * File contains cache module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('Module.inc.php');
 
 /**
- * Cache kernel module class.
+ * Cache module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -43,21 +43,21 @@ class CacheModule extends Module
     //-----------------------------------------------------------------------------
     
     /**
-     * Full initialization of kernel module.
+     * Full initialization of module.
      *
      * @return bool True on success.
      */
     protected function init()
     {
-        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
         // Clear list of providers.
         $this->_aProviders = array();
 
         // Load configuration of cache providers.
-        $this->_aConfiguration = $this->cKernel->cConfig->get('Module/CacheModule/Providers');
+        $this->_aConfiguration = $this->getApplication()->getConfig()->get('Module/CacheModule/Providers');
 
-        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
 
     } // End function
@@ -76,13 +76,13 @@ class CacheModule extends Module
         // Try to load provider from cache.
         $sCacheIndex = $sProviderName ? $sProviderName : 0;
         if (array_key_exists($sCacheIndex, $this->_aProviders)) {
-            $this->cKernel->trace->addLine('[%s] Cache provider ("%s") loaded from cache.', __CLASS__, $sCacheIndex);
+            $this->getApplication()->trace->addLine('[%s] Cache provider ("%s") loaded from cache.', __CLASS__, $sCacheIndex);
             return $this->_aProviders[$sCacheIndex];
         }
 
         // Try to load for existing provider.
         if ($sProviderName) {
-            $this->cKernel->trace->addLine('[%s] Load provider ("%s").', __CLASS__, $sProviderName);
+            $this->getApplication()->trace->addLine('[%s] Load provider ("%s").', __CLASS__, $sProviderName);
 
             // Create new provider by name.
             foreach ($this->_aConfiguration as $aConnectionData) {
@@ -96,14 +96,14 @@ class CacheModule extends Module
 
                 // Load provider class name.
                 if (!array_key_exists('ProviderClass', $aConnectionData)) {
-                    $this->cKernel->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
+                    $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
                     return null;
                 }
 
                 $sProviderClass = $aConnectionData['ProviderClass'];
                 $this->_aProviders[$sProviderName] = $this->_loadProvider($sProviderClass, $aConnectionData);
                 if (!$this->_aProviders[$sProviderName]) {
-                    $this->cKernel->trace->addLine('[%s] Provider ("%s") not loaded.', __CLASS__, $sProviderName);
+                    $this->getApplication()->trace->addLine('[%s] Provider ("%s") not loaded.', __CLASS__, $sProviderName);
                     return null;
                 }
 
@@ -111,33 +111,33 @@ class CacheModule extends Module
 
             } // End foreach
 
-            $this->cKernel->trace->addLine('[%s] Provider ("%s") not exists.', __CLASS__, $sProviderName);
+            $this->getApplication()->trace->addLine('[%s] Provider ("%s") not exists.', __CLASS__, $sProviderName);
             return null;
 
         } // End if
 
         // Load default (first) configuration, without name.
-        $this->cKernel->trace->addLine('[%s] Load default configuration.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Load default configuration.', __CLASS__);
 
         // Create new default connection for first configuration in list.
         if (!count($this->_aConfiguration)) {
-            $this->cKernel->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
             return null;
         }
 
         // Load provider class name.
         $aConnectionData = $this->_aConfiguration[0];
         if (!array_key_exists('ProviderClass', $aConnectionData)) {
-            $this->cKernel->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
             return null;
         }
 
-        $this->cKernel->trace->addLine('[%s] Create provider from first configuration.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Create provider from first configuration.', __CLASS__);
 
         $sProviderClass = $aConnectionData['ProviderClass'];
         $this->_aProviders[0] = $this->_loadProvider($sProviderClass, $aConnectionData);
         if (!$this->_aProviders[0]) {
-            $this->cKernel->trace->addLine('[%s] Default configuration not loaded.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] Default configuration not loaded.', __CLASS__);
             return null;
         }
 
@@ -161,12 +161,12 @@ class CacheModule extends Module
                 'class' => $sClassname,
                 'ns'    => '\\Gveniver\Cache\\',
                 'path'  => 'system/cache/provider/%class%.inc.php',
-                'args'  => array($this->cKernel, $aOptions)
+                'args'  => array($this->getApplication(), $aOptions)
             ),
             $nErrCode
         );
         if (!$cProvider) {
-             $this->cKernel->trace->addLine(
+             $this->getApplication()->trace->addLine(
                  '[%s] Error in create cache provider ("%s"), with code: %d.',
                  __CLASS__,
                  $sClassname,

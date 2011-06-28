@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains class of simple kernel extension.
+ * File contains class of simple extension.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Extension;
 \Gveniver\Loader::i('system/extension/Extension.inc.php');
 
 /**
- * Class of simple kernel extension.
+ * Class of simple extension.
  * Without export data.
  *
  * @category  Gveniver
@@ -38,7 +38,7 @@ class SimpleExtension extends Extension
      */
     public function query($sAction, $aParams = array(), $sFormat = null)
     {
-        $this->cKernel->trace->addLine('[%s] Executing query: "%s".', __CLASS__, $sAction);
+        $this->getApplication()->trace->addLine('[%s] Executing query: "%s".', __CLASS__, $sAction);
 
         // Load name of method by specified output format.
         $sMethodName = null;
@@ -59,7 +59,7 @@ class SimpleExtension extends Extension
             }
 
             if (!$sMethodName) {
-                $this->cKernel->trace->addLine(
+                $this->getApplication()->trace->addLine(
                     '[%s] Handler for query ("%s") and format ("%s") is not found.',
                     __CLASS__,
                     $sAction,
@@ -73,18 +73,18 @@ class SimpleExtension extends Extension
 
         // Check existence of method.
         if (!method_exists($this, $sMethodName)) {
-            $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not found.', __CLASS__, $sAction);
+            $this->getApplication()->trace->addLine('[%s] Handler for query ("%s") is not found.', __CLASS__, $sAction);
             return null;
         }
 
         // Method must be public.
         $cRefl = new \ReflectionMethod($this, $sMethodName);
         if (!$cRefl->isPublic()) {
-            $this->cKernel->trace->addLine('[%s] Handler for query ("%s") is not public.', __CLASS__, $sAction);
+            $this->getApplication()->trace->addLine('[%s] Handler for query ("%s") is not public.', __CLASS__, $sAction);
             return null;
         }
         
-        $this->cKernel->trace->addLine('[%s] Handler found for query: "%s".', __CLASS__, $sAction);
+        $this->getApplication()->trace->addLine('[%s] Handler found for query: "%s".', __CLASS__, $sAction);
         
         return call_user_func_array(array($this, $sMethodName), $aParams);
 

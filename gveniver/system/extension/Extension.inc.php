@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains base abstract kernel extension class.
+ * File contains base abstract extension class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -13,7 +13,7 @@
 namespace Gveniver\Extension;
 
 /**
- * Base abstract kernel extension class.
+ * Base abstract extension class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -34,27 +34,39 @@ abstract class Extension
     //-----------------------------------------------------------------------------
 
     /**
-     * Current kernel of extension.
+     * Current application of extension.
      *
-     * @var \Gveniver\Kernel\Kernel
+     * @var \Gveniver\Kernel\Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
      * Base extension constructor.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
         $this->_cConfig = new \Gveniver\Config();
 
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Getter for current application.
+     *
+     * @return \Gveniver\Kernel\Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
     /**
      * Query to extension.
      *
@@ -92,7 +104,7 @@ abstract class Extension
     {
         // Load list with all resources.
         $aResourceList = array();
-        if (!$this->_cConfig->get('Extension/ResourceList', $aResourceList))
+        if (!$this->getConfig()->get('Extension/ResourceList', $aResourceList))
             return null;
 
         // Load with name of resource and specified locale.

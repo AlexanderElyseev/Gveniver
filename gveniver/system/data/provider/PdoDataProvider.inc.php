@@ -44,7 +44,7 @@ class PdoDataProvider extends DataProvider
     {
         // Check for existing PDO PHP extension.
         if (!function_exists('PDO')) {
-            $this->cKernel->trace->addLine('[%s] PDO PHP extension is not installed.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] PDO PHP extension is not installed.', __CLASS__);
             return false;
         }
 

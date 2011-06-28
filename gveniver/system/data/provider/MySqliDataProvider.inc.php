@@ -29,7 +29,7 @@ class MySqliDataProvider extends DataProvider
     /**
      * MySql connection link.
      *
-     * @var resource
+     * @var \mysqli
      */
     private $_cConnection;
     //-----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ class MySqliDataProvider extends DataProvider
     {
         // Check for existing MySqli PHP extension.
         if (!class_exists('mysqli')) {
-            $this->cKernel->trace->addLine('[%s] MySqli PHP extension is not installed.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] MySqli PHP extension is not installed.', __CLASS__);
             return false;
         }
 

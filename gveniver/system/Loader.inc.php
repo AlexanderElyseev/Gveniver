@@ -440,11 +440,12 @@ final class Loader
      * Correction method of the directory separator character.
      * Replace all wrong characters to correct directory separator.
      *
-     * @param string $sFileName Name of file.
+     * @param string $sFileName        Name of file.
+     * @param bool   $bAddDirSeparator Is need to append directory separator to end of path.
      *
      * @return string
      */
-    public static function correctPath($sFileName)
+    public static function correctPath($sFileName, $bAddDirSeparator = false)
     {
         $sFileName = (GV_DS === '/')
             ? str_replace('\\', GV_DS, $sFileName)
@@ -452,6 +453,9 @@ final class Loader
 
         if (!self::isAbsolutePath($sFileName))
             $sFileName = GV_PATH_BASE.$sFileName;
+
+        if ($bAddDirSeparator && substr($sFileName, -1) !== GV_DS)
+            $sFileName = $sFileName.GV_DS;
 
         return $sFileName;
 
@@ -552,6 +556,7 @@ final class Loader
             }
         } catch (\Exception $cEx) {
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
+            //echo $cEx->getMessage();
             return null;
         }
 

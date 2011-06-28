@@ -112,8 +112,8 @@ class Log
     /**
      * Save log with specified provider or with all providers in list.
      * 
-     * @param LogSaveProvider $cProvider Target provider to save (if need).
-     * @param int             $nLevel    Log level for specified provider (if need).
+     * @param LogProvider $cProvider Target provider to save (if need).
+     * @param int         $nLevel    Log level for specified provider (if need).
      *
      * @return void
      */

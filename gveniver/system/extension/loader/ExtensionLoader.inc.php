@@ -26,11 +26,11 @@ namespace Gveniver\Extension;
 abstract class ExtensionLoader
 {
     /**
-     * Current kernel.
+     * Current application.
      *
-     * @var \Gveniver\Kernel\Kernel
+     * @var \Gveniver\Kernel\Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
 
     /**
@@ -50,15 +50,27 @@ abstract class ExtensionLoader
      * Base class constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
                 
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Getter for current application.
+     *
+     * @return \Gveniver\Kernel\Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
     /**
      * Loading extension by name.
      *
@@ -68,11 +80,11 @@ abstract class ExtensionLoader
      */
     public function get($sExtensionName)
     {
-        $this->cKernel->trace->addLine('[%s] Loading extension ("%s").', __CLASS__, $sExtensionName);
+        $this->getApplication()->trace->addLine('[%s] Loading extension ("%s").', __CLASS__, $sExtensionName);
 
         // First, try to load extension from cache by name.
         if (array_key_exists($sExtensionName, $this->_aNameHash)) {
-            $this->cKernel->trace->addLine('[%s] Extension ("%s") loaded from cache.', __CLASS__, $sExtensionName);
+            $this->getApplication()->trace->addLine('[%s] Extension ("%s") loaded from cache.', __CLASS__, $sExtensionName);
             $nId = $this->_aNameHash[$sExtensionName];
             return $this->_aExtensions[$nId];
         }
@@ -80,11 +92,11 @@ abstract class ExtensionLoader
         // Load extension.
         $cExt = $this->load($sExtensionName);
         if (!$cExt) {
-            $this->cKernel->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
+            $this->getApplication()->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
             return null;
         }
 
-        $this->cKernel->trace->addLine('[%s] Extension ("%s") successfully loaded.', __CLASS__, $sExtensionName);
+        $this->getApplication()->trace->addLine('[%s] Extension ("%s") successfully loaded.', __CLASS__, $sExtensionName);
         
         // Save loaded extension to cache.
         $nIndex = count($this->_aExtensions);

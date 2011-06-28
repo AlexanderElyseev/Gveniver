@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains kernel module class for log subsystem.
+ * File contains module class for log subsystem.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -15,7 +15,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('system/log/Log.inc.php');
 
 /**
- * Kernel module class for log subsystem.
+ * module class for log subsystem.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -35,34 +35,34 @@ class LogModule extends Module
     //-------------------------------------------------------------------------------
 
     /**
-     * Full initialization of kernel module.
+     * Full initialization of module.
      *
      * @return bool True on success.
      */
     protected function init()
     {
-        $this->cKernel->trace->addLine('[%s] Init.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
         // If log configuration is specified, builld log object and load providers configuration.
-        $nCommonLogLevel = intval($this->cKernel->cConfig->get('Module/LogModule/Level'));
+        $nCommonLogLevel = intval($this->getApplication()->getConfig()->get('Module/LogModule/Level'));
         if (!$nCommonLogLevel) {
-            $this->cKernel->trace->addLine('[%s] Log configuration not found.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] Log configuration not found.', __CLASS__);
             return true;
         }
         
-        $this->cKernel->trace->addLine('[%s] Common log level: %d.', __CLASS__, $nCommonLogLevel);
+        $this->getApplication()->trace->addLine('[%s] Common log level: %d.', __CLASS__, $nCommonLogLevel);
 
         // Build base log object.
         $this->_cLog = new \Gveniver\Log\Log($nCommonLogLevel);
 
          // Load configuration of log providers.
-        $aProviders = $this->cKernel->cConfig->get('Module/LogModule/Providers');
+        $aProviders = $this->getApplication()->getConfig()->get('Module/LogModule/Providers');
         if (is_array($aProviders)) {
             foreach ($aProviders as $aProviderData) {
 
                 // Class name of log provider is required.
                 if (!isset($aProviderData['Class'])) {
-                    $this->cKernel->trace->addLine('[%s] Provider class name is not specified.', __CLASS__);
+                    $this->getApplication()->trace->addLine('[%s] Provider class name is not specified.', __CLASS__);
                     continue;
                 }
 
@@ -74,12 +74,12 @@ class LogModule extends Module
                         'class' => $sClassName,
                         'ns'    => '\\Gveniver\\Log',
                         'path'  => 'system/log/provider/%class%.inc.php',
-                        'args'  => array($this->cKernel, $aProviderData)
+                        'args'  => array($this->getApplication(), $aProviderData)
                     ),
                     $nErrCode
                 );
                 if (!$cProvider) {
-                     $this->cKernel->trace->addLine(
+                     $this->getApplication()->trace->addLine(
                          '[%s] Error in create log provider ("%s"), with code: %d.',
                          __CLASS__,
                          $sClassName,
@@ -89,7 +89,7 @@ class LogModule extends Module
 
                 } // End if
 
-                $this->cKernel->trace->addLine('[%s] Log provider ("%s") successfully created.', __CLASS__, $sClassName);
+                $this->getApplication()->trace->addLine('[%s] Log provider ("%s") successfully created.', __CLASS__, $sClassName);
 
                 // Add provider to log object.
                 $this->_cLog->appendProvider($cProvider, $nLogProvider);
@@ -98,7 +98,7 @@ class LogModule extends Module
 
         } // End if
 
-        $this->cKernel->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
 
     } // End function
