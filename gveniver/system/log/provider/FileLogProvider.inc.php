@@ -38,13 +38,13 @@ class FileLogProvider extends LogProvider
      * Class constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel     Current kernel.
-     * @param array                   $aConfigData Configuration data for provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aConfigData  Configuration data for provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aConfigData)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aConfigData)
     {
         // Use parent constructor.
-        parent::__construct($cKernel, $aConfigData);
+        parent::__construct($cApplication, $aConfigData);
 
         if (!isset($aConfigData['FileName']) || !is_string($aConfigData['FileName']))
             throw new \Gveniver\Exception\Exception('Log file name must be specified.');
@@ -71,7 +71,7 @@ class FileLogProvider extends LogProvider
         $sLogDir = dirname($this->_sFileName);
         if (!is_dir($sLogDir) || !is_writable($sLogDir)) {
             if (!mkdir($sLogDir, 0777, true)) {
-                $this->cKernel->trace->addLine('[%s] Permissions denied in writeing log  at "%s".', __CLASS__, $sLogDir);
+                $this->getApplication()->trace->addLine('[%s] Permissions denied in writeing log  at "%s".', __CLASS__, $sLogDir);
                 return;
             }
         }
@@ -79,7 +79,7 @@ class FileLogProvider extends LogProvider
         // Open file for writing.
         $cFile = fopen($this->_sFileName, 'a');
         if (!$cFile) {
-            $this->cKernel->trace->addLine('[%s] Error in opening log "%s".', __CLASS__, $this->_sFileName);
+            $this->getApplication()->trace->addLine('[%s] Error in opening log "%s".', __CLASS__, $this->_sFileName);
             return;
         }
 

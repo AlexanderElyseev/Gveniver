@@ -37,16 +37,16 @@ class FileCacheProvider extends CacheProvider
     /**
      * Class constructor.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
-     * @param array                   $aOptions Options for cache provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aOptions     Options for cache provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
         // Use parent constructor.
-        parent::__construct($cKernel, $aOptions);
+        parent::__construct($cApplication, $aOptions);
 
         // Load cache folder.
-        $this->_sBaseCacheDirectory = (string)$this->cKernel->cConfig->get('Profile/Path/AbsCache');
+        $this->_sBaseCacheDirectory = (string)$this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
         if (!$this->_sBaseCacheDirectory || !file_exists($this->_sBaseCacheDirectory) || !is_dir($this->_sBaseCacheDirectory))
             throw new \Gveniver\Exception\Exception('Wrong cache directory.');
 
@@ -189,9 +189,9 @@ class FileCacheProvider extends CacheProvider
         // Build path to cache directory. Create, if not exists.
         $sCacheDirectory = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS;
         if (!file_exists($sCacheDirectory)) {
-            $this->cKernel->trace->addLine('[%s] Cache directory "%s" not found. Creating.', __CLASS__, $sCacheDirectory);
+            $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not found. Creating.', __CLASS__, $sCacheDirectory);
             if (!!mkdir($sCacheDirectory, 0777, true)) {
-                 $this->cKernel->trace->addLine('[%s] Cache directory "%s" not created.', __CLASS__, $sCacheDirectory);
+                 $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not created.', __CLASS__, $sCacheDirectory);
                 return false;
             }
         }

@@ -556,6 +556,7 @@ final class Loader
             }
         } catch (\Exception $cEx) {
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
+            //echo $cEx->getMessage();
             return null;
         }
 

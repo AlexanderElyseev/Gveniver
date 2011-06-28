@@ -21,4 +21,4 @@ define('GV_EOL', GV_CLI ? "\n" : '<br/>');                      // End of line.
 
 require 'system/Loader.inc.php';
 Gveniver\Loader::i('system/ExtendCommon.inc.php');
-Gveniver\Loader::i('system/kernel/Kernel.inc.php');
+Gveniver\Loader::i('system/kernel/Application.inc.php');

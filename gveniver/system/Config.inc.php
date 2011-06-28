@@ -76,7 +76,7 @@ class Config
         $this->_merge($aConfig);
 
         // Save cache if need.
-        $bCacheEnabled = is_null($bForceCache) ? Kernel\Kernel::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
+        $bCacheEnabled = is_null($bForceCache) ? Kernel\Application::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
         if ($bCacheEnabled) {
             $sCacheDir = dirname($sCacheFile);
             if (!file_exists($sCacheDir))

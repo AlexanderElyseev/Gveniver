@@ -16,7 +16,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('system/kernel/Profile.inc.php');
 
 /**
- * Base and final class of kernel.
+ * Base and final class of application.
  *
  * PHP version 5
  *
@@ -27,14 +27,14 @@ namespace Gveniver\Kernel;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-final class Kernel
+final class Application
 {
     /**
      * Configuration of kernel.
      *
-     * @var Config
+     * @var \Gveniver\Config
      */
-    public $cConfig;
+    private $_cConfig;
     //-----------------------------------------------------------------------------
 
     /**
@@ -66,18 +66,18 @@ final class Kernel
      * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @param string $sProfile               Path to kernel profile dir or name of kernel profile.
+     * @param string $sProfile               Path to profile directory or name of profile.
      * @param string $sApplicationConfigFile Path to XML configuration file for application.
      */
     public function __construct($sProfile, $sApplicationConfigFile = null)
     {
         // Initialize and load base configuration.
-        $this->cConfig = new \Gveniver\Config();
-        $this->cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
+        $this->_cConfig = new \Gveniver\Config();
+        $this->_cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
 
         // Append application configuration, if specified.
         if ($sApplicationConfigFile)
-            $this->cConfig->mergeXmlFile($sApplicationConfigFile);
+            $this->_cConfig->mergeXmlFile($sApplicationConfigFile);
 
         // Initialization of environment.
         $this->initEnvironment();
@@ -85,14 +85,26 @@ final class Kernel
         // Load profile.
         $this->_cProfile = $this->_loadProfile($sProfile);
         if (!$this->_cProfile)
-            throw new \Gveniver\Exception\Exception(sprintf('Kernel profile with name "%s" not found.', $sProfile));
+            throw new \Gveniver\Exception\Exception(sprintf('Profile with name "%s" not found.', $sProfile));
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
+    /**
+     * Getter for configuration of application.
+     *
+     * @return \Gveniver\Config
+     */
+    public function getConfig()
+    {
+        return $this->_cConfig;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
      * Overloaded getter method for non existing class fields.
-     * Returns kernel module by field name.
+     * Returns module by field name.
      *
      * @param string $sName Parameter name for reading.
      *
@@ -119,49 +131,49 @@ final class Kernel
         $this->trace->addLine('[%s] Initializing environement of the kernel.', __CLASS__);
 
         // Error reporting.
-        $nErrorReporting = $this->cConfig->get('Kernel/ErrorReporting');
+        $nErrorReporting = $this->getConfig()->get('Kernel/ErrorReporting');
         ini_set('error_reporting', $nErrorReporting);
         $this->trace->addLine('[%s] Error reporting: %d.', __CLASS__, $nErrorReporting);
 
         // Display errors.
-        $bDisplayErrors = self::toBoolean($this->cConfig->get('Kernel/DisplayErrors'));
+        $bDisplayErrors = self::toBoolean($this->getConfig()->get('Kernel/DisplayErrors'));
         ini_set('display_errors', $bDisplayErrors);
         if ($bDisplayErrors)
             $this->trace->addLine('[%s] Display errors: %s.', __CLASS__, $bDisplayErrors);
 
         // Start session.
-        $bStartSession = self::toBoolean($this->cConfig->get('Kernel/StartSession'));
+        $bStartSession = self::toBoolean($this->getConfig()->get('Kernel/StartSession'));
         if ($bStartSession) {
             session_start();
             $this->trace->addLine('[%s] Session started.', __CLASS__);
         }
 
         // Used locale.
-        $sLocale = $this->cConfig->get('Kernel/Locale');
+        $sLocale = $this->getConfig()->get('Kernel/Locale');
         setlocale(LC_ALL, $sLocale);
         $this->trace->addLine('[%s] Locale: %s.', __CLASS__, $sLocale);
 
         // Used timezone.
-        $sTimezone = $this->cConfig->get('Kernel/Timezone');
+        $sTimezone = $this->getConfig()->get('Kernel/Timezone');
         date_default_timezone_set($sTimezone);
         $this->trace->addLine('[%s] Timezone: %s.', __CLASS__, $sTimezone);
 
         // Multibyte encoding.
-        $sEncoding = $this->cConfig->get('Kernel/Encoding');
+        $sEncoding = $this->getConfig()->get('Kernel/Encoding');
         mb_internal_encoding($sEncoding);
         mb_regex_encoding($sEncoding);
         $this->trace->addLine('[%s] Encoding: %s.', __CLASS__, $sEncoding);
 
         // Use output buffering.
-        $bUseBuffering = self::toBoolean($this->cConfig->get('Kernel/UseOutputBuffering'));
+        $bUseBuffering = self::toBoolean($this->getConfig()->get('Kernel/UseOutputBuffering'));
         if ($bUseBuffering) {
             $this->trace->addLine('[%s] Use output buffering.', __CLASS__);
 
             // Force compression even when client does not report support.
-            $bForceCompression = self::toBoolean($this->cConfig->get('Kernel/ForceCompression'));
+            $bForceCompression = self::toBoolean($this->getConfig()->get('Kernel/ForceCompression'));
 
             // Prefer deflate over gzip when both are supported.
-            $bPreferDeflate = self::toBoolean($this->cConfig->get('Kernel/PreferDeflate'));
+            $bPreferDeflate = self::toBoolean($this->getConfig()->get('Kernel/PreferDeflate'));
 
             // Handle the output stream and set a handler function.
             if(isset($_SERVER['HTTP_ACCEPT_ENCODING']))
@@ -194,13 +206,13 @@ final class Kernel
     //-----------------------------------------------------------------------------
 
     /**
-     * Load kernel profile instance by name.
+     * Load application profile instance by name.
      *
-     * @param string $sProfile Path to kernel profile dir or name of kernel profile for loading.
+     * @param string $sProfile Path to application profile dir or name of application profile for loading.
      * If directory is specified, load from directory. Otherwise, load from base profile directory
      * with specified profile name.
      *
-     * @return Profile|null Returns kernel profile by specified name or null, if module not loaded.
+     * @return Profile|null Returns application profile by specified name or null, if module not loaded.
      */
     private function _loadProfile($sProfile)
     {
@@ -212,7 +224,7 @@ final class Kernel
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfile);
 
-            $sProfilePath = \Gveniver\Loader::correctPath($this->cConfig->get('Kernel/ProfilePath')).$sProfile.GV_DS;
+            $sProfilePath = \Gveniver\Loader::correctPath($this->getConfig()->get('Kernel/ProfilePath')).$sProfile.GV_DS;
             if (!is_dir($sProfilePath)) {
                 $this->trace->addLine('[%s] Profile directory ("%s") is not exists.', __CLASS__, $sProfilePath);
                 return null;
@@ -227,7 +239,7 @@ final class Kernel
         }
 
         // Include profile file with class, if target class is not exists.
-        $cProfileClass = '\\Gveniver\\Kernel\\'.$sProfile.'KernelProfile';
+        $cProfileClass = '\\Gveniver\\Kernel\\'.$sProfile.'Profile';
         if (!class_exists($cProfileClass)) {
             $this->trace->addLine(
                 '[%s] Profile class ("%s") is not exists. Start of including file: "%s".',
@@ -275,7 +287,7 @@ final class Kernel
 
         // Load configuration of profile append to main configuration.
         $sProfileXmlFile = $sProfilePath.'config.xml';
-        if ($this->cConfig->mergeXmlFile($sProfileXmlFile)) {
+        if ($this->getConfig()->mergeXmlFile($sProfileXmlFile)) {
             $this->trace->addLine(
                 '[%s] Configuration parameters of profile ("%s") successfully loaded (from "%s").',
                 __CLASS__,
@@ -290,7 +302,7 @@ final class Kernel
     //-----------------------------------------------------------------------------
 
     /**
-     * Load kernel module by name.
+     * Load module by name.
      *
      * !!! Do not use modules in this function for preven recursions !!!
      *
@@ -299,7 +311,7 @@ final class Kernel
      *
      * @param string $sModuleName Name of module for loading.
      *
-     * @return Module|null Returns kernel module by specified name or null, if module not loaded.
+     * @return Module|null Returns module by specified name or null, if module not loaded.
      */
     private function _loadModule($sModuleName)
     {
@@ -322,18 +334,18 @@ final class Kernel
         if (!class_exists($sModuleClassName))
             return null;
         
-        // Class of module must extends base kernel module class.
+        // Class of module must extends base module class.
         if (!in_array('Gveniver\\Kernel\\Module', class_parents($sModuleClassName)))
             return null;
 
         // Check module relations.
-        $aRelations = $this->cConfig->get(array('Module', $sModuleName, 'Relations'));
+        $aRelations = $this->getConfig()->get(array('Module', $sModuleName, 'Relations'));
         if (is_array($aRelations) && count($aRelations) > 0)
             foreach ($aRelations as $sRelationModule)
                 if (!$this->_loadModule($sRelationModule['Name']))
                     return null;
 
-        // Try to create new instance of kernel module.
+        // Try to create new instance of module.
         try {
             $cModule = new $sModuleClassName($this);
         } catch (Exception $cEx) {
@@ -348,7 +360,7 @@ final class Kernel
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns kernel module by name.
+     * Returns module by name.
      * Analyze short module names and save to cache.
      *
      * @param string $sModuleName Name of module. May be short (ex. trace -> TraceModule).
@@ -377,7 +389,7 @@ final class Kernel
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns current kernel profile.
+     * Returns current application profile.
      *
      * @return Profile
      */

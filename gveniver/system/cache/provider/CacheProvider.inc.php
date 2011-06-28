@@ -26,11 +26,11 @@ namespace Gveniver\Cache;
 abstract class CacheProvider
 {
     /**
-     * Current kernel.
+     * Current application.
      *
-     * @var Kernel
+     * @var \Gveniver\Kernel\Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
 
     /**
@@ -46,17 +46,29 @@ abstract class CacheProvider
      * Base constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
-     * @param array                   $aOptions Options for cache provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aOptions     Options for cache provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
         $this->aOptions = $aOptions;
 
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Getter for current application.
+     *
+     * @return \Gveniver\Kernel\Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
     /**
      * Load data form cache.
      * 

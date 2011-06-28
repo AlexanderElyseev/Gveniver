@@ -43,7 +43,7 @@ class MongoDbDataProvider extends DataProvider
     {
         // Check for existing MongoDb PHP extension.
         if (!class_exists('Mongo')) {
-            $this->cKernel->trace->addLine('[%s] MongoDb PHP extension is not installed.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] MongoDb PHP extension is not installed.', __CLASS__);
             return false;
         }
 

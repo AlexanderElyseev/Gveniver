@@ -38,13 +38,13 @@ class StreamLogProvider extends LogProvider
      * Class constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel     Current kernel.
-     * @param array                   $aConfigData Configuration data for provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aConfigData  Configuration data for provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aConfigData)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aConfigData)
     {
         // Use parent constructor.
-        parent::__construct($cKernel, $aConfigData);
+        parent::__construct($cApplication, $aConfigData);
 
         if (!isset($aConfigData['StreamName']) || !is_string($aConfigData['StreamName']))
             throw new \Gveniver\Exception\Exception('Log stream name must be specified.');
@@ -65,7 +65,7 @@ class StreamLogProvider extends LogProvider
     {
         $cFile = fopen($this->_sStreamName, 'a');
         if (!$cFile) {
-            $this->cKernel->trace->addLine('[%s] Error in opening log stream "%s".', __CLASS__, $this->_sStreamName);
+            $this->getApplication()->trace->addLine('[%s] Error in opening log stream "%s".', __CLASS__, $this->_sStreamName);
             return;
         }
 

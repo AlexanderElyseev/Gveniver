@@ -26,11 +26,11 @@ namespace Gveniver\Data;
 abstract class DataProvider
 {
     /**
-     * Current kernel.
+     * Current application.
      *
-     * @var Kernel
+     * @var \Gveniver\Kernel\Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
 
     /**
@@ -46,12 +46,12 @@ abstract class DataProvider
      * Base constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel  Current kernel.
-     * @param array                   $aOptions Options for provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aOptions     Options for provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aOptions)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
         $this->aOptions = $aOptions;
 
         // Try to connect.
@@ -61,6 +61,18 @@ abstract class DataProvider
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Getter for current application.
+     *
+     * @return \Gveniver\Kernel\Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
     /**
      * Connect to data source.
      *

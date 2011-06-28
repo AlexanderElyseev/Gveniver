@@ -37,7 +37,7 @@ class GvInvarExt extends SimpleExtension
         if (!$sInvarName)
             return null;
 
-        return $this->cKernel->invar->get($sInvarName);
+        return $this->getApplication()->invar->get($sInvarName);
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class GvInvarExt extends SimpleExtension
      */
     public function getLink(array $aParams)
     {
-        return $this->cKernel->invar->getLink($aParams);
+        return $this->getApplication()->invar->getLink($aParams);
 
     } // End function
     //-----------------------------------------------------------------------------

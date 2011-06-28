@@ -43,7 +43,7 @@ class MySqlDataProvider extends DataProvider
     {
         // Check for existing MySql PHP extension.
         if (!function_exists('mysql_connect')) {
-            $this->cKernel->trace->addLine('[%s] MySql PHP extension is not installed.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] MySql PHP extension is not installed.', __CLASS__);
             return false;
         }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains tracing kernel module class.
+ * File contains tracing module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -14,7 +14,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('Module.inc.php');
 
 /**
- * Tracing kernel module class.
+ * Tracing module class.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -43,15 +43,15 @@ class TraceModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
-     * Full initialization of kernel module.
+     * Full initialization of module.
      *
      * @return bool True on success.
      */
     protected function init()
     {
         $this->_aMessages = array();
-        $this->_bDebug = Kernel::toBoolean(
-            $this->cKernel->cConfig->get(
+        $this->_bDebug = Application::toBoolean(
+            $this->getApplication()->getConfig()->get(
                 array('Kernel', 'Debug')
             )
         );

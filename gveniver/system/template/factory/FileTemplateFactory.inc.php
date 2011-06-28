@@ -63,31 +63,31 @@ abstract class FileTemplateFactory extends TemplateFactory
      * Class constructor.
      * Initialize member fields. Load parameters of template subsystem from configuration.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
      *
      * @throws \Gveniver\Exception\Exception Throws if directory with templates not loaded
      * correctly.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
         // Execute parent constructor.
-        parent::__construct($cKernel);
+        parent::__construct($cApplication);
 
         // Template files extension.
-        $sExt = $this->cKernel->cConfig->get('Module/TemplateModule/Ext');
+        $sExt = $this->getApplication()->getConfig()->get('Module/TemplateModule/Ext');
         if (!$sExt)
             throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
         $this->sTplFileNameExtension = ($sExt[0] != '.') ? '.'.$sExt : $sExt;
 
         // Template files separator.
-        $this->sTplFileNameSeparator = $this->cKernel->cConfig->get(
+        $this->sTplFileNameSeparator = $this->getApplication()->getConfig()->get(
             array('Module/TemplateModule/Separator')
         );
         if (!$this->sTplFileNameSeparator)
             throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
 
         // Template folder.
-        $this->sTplFolder = $this->cKernel->cConfig->get('Profile/Path/AbsTemplate');
+        $this->sTplFolder = $this->getApplication()->getConfig()->get('Profile/Path/AbsTemplate');
         if (!$this->sTplFolder  || !is_dir($this->sTplFolder) || !is_readable($this->sTplFolder))
             throw new \Gveniver\Exception\Exception('Wrong template directory.');
         
@@ -153,7 +153,7 @@ abstract class FileTemplateFactory extends TemplateFactory
 
                 } // End for
 
-                $this->cKernel->trace->addLine('[%s] Template ("%s") not found.', __CLASS__, $sStartName);
+                $this->getApplication()->trace->addLine('[%s] Template ("%s") not found.', __CLASS__, $sStartName);
 
             } // End else
 

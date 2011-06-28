@@ -38,15 +38,15 @@ class Smarty3TemplateFactory extends FileTemplateFactory
     /**
      * Class constructor. Initialize Smarty system.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
      * 
      * @throws \Gveniver\Exception\Exception Throws if Smarty library not loaded or
      * loaded incorrectly.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
         // Use base constructor.
-        parent::__construct($cKernel);
+        parent::__construct($cApplication);
 
         // Check, is SMarty is exists on system.
         if (!class_exists('Smarty'))
@@ -67,28 +67,28 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      */
     private function _reinstallSmarty()
     {
-        $sDirTemplate = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirTemplate');
+        $sDirTemplate = $this->getApplication()->getConfig()->get('Module/TemplateModule/SmartyDirTemplate');
         if (!$this->_createDir($sDirTemplate) || !is_readable($sDirTemplate))
             return false;
         $this->_cSmarty->template_dir = $sDirTemplate;
 
-        $sDirCompile = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirCompile');
+        $sDirCompile = $this->getApplication()->getConfig()->get('Module/TemplateModule/SmartyDirCompile');
         if (!$this->_createDir($sDirCompile) || !is_writable($sDirCompile))
             return false;
         $this->_cSmarty->compile_dir = $sDirCompile;
 
-        $sDirCache = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirCache');
+        $sDirCache = $this->getApplication()->getConfig()->get('Module/TemplateModule/SmartyDirCache');
         if (!$this->_createDir($sDirCache) || !is_writable($sDirCache))
             return false;
         $this->_cSmarty->cache_dir = $sDirCache;
 
-        $sDirConfig = $this->cKernel->cConfig->get('Module/TemplateModule/SmartyDirConfig');
+        $sDirConfig = $this->getApplication()->getConfig()->get('Module/TemplateModule/SmartyDirConfig');
         if (!$this->_createDir($sDirConfig) || !is_readable($sDirConfig))
             return false;
         $this->_cSmarty->config_dir = $sDirConfig;
 
-        $this->_cSmarty->left_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterBegin');
-        $this->_cSmarty->right_delimiter = $this->cKernel->cConfig->get('Module/TemplateModule/DelimiterEnd');
+        $this->_cSmarty->left_delimiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterBegin');
+        $this->_cSmarty->right_delimiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterEnd');
         $this->_cSmarty->registerPlugin('function', 'gv', array($this, 'extension'));
         $this->_cSmarty->registerPlugin('modifier', 'upper', '\\Gveniver\\strtoupper_ex');
         $this->_cSmarty->registerPlugin('modifier', 'lower', '\\Gveniver\\strtolower_ex');
@@ -151,9 +151,9 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      */
     public function extension($aParams, &$cSmarty)
     {
-        $cExtModule = $this->cKernel->extension;
+        $cExtModule = $this->getApplication()->extension;
         if (!$cExtModule) {
-            $this->cKernel->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
             return null;
         }
 
@@ -163,14 +163,14 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         $sVarName = isset($aParams['var']) ? $aParams['var'] : null;
         $sFormat = isset($aParams['format']) ? $aParams['format'] : null;
         if (!$sExtensionName || !$sExtensionHandlerName) {
-            $this->cKernel->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
             return null;
         }
         
         // Load extension.
         $cExt = $cExtModule->getExtension($sExtensionName);
         if (!$cExt instanceof \Gveniver\Extension\Extension) {
-            $this->cKernel->trace->addLine(
+            $this->getApplication()->trace->addLine(
                 '[%s] Extension ("%s") not found for Smarty query.',
                 __CLASS__,
                 $sExtensionName

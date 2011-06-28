@@ -26,7 +26,7 @@ namespace Gveniver\Kernel;
  * @license    http://prof-club.ru/license.txt Prof-Club License
  * @link       http://prof-club.ru
  */
-class DummyKernelProfile extends Profile
+class DummyProfile extends Profile
 {
     /**
      * Start profile logic.
@@ -35,14 +35,14 @@ class DummyKernelProfile extends Profile
      */
     public function start()
     {
-        $this->cKernel->trace->addLine('[%s] Start.', __CLASS__);
-        $sResult = $this->cKernel->template->parseTemplate(
+        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
+        $sResult = $this->getApplication()->template->parseTemplate(
             $this->getMainTemplate(
                 $this->getCurrentSectionName(),
                 $this->getCurrentAction()
             )
         );
-        $this->cKernel->trace->addLine('[%s] End.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
         return $sResult;
 
     } // End function

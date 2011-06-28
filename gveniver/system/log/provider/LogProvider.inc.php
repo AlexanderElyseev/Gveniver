@@ -66,11 +66,11 @@ abstract class LogProvider
     //-----------------------------------------------------------------------------
         
     /**
-     * Current kernel.
+     * Current application.
      *
-     * @var Kernel
+     * @var \Gveniver\Kernel\Application
      */
-    protected $cKernel;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
 
     /**
@@ -86,17 +86,29 @@ abstract class LogProvider
      * Base constructor.
      * Initialize member fields.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel     Current kernel.
-     * @param array                   $aConfigData Configuration data of provider.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     * @param array                        $aConfigData  Configuration data of provider.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel, array $aConfigData)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, array $aConfigData)
     {
-        $this->cKernel = $cKernel;
+        $this->_cApplication = $cApplication;
         $this->aConfigData = $aConfigData;
 
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Getter for current application.
+     *
+     * @return \Gveniver\Kernel\Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+    
     /**
      * Save log data with specified by provider logic.
      *

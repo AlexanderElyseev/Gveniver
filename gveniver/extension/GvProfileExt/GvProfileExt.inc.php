@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains kernel extension for access to profile data.
+ * File contains extension for access to profile data.
  *
  * @category  Gveniver
  * @package   Extension
@@ -17,7 +17,7 @@ namespace Gveniver\Extension;
 \Gveniver\Loader::i('system/cache/packer/ScriptPacker.inc.php');
 
 /**
- * Kernel extension class for access to profile data.
+ * Extension class for access to profile data.
  *
  * @category  Gveniver
  * @package   Extension
@@ -40,23 +40,23 @@ class GvProfileExt extends SimpleExtension
     /**
      * Overloaded class constructor.
      *
-     * @param \Gveniver\Kernel\Kernel $cKernel Current kernel.
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
      */
-    public function __construct(\Gveniver\Kernel\Kernel $cKernel)
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
         // Base parent constructor.
-        parent::__construct($cKernel);
+        parent::__construct($cApplication);
 
         // Configuration parameters.
-        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Kernel/UseConfigScript'));
-        $this->_aConfig['ConfigScriptSection'] = $this->cKernel->cConfig->get('Kernel/ConfigScriptSection');
-        $this->_aConfig['InvarSectionKey'] = $this->cKernel->cConfig->get('Kernel/InvarSectionKey');
+        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Kernel/UseConfigScript'));
+        $this->_aConfig['ConfigScriptSection'] = $this->getApplication()->getConfig()->get('Kernel/ConfigScriptSection');
+        $this->_aConfig['InvarSectionKey'] = $this->getApplication()->getConfig()->get('Kernel/InvarSectionKey');
 
-        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheScript'));
-        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/CacheStyle'));
+        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/CacheScript'));
+        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/CacheStyle'));
 
-        $this->_aConfig['UseScriptTemplate'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/UseScriptTemplate'));
-        $this->_aConfig['UseStyleTemplate'] = \Gveniver\Kernel\Kernel::toBoolean($this->cKernel->cConfig->get('Profile/UseStyleTemplate'));
+        $this->_aConfig['UseScriptTemplate'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/UseScriptTemplate'));
+        $this->_aConfig['UseStyleTemplate'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/UseStyleTemplate'));
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -68,10 +68,10 @@ class GvProfileExt extends SimpleExtension
      *
      * @return string|null
      */
-    public function getKernelConfigVariable($sPath)
+    public function getConfigVariable($sPath)
     {
         if ($sPath)
-            return $this->cKernel->cConfig->get($sPath);
+            return $this->getApplication()->getConfig()->get($sPath);
 
         return null;
         
@@ -85,12 +85,12 @@ class GvProfileExt extends SimpleExtension
      */
     public function parseActTemplate()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
         $sTemplateName = $cProfile->getActTemplate($sSectionName, $sActionValue);
         if ($sTemplateName)
-            return  $this->cKernel->template->parseTemplate($sTemplateName);
+            return  $this->getApplication()->template->parseTemplate($sTemplateName);
 
         return null;
         
@@ -108,7 +108,7 @@ class GvProfileExt extends SimpleExtension
     public function parseTemplate($sTemplateName, $aParams = array())
     {
         return $sTemplateName
-            ? $this->cKernel->template->parseTemplate($sTemplateName, $aParams)
+            ? $this->getApplication()->template->parseTemplate($sTemplateName, $aParams)
             : null;
 
     } // End function
@@ -126,13 +126,13 @@ class GvProfileExt extends SimpleExtension
         // Add JavaScript configuration.
         if ($this->_aConfig['UseConfigScript'])
             $aRet[] = array(
-                'FileName' => $this->cKernel->invar->getLink(
+                'FileName' => $this->getApplication()->invar->getLink(
                     array($this->_aConfig['InvarSectionKey'] => $this->_aConfig['ConfigScriptSection'])
                 )
             );
 
         // Load scripts data from profile configuration.
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
         $aScriptDataList = $cProfile->getScriptList(
@@ -156,7 +156,7 @@ class GvProfileExt extends SimpleExtension
         }
 
         // Set absolute path to scripts.
-        $sScriptWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsScriptWeb');
+        $sScriptWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsScriptWeb');
         foreach ($aScriptDataList as &$aScript) {
             $aScript['FileName'] = $sScriptWebPath.$aScript['FileName'];
         }
@@ -179,18 +179,18 @@ class GvProfileExt extends SimpleExtension
     {
         try {
             // Check script cache.
-            $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
+            $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
             if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                 return null;
 
-            $sScriptCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
+            $sScriptCacheWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb');
             return array(
                 array('FileName' => $sScriptCacheWebPath.$sCacheFile)
             );
 
         } catch (\Gveniver\Exception\Exception $cEx) {
-            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
+            $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
         return null;
@@ -213,8 +213,8 @@ class GvProfileExt extends SimpleExtension
             return;
 
         try {
-            $sScriptAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsScript');
-            $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
+            $sScriptAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsScript');
+            $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
             $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                 $sCacheAbsPath.$sCacheFile,
@@ -226,7 +226,7 @@ class GvProfileExt extends SimpleExtension
             $cCacheSplitter->save();
 
         } catch (\Gveniver\Exception\Exception $cEx) {
-            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
+            $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
     } // End function
@@ -255,7 +255,7 @@ class GvProfileExt extends SimpleExtension
     public function getStyles()
     {
         // Load data from profile configuration.
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
         $aStyleList = $cProfile->getStyleList(
@@ -279,7 +279,7 @@ class GvProfileExt extends SimpleExtension
 
         // Build result list of styles.
         $aRet = array();
-        $sStyleWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsStyleWeb');
+        $sStyleWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsStyleWeb');
         if (is_array($aStyleList)) {
             foreach ($aStyleList as $aStyle) {
                 $aRet[] = array(
@@ -307,8 +307,8 @@ class GvProfileExt extends SimpleExtension
     private function _getCacheStyles($aList, $sSectionName, $sActionValue)
     {
         try {
-            $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
-            $sStyleCacheWebPath = $this->cKernel->cConfig->get('Profile/Path/AbsCacheWeb');
+            $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
+            $sStyleCacheWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb');
 
             // Group styles by condition.
             $aVariousConditions = array();
@@ -332,7 +332,7 @@ class GvProfileExt extends SimpleExtension
             return $aRet;
 
         } catch (\Gveniver\Exception\Exception $cEx) {
-            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
+            $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
         return null;
@@ -355,8 +355,8 @@ class GvProfileExt extends SimpleExtension
             return;
 
         try {
-            $sStyleAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsStyle');
-            $sCacheAbsPath = $this->cKernel->cConfig->get('Profile/Path/AbsCache');
+            $sStyleAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsStyle');
+            $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
 
             // Group styles by condition.
             $aVariousConditions = array();
@@ -378,7 +378,7 @@ class GvProfileExt extends SimpleExtension
             } // End foreach
 
         } catch (\Gveniver\Exception\Exception $cEx) {
-            $this->cKernel->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
+            $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
     } // End function
@@ -408,7 +408,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getTitle()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         return $cProfile->getTitle(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()
@@ -425,7 +425,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getSubTitle()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         return $cProfile->getSubTitle(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()
@@ -442,7 +442,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getContentType()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         return $cProfile->getContentType(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()
@@ -459,7 +459,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getKeywords()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         return $cProfile->getKeywords(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()
@@ -476,7 +476,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getAuthor()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         return $cProfile->getAuthor(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()
@@ -493,7 +493,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getRobots()
     {
-        $cProfile = $this->cKernel->getProfile();
+        $cProfile = $this->getApplication()->getProfile();
         return $cProfile->getRobots(
             $cProfile->getCurrentSectionName(),
             $cProfile->getCurrentAction()

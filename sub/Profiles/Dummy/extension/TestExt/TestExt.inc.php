@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains test kernel extension.
+ * File contains test extension.
  *
  * @category  Gveniver
  * @package   Extension
@@ -13,7 +13,7 @@
 GvInclude::i('system/extension/SimpleExtension.inc.php');
 
 /**
- * Test kernel extension class.
+ * Test extension class.
  *
  * @category  Gveniver
  * @package   Extension
