@@ -70,7 +70,7 @@ class GvDebugExt extends SimpleExtension
      */
     public function isDebug()
     {
-        return $this->getApplication()->toBoolean(
+        return \Gveniver\Kernel\Application::toBoolean(
             $this->getApplication()->getConfig()->get('Kernel/Debug')
         );
         

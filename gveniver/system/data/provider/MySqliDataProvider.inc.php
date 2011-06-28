@@ -29,7 +29,7 @@ class MySqliDataProvider extends DataProvider
     /**
      * MySql connection link.
      *
-     * @var resource
+     * @var \mysqli
      */
     private $_cConnection;
     //-----------------------------------------------------------------------------

@@ -155,6 +155,7 @@ class DirectoryExtensionLoader extends ExtensionLoader
         } // End foreach
  
         $this->getApplication()->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
+        return null;
 
     } // End function
     //-----------------------------------------------------------------------------

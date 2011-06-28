@@ -348,7 +348,7 @@ final class Application
         // Try to create new instance of module.
         try {
             $cModule = new $sModuleClassName($this);
-        } catch (Exception $cEx) {
+        } catch (\Exception $cEx) {
             return null;
         }
 

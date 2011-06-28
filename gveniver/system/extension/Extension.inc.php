@@ -58,7 +58,7 @@ abstract class Extension
     /**
      * Getter for current application.
      *
-     * @return Application
+     * @return \Gveniver\Kernel\Application
      */
     public function getApplication()
     {
