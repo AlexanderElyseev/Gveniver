@@ -49,7 +49,7 @@ class GvInvarExt extends SimpleExtension
      *
      * @return string
      */
-    public function getLink(array $aParams)
+    public function getLink(array $aParams = array())
     {
         return $this->getApplication()->invar->getLink($aParams);
 
