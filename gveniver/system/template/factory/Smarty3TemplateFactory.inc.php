@@ -151,6 +151,8 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      */
     public function extension($aParams, &$cSmarty)
     {
+        $aCopyParams = $aParams;
+
         $cExtModule = $this->getApplication()->extension;
         if (!$cExtModule) {
             $this->getApplication()->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
@@ -162,6 +164,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         $sExtensionHandlerName = isset($aParams['act']) ? $aParams['act'] : null;
         $sVarName = isset($aParams['var']) ? $aParams['var'] : null;
         $sFormat = isset($aParams['format']) ? $aParams['format'] : null;
+        $mCache = isset($aParams['cache']) ? $aParams['cache'] : null;
         if (!$sExtensionName || !$sExtensionHandlerName) {
             $this->getApplication()->trace->addLine('[%s] Wrong arguments at extension query from Smarty.', __CLASS__);
             return null;
@@ -188,12 +191,43 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         unset($aParams['act']);
         unset($aParams['var']);
         unset($aParams['format']);
-        $sRet = $cExt->query($sExtensionHandlerName, $aParams, $sFormat);
+        unset($aParams['cache']);
+
+        // Check cache before executing query.
+        if ($mCache) {
+            $this->getApplication()->trace->addLine('[%s] Using cache for extension query.', __CLASS__);
+
+            // Try to load cache module from application.
+            // On error execute query.
+            $cCacheModule = $this->getApplication()->cache;
+            if (!$cCacheModule) {
+                $this->getApplication()->trace->addLine('[%s] Cache module not found.', __CLASS__);
+                $sRet = $cExt->query($sExtensionHandlerName, $aParams, $sFormat);
+            } else {
+                // Generate identifier of cache data by parameters of call.
+                $sCacheId = is_array($mCache) && isset($mCache['id'])
+                    ? $mCache['id']
+                    : $cCacheModule->generateId(serialize($aCopyParams));
+                
+                // Load data from cache.
+                // If data is not loaded, load by extension and save to cache.
+                $sRet = null;
+                if ($cCacheModule->get($sCacheId, self::CACHE_GROUP, $sRet)) {
+                    $this->getApplication()->trace->addLine('[%s] Data loaded from cache.', __CLASS__);
+                } else {
+                    $this->getApplication()->trace->addLine('[%s] Data is not loaded from cache.', __CLASS__);
+                    $sRet = $cExt->query($sExtensionHandlerName, $aParams, $sFormat);
+                    $cCacheModule->set($sRet, $sCacheId, self::CACHE_GROUP);
+                }
+            }
+        } else {
+            $sRet = $cExt->query($sExtensionHandlerName, $aParams, $sFormat);
+        }
 
         // Assign result to specified variable.
         if ($sVarName) {
             $cSmarty->assign($sVarName, $sRet);
-            return "";
+            return '';
         }
         return $sRet;
 
