@@ -61,5 +61,23 @@ class GvRedirectExt extends SimpleExtension
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Returns saved in session value of variable with specified name.
+     *
+     * @param string $sName Name of variable for loading.
+     *
+     * @return mixed
+     */
+    public function getSessionVariable($sName = null)
+    {
+        // Do nothing, if variable name is not specified.
+        if (!$sName)
+            return null;
+
+        return $this->getApplication()->redirect->getSessionVariable($sName);
+
+    }  // End function
+    //-----------------------------------------------------------------------------
+
 } // End class
 //-----------------------------------------------------------------------------
