@@ -28,25 +28,5 @@ namespace Gveniver\Kernel;
  */
 class DummyProfile extends Profile
 {
-    /**
-     * Start profile logic.
-     *
-     * @return string
-     */
-    public function start()
-    {
-        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
-        $sResult = $this->getApplication()->template->parseTemplate(
-            $this->getMainTemplate(
-                $this->getCurrentSectionName(),
-                $this->getCurrentAction()
-            )
-        );
-        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
-        return $sResult;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
 } // End class
 //-----------------------------------------------------------------------------
