@@ -56,6 +56,14 @@ class RedirectModule extends Module
      */
     private $_sLinkText;
     //-----------------------------------------------------------------------------
+
+    /**
+     * Data for saving session.
+     * 
+     * @var array
+     */
+    private $_aPostData = array();
+    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
@@ -71,6 +79,9 @@ class RedirectModule extends Module
         $this->_nRedirectionTime = (int)$this->getApplication()->getConfig()->get('Module/RedirectModule/WaitTime');
         $this->_sRedirectionTemplateName = $this->getApplication()->getConfig()->get('Module/RedirectModule/Template');
 
+        // Load session data.
+        $this->_loadSessionData();
+
         $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
         return true;
 
@@ -78,11 +89,102 @@ class RedirectModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
+     * Class destructor.
+     * Save session data.
+     */
+    public function __destruct()
+    {
+        $this->_saveSessionData();
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+    
+    /**
+     * Load saved data from session.
+     *
+     * @return void
+     */
+    private function _loadSessionData()
+    {
+        if (!isset($_SESSION['Gveniver']['RedirectModule']['Data'])) {
+            $this->getApplication()->trace->addLine('[%s] Session data is not set.', __CLASS__);
+            return;
+        }
+
+        // Load.
+        $aData = $_SESSION['Gveniver']['RedirectModule']['Data'];
+
+        // Clean.
+        unset($_SESSION['Gveniver']['RedirectModule']['Data']);
+
+        // Do not save wrong data.
+        if (!is_array($aData)) {
+            $this->getApplication()->trace->addLine('[%s] Wrong session datat.', __CLASS__);
+            return;
+        }
+
+        // Save.
+        $this->_aPostData = $aData['Data'];
+        return;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Save post data to session.
+     *
+     * @return void
+     */
+    private function _saveSessionData()
+    {
+        if (!count($this->_aPostData))
+            return;
+
+        $_SESSION['Gveniver']['RedirectModule']['Data'] = $this->_aPostData;
+        return;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Load variable from saved in session data.
+     * 
+     * @param string $sName Name of variable for loading.
+     *
+     * @return mixed Returns null if variable if nod specified.
+     */
+    public function getSessionVariable($sName)
+    {
+        return isset($this->_aPostData[$sName]) ? $this->_aPostData[$sName] : null;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Set data for saving in session.
+     *
+     * @param mixed  $mData Data for save.
+     * @param string $sName Name of variable for saving. If not specified,
+     * replace all session data by specified.
+     *
+     * @return void
+     */
+    public function setSessionVariable($mData, $sName = null)
+    {
+        if (!$sName && is_array($mData))
+            $this->_aPostData = $mData;
+        elseif ($sName)
+            $this->_aPostData[$sName] = $mData;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+    
+    /**
      * Output redirection link as string.
      *
      * @return string
      */
-    function __toString()
+    public function __toString()
     {
         // Do not redirect to incorrect url.
         if (!$this->_sRedirectionTemplateName || !$this->_sUrl || !$this->isCorrectUrl($this->_sUrl))
@@ -115,11 +217,7 @@ class RedirectModule extends Module
     function setUrl($sUrl, $bReWrite = true)
     {
         // Url is setted and no need to rewrite.
-        if (!$bReWrite && is_correct_url($this->_sUrl))
-            return;
-
-        // Save correct url.
-        if (!$this->isCorrectUrl($sUrl))
+        if (!$bReWrite && \Gveniver\is_correct_url($this->_sUrl))
             return;
 
         $this->getApplication()->trace->addLine('[%s] Set url to "%s"', __CLASS__, $sUrl);
@@ -178,7 +276,7 @@ class RedirectModule extends Module
     public function redirect()
     {
         // Check correctness.
-        if (!is_correct_url($this->_sUrl))
+        if (!\Gveniver\is_correct_url($this->_sUrl))
             return;
 
         // Redirect.
