@@ -2,27 +2,27 @@
 <Configuration>
     <Module>
         <TemplateModule>
-            <SmartyDirCache>/var/www/lib/Gveniver/sub/Profiles/Dummy/cache/</SmartyDirCache>
-            <SmartyDirTemplate>/var/www/lib/Gveniver/sub/Profiles/Dummy/templates/</SmartyDirTemplate>
-            <SmartyDirCompile>/var/www/lib/Gveniver/sub/Profiles/Dummy/templates_c/</SmartyDirCompile>
-            <SmartyDirConfig>/var/www/lib/Gveniver/sub/Profiles/Dummy/</SmartyDirConfig>
+            <SmartyDirCache>/var/www/gv/eas/sub/Profiles/Dummy/cache/</SmartyDirCache>
+            <SmartyDirTemplate>/var/www/gv/eas/sub/Profiles/Dummy/templates/</SmartyDirTemplate>
+            <SmartyDirCompile>/var/www/gv/eas/sub/Profiles/Dummy/templates_c/</SmartyDirCompile>
+            <SmartyDirConfig>/var/www/gv/eas/sub/Profiles/Dummy/</SmartyDirConfig>
 		</TemplateModule>
     </Module>
     <Profile>
         <Path>
             <AbsRootWeb>http://dc1/lib/Gveniver/</AbsRootWeb>
-            <AbsScript>/var/www/lib/Gveniver/sub/Profiles/Dummy/scripts/</AbsScript>
+            <AbsScript>/var/www/gv/eas/sub/Profiles/Dummy/scripts/</AbsScript>
             <AbsScriptWeb>http://dc1/lib/Gveniver/sub/Profiles/Dummy/scripts/</AbsScriptWeb>
-            <AbsStyle>/var/www/lib/Gveniver/sub/Profiles/Dummy/styles/</AbsStyle>
+            <AbsStyle>/var/www/gv/eas/sub/Profiles/Dummy/styles/</AbsStyle>
             <AbsStyleWeb>http://dc1/lib/Gveniver/sub/Profiles/Dummy/styles/</AbsStyleWeb>
-            <AbsImage>/var/www/lib/Gveniver/sub/Profiles/Dummy/images/</AbsImage>
+            <AbsImage>/var/www/gv/eas/sub/Profiles/Dummy/images/</AbsImage>
             <AbsImageWeb>http://dc1/lib/Gveniver/sub/Profiles/Dummy/images/</AbsImageWeb>
-            <AbsUpload>/var/www/lib/Gveniver/sub/Profiles/Dummy/upload/</AbsUpload>
+            <AbsUpload>/var/www/gv/eas/sub/Profiles/Dummy/upload/</AbsUpload>
             <AbsUploadWeb>http://dc1/lib/Gveniver/sub/Profiles/Dummy/upload/</AbsUploadWeb>
-            <AbsCache>/var/www/lib/Gveniver/sub/Profiles/Dummy/cache/</AbsCache>
+            <AbsCache>/var/www/gv/eas/sub/Profiles/Dummy/cache/</AbsCache>
             <AbsCacheWeb>http://dc1/lib/Gveniver/sub/Profiles/Dummy/cache/</AbsCacheWeb>
-            <AbsExtension>/var/www/lib/Gveniver/sub/Profiles/Dummy/extension/</AbsExtension>
-            <AbsTemplate>/var/www/lib/Gveniver/sub/Profiles/Dummy/templates/</AbsTemplate>
+            <AbsExtension>/var/www/gv/eas/sub/Profiles/Dummy/extension/</AbsExtension>
+            <AbsTemplate>/var/www/gv/eas/sub/Profiles/Dummy/templates/</AbsTemplate>
         </Path>
         <SectionList>
 			<Default>

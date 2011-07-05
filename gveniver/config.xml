@@ -61,6 +61,13 @@
                 </Provider>
             </Providers>
         </DataModule>
+        <InvarModule>
+            <SectionKeyName>section</SectionKeyName>
+            <SectionKeyTemplate>%section%</SectionKeyTemplate>
+            <ActionKeyName>action</ActionKeyName>
+            <ActionKeyTemplate>%action%</ActionKeyTemplate>
+            <LoaderClass>HfuInvarLoader</LoaderClass>
+        </InvarModule>
         <LogModule>
             <Level>255</Level>
             <Providers>
@@ -91,13 +98,10 @@
             <SmartyDirCompile>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\templates_c\</SmartyDirCompile>
             <SmartyDirConfig>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\</SmartyDirConfig>
         </TemplateModule>
-        <InvarModule>
-            <SectionKeyName>section</SectionKeyName>
-            <SectionKeyTemplate>%section%</SectionKeyTemplate>
-            <ActionKeyName>action</ActionKeyName>
-            <ActionKeyTemplate>%action%</ActionKeyTemplate>
-            <LoaderClass>HfuInvarLoader</LoaderClass>
-        </InvarModule>
+        <RedirectModule>
+            <WaitTime>300</WaitTime>
+            <Template></Template>
+        </RedirectModule>
     </Module>
     <Profile>
         <UseScriptTemplate>1</UseScriptTemplate>

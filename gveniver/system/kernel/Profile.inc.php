@@ -61,14 +61,27 @@ abstract class Profile
 
     } // End function
     //-----------------------------------------------------------------------------
-
+    
     /**
      * Start profile logic.
+     * By default, load and parse main template with current section and action.
      *
      * @return string
-     * @abstract
      */
-    public abstract function start();
+    public function start()
+    {
+        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
+        $sResult = $this->getApplication()->template->parseTemplate(
+            $this->getMainTemplate(
+                $this->getCurrentSectionName(),
+                $this->getCurrentAction()
+            )
+        );
+        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
+        return $sResult;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**

@@ -282,3 +282,33 @@ function str_break_html($txt, $len, $delim = '\s;,.!?:#')
      
 } // End function
 //-------------------------------------------------------------------------------
+
+/**
+ * Check url correctness.
+ *
+ * @param string $sUrl Url to check.
+ *
+ * @return boolean True if correct.
+ */
+// @codingStandardsIgnoreStart
+function is_correct_url($sUrl)
+// @codingStandardsIgnoreEnd
+{
+    $sPattern = '{
+        (?:
+        (\w+://)
+        |
+        www\.
+        )
+        [\w-]+(\.[\w-]+)*
+        \S*
+        (?:
+        (?<! [[:punct:]])
+        | (?<= [-/&+*])
+        )
+    }xis';
+
+    return preg_match($sPattern, $sUrl);
+
+} // End function
+//-----------------------------------------------------------------------------

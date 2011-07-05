@@ -11,7 +11,8 @@
  */
 
 namespace Gveniver\Cache;
-\Gveniver\Loader::i("system/cache/packer/DataPacker.inc.php");
+\Gveniver\Loader::i('system/cache/packer/DataPacker.inc.php');
+\Gveniver\Loader::i('system/exception/ArgumentException.inc.php');
 
 /**
  * Base class for splitting files.
@@ -23,7 +24,6 @@ namespace Gveniver\Cache;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-
 class FileSplitter
 {
     /**

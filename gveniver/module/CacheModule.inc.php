@@ -64,6 +64,25 @@ class CacheModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
+     * Generator for correct unique cache identifiers by names.
+     *
+     * @param string $sDataName Unique name of cached data.
+     *
+     * @return string
+     */
+    public function generateId($sDataName)
+    {
+        // Load default cache provider.
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
+
+        return $cProvider->generateId($sDataName);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Returns cache provider by name.
      *
      * @param string $sProviderName Name of cache provider.
