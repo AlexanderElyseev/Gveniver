@@ -115,11 +115,7 @@ class RedirectModule extends Module
     function setUrl($sUrl, $bReWrite = true)
     {
         // Url is setted and no need to rewrite.
-        if (!$bReWrite && is_correct_url($this->_sUrl))
-            return;
-
-        // Save correct url.
-        if (!$this->isCorrectUrl($sUrl))
+        if (!$bReWrite && \Gveniver\is_correct_url($this->_sUrl))
             return;
 
         $this->getApplication()->trace->addLine('[%s] Set url to "%s"', __CLASS__, $sUrl);
@@ -178,7 +174,7 @@ class RedirectModule extends Module
     public function redirect()
     {
         // Check correctness.
-        if (!is_correct_url($this->_sUrl))
+        if (!\Gveniver\is_correct_url($this->_sUrl))
             return;
 
         // Redirect.
