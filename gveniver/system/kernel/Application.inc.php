@@ -79,13 +79,13 @@ final class Application
         if ($sApplicationConfigFile)
             $this->_cConfig->mergeXmlFile($sApplicationConfigFile);
 
-        // Initialization of environment.
-        $this->initEnvironment();
-
         // Load profile.
         $this->_cProfile = $this->_loadProfile($sProfile);
         if (!$this->_cProfile)
             throw new \Gveniver\Exception\Exception(sprintf('Profile with name "%s" not found.', $sProfile));
+
+        // Initialization of environment.
+        $this->initEnvironment();
 
     } // End function
     //-----------------------------------------------------------------------------
