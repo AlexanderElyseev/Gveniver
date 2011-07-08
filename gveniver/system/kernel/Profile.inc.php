@@ -29,6 +29,14 @@ namespace Gveniver\Kernel;
 abstract class Profile
 {
     /**
+     * Path to directory with profile.
+     *
+     * @var string
+     */
+    private $_sProfilePath;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Reference to current kernel.
      *
      * @var Application
@@ -42,10 +50,12 @@ abstract class Profile
      * Initialize new instance of application profile.
      *
      * @param Application $cApplication Current application.
+     * @param string      $sPath        Path to directory with profile.
      */
-    public function __construct(Application $cApplication)
+    public function __construct(Application $cApplication, $sPath)
     {
         $this->_cApplication = $cApplication;
+        $this->_sProfilePath = $sPath;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -61,7 +71,19 @@ abstract class Profile
 
     } // End function
     //-----------------------------------------------------------------------------
-    
+
+    /**
+     * Getter for directory of profile.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->_sProfilePath;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
     /**
      * Start profile logic.
      * By default, load and parse main template with current section and action.

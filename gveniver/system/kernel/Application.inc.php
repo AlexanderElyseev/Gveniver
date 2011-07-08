@@ -30,7 +30,7 @@ namespace Gveniver\Kernel;
 final class Application
 {
     /**
-     * Configuration of kernel.
+     * Configuration of application.
      *
      * @var \Gveniver\Config
      */
@@ -38,7 +38,7 @@ final class Application
     //-----------------------------------------------------------------------------
 
     /**
-     * Profile of kernel.
+     * Current profile of application.
      *
      * @var Profile
      */
@@ -273,7 +273,7 @@ final class Application
 
         // Create instance of profile.
         try {
-            $cProfile = new $cProfileClass($this);
+            $cProfile = new $cProfileClass($this, $sProfilePath);
         } catch (\Gveniver\Exception\Exception $cEx) {
             $this->trace->addLine(
                 '[%s] Exception in profile ("%s") constructor: "%s".',
@@ -304,7 +304,7 @@ final class Application
     /**
      * Load module by name.
      *
-     * !!! Do not use modules in this function for preven recursions !!!
+     * !!! Do not use modules in this function for prevent recursions !!!
      *
      * At first, try to load module from loaded list. If module with specified name not found,
      * load module instance.
@@ -326,9 +326,11 @@ final class Application
         $this->_aModules[$sModuleName] = null;
 
         // If module class is not exists, include module file.
+        // At first, try load from library directory. If file is not found, load from profile path.
         if (!class_exists($sModuleClassName))
             if (!\Gveniver\Loader::i('module'.GV_DS.$sModuleName.'.inc.php'))
-                return null;
+                if (!\Gveniver\Loader::i($this->getProfile()->getPath().'module'.GV_DS.$sModuleName.'.inc.php'))
+                    return null;
 
         // After including module file, class of module must exists.
         if (!class_exists($sModuleClassName))
