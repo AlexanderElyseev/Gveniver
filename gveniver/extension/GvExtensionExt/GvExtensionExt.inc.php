@@ -57,7 +57,7 @@ class GvExtensionExt extends SimpleExtension
         } // End if
 
         // Executing query.
-        $cResult = $cExtension->query($sAct, $aParams, $sFormat);
+        $cResult = $cExtension->query($sAct, $aParams, array('format' => $sFormat, 'external' => true));
         if (!$cResult instanceof ExtensionReply) {
             $cReply->setStatus(true);
             $cReply->setReply($cResult);
