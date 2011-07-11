@@ -454,11 +454,13 @@ final class Loader
         if (!self::isAbsolutePath($sFileName))
             $sFileName = GV_PATH_BASE.$sFileName;
 
-        if ($bAddDirSeparator && substr($sFileName, -1) !== GV_DS)
+        $sRealFileName = realpath($sFileName);
+        $sFileName =  $sRealFileName ? $sRealFileName : $sFileName;
+
+        if ($bAddDirSeparator && is_dir($sFileName) && substr($sFileName, -1) != GV_DS)
             $sFileName = $sFileName.GV_DS;
 
-        $sRealFileName = realpath($sFileName);
-        return $sRealFileName ? $sRealFileName : $sFileName;
+        return $sFileName;
 
     } // End function
     //-----------------------------------------------------------------------------

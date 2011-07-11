@@ -132,10 +132,15 @@ abstract class LogProvider
     {
         $aLevelsHash = array(
             'FatalError' => self::LEVEL_FATALERROR,
+            'fatalError' => self::LEVEL_FATALERROR,
             'Error'      => self::LEVEL_ERROR,
+            'error'      => self::LEVEL_ERROR,
             'Security'   => self::LEVEL_SECURITY,
+            'security'   => self::LEVEL_SECURITY,
             'Warning'    => self::LEVEL_WARNING,
+            'warning'    => self::LEVEL_WARNING,
             'Info'       => self::LEVEL_INFO,
+            'info'       => self::LEVEL_INFO,
         );
 
         if (!isset($aLevelsHash[$sLevel]))
