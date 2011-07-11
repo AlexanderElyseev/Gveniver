@@ -143,7 +143,7 @@ class CacheModule extends Module
             $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
             return null;
         }
-
+        
         // Load provider class name.
         $aConnectionData = $this->_aConfiguration[0];
         if (!array_key_exists('ProviderClass', $aConnectionData)) {
