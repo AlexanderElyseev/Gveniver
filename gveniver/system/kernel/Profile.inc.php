@@ -80,7 +80,7 @@ abstract class Profile
     public function getPath()
     {
         return $this->_sProfilePath;
-        
+
     } // End function
     //-----------------------------------------------------------------------------
 

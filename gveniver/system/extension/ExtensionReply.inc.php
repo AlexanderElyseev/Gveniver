@@ -30,7 +30,7 @@ class ExtensionReply
      *
      * @var mixed
      */
-    private $_sReply;
+    private $_mReply;
     //-----------------------------------------------------------------------------
 
     /**
@@ -68,7 +68,7 @@ class ExtensionReply
      */
     public function __construct($sReply = '', $bStatus = false, $sMessage = '', $nCode = null)
     {
-        $this->_sReply = $sReply;
+        $this->_mReply = $sReply;
         $this->_bStatus = $bStatus;
         $this->_sMessage = $sMessage;
         $this->_nCode = $nCode;
@@ -91,11 +91,11 @@ class ExtensionReply
     /**
      * Getter for result reply of query.
      *
-     * @return string
+     * @return mixed
      */
     public function getReply()
     {
-        return $this->_sReply;
+        return $this->_mReply;
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -103,13 +103,13 @@ class ExtensionReply
     /**
      * Setter for reply of extension.
      * 
-     * @param string $sReply Result of query to set.
+     * @param mixed $mReply Result of query to set.
      * 
      * @return void
      */
-    public function setReply($sReply)
+    public function setReply($mReply)
     {
-        $this->_sReply = $sReply;
+        $this->_mReply = $mReply;
         
     } // End function
     //-----------------------------------------------------------------------------
