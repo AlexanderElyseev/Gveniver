@@ -107,7 +107,7 @@ class Config
                 if (count($aChilds) == 0)
                     continue;
 
-                if (count($cXml->{$sKey}) > 1)      // List of elements with equal type.
+                if (count($cXml->{$sKey}) > 1 || $cXml["_list"])      // List of elements with equal type.
                     $aTarget[] = $aChilds;
                 else                                // List of unique.
                     $aTarget[$sKey] = $aChilds;

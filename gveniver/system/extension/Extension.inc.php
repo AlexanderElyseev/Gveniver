@@ -71,7 +71,7 @@ abstract class Extension
      * Query to extension.
      *
      * @param string $sAction Name of action handler.
-     * @param array  $aParams Arguments to extension.
+     * @param array  $aParams Arguments to extension query.
      * @param string $sFormat Output format name.
      *
      * @return mixed

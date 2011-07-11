@@ -31,7 +31,7 @@ class SimpleExtension extends Extension
      * Redirect request to public function of current extension with same name.
      *
      * @param string $sAction Name of action handler.
-     * @param array  $aParams Arguments to extension.
+     * @param array  $aParams Arguments to extension query.
      * @param string $sFormat Output format name.
      *
      * @return mixed

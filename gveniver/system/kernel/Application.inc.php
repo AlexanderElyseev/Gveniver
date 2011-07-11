@@ -54,6 +54,22 @@ final class Application
     //-----------------------------------------------------------------------------
 
     /**
+     * List of directories for loading modules.
+     *
+     * @var array
+     */
+    private $_aModuleDirList = array();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Hash table for relation between module name and module file name..
+     *
+     * @var array
+     */
+    private $_aModuleAliasList = array();
+    //-----------------------------------------------------------------------------
+
+    /**
      * Hash table of module names.
      *
      * @var array
@@ -71,6 +87,9 @@ final class Application
      */
     public function __construct($sProfile, $sApplicationConfigFile = null)
     {
+        // Register default system directory with modules.
+        $this->registerModuleDir('module');
+
         // Initialize and load base configuration.
         $this->_cConfig = new \Gveniver\Config();
         $this->_cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
@@ -325,14 +344,14 @@ final class Application
         // Mark attemp of loading module as failed by default.
         $this->_aModules[$sModuleName] = null;
 
-        // If module class is not exists, include module file.
-        // At first, try load from library directory. If file is not found, load from profile path.
+        // If module class is not exists, load module file form registered directories.
         if (!class_exists($sModuleClassName))
-            if (!\Gveniver\Loader::i('module'.GV_DS.$sModuleName.'.inc.php'))
-                if (!\Gveniver\Loader::i($this->getProfile()->getPath().'module'.GV_DS.$sModuleName.'.inc.php'))
-                    return null;
+            foreach ($this->_aModuleDirList as $sDir)
+                if (\Gveniver\Loader::i($sDir.$sModuleName.'.inc.php'))
+                    if (class_exists($sModuleClassName))
+                        break;
 
-        // After including module file, class of module must exists.
+        // After including of all module files, class of module must exists.
         if (!class_exists($sModuleClassName))
             return null;
         
@@ -375,17 +394,59 @@ final class Application
         if (isset($this->_aModuleNameHash[$sModuleName])) {
             $sCorrectName = $this->_aModuleNameHash[$sModuleName];
         } else {
-            // TODO: very stupid...
-            $sCorrectName = $sModuleName;
-            if (!preg_match('/^\w+Module$/i', $sCorrectName))
-                $sCorrectName .= 'Module';
+            if (isset($this->_aModuleAliasList[$sModuleName])) {
+                $sCorrectName = $this->_aModuleAliasList[$sModuleName];
+            } else {
+                // TODO: very stupid...
+                $sCorrectName = $sModuleName;
+                if (!preg_match('/^\w+Module$/i', $sCorrectName))
+                    $sCorrectName .= 'Module';
 
-            $sCorrectName = str_replace('module', 'Module', $sCorrectName);
-            $sCorrectName[0] = strtoupper($sCorrectName[0]);
-            $this->_aModuleNameHash[$sModuleName] = $sCorrectName;
+                $sCorrectName = str_replace('module', 'Module', $sCorrectName);
+                $sCorrectName[0] = strtoupper($sCorrectName[0]);
+                $this->_aModuleNameHash[$sModuleName] = $sCorrectName;
+            }
         }
 
         return $this->_loadModule($sCorrectName);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Register directory for dynamically loaded profiles.
+     *
+     * @param string $sDir Path to directory with modules.
+     * 
+     * @return bool True on success.
+     */
+    public function registerModuleDir($sDir)
+    {
+        $sDir = \Gveniver\Loader::correctPath($sDir, true);
+        if (!is_dir($sDir) || !is_readable($sDir) || in_array($sDir, $this->_aModuleDirList))
+            return false;
+
+        $this->_aModuleDirList[] = $sDir;
+        return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Register alias of module.
+     *
+     * @param string $sModuleAlias Alias of module.
+     * @param string $sModuleClass File name of module.
+     *
+     * @return bool True on success.
+     */
+    public function registerModuleAlias($sModuleAlias, $sModuleClass)
+    {
+        if (isset($this->_aModuleAliasList[$sModuleAlias]))
+            return false;
+
+        $this->_aModuleAliasList[$sModuleAlias] = $sModuleClass;
+        return true;
 
     } // End function
     //-----------------------------------------------------------------------------
