@@ -312,3 +312,34 @@ function is_correct_url($sUrl)
 
 } // End function
 //-----------------------------------------------------------------------------
+
+/**
+ * Send the mail.
+ *
+ * @param $sFrom    Author of message.
+ * @param $sTo      Recipient of message.
+ * @param $sSubject Subject of message.
+ * @param $sText    Text of message.
+ *
+ * @return bool True on success
+ */
+// @codingStandardsIgnoreStart
+function mail($sFrom, $sTo, $sSubject, $sText)
+// @codingStandardsIgnoreEnd
+{
+    // Build e-mail headers.
+    $sHeaders = sprintf("From: %s\r\n", $sFrom);
+    $sHeaders .= "MIME-Version: 1.0\r\n";
+    $sHeaders .= "Content-Type: text/plain; charset=\"UTF-8\"\r\n";
+
+    // Standart sending.
+    // TODO: check address.
+    return mail(
+        $sTo,
+        $sSubject,
+        $sText,
+        $sHeaders
+    );
+
+} // End function
+//-----------------------------------------------------------------------------

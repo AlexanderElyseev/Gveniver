@@ -17,49 +17,10 @@
     </Kernel>
     <Module>
         <CacheModule>
-            <Providers>
-                <Provider>
-                    <ProviderClass>FileCacheProvider</ProviderClass>
-                    <ProviderName>First</ProviderName>
-                </Provider>
-                <Provider>
-                    <ProviderClass>FileMemoryCacheProvider</ProviderClass>
-                    <ProviderName>Second</ProviderName>
-                </Provider>
-                <Provider>
-                    <ProviderClass>MemcachedCacheProvider</ProviderClass>
-                    <ProviderName>third</ProviderName>
-                    <Servers>
-                        <Server>
-                            <Name>localhost</Name>
-                            <Host>127.0.0.1</Host>
-                        </Server>
-                    </Servers>
-                </Provider>
-            </Providers>
+            <Providers></Providers>
         </CacheModule>
         <DataModule>
-            <Providers>
-                <Provider>
-                    <Dsn>mysql:host=localhost;dbname=dbprofclub</Dsn>
-                    <Password>root</Password>
-                    <ProviderClass>PdoDataProvider</ProviderClass>
-                    <ProviderName>First</ProviderName>
-                    <User>root</User>
-                </Provider>
-                <Provider>
-                    <Database>dbprofclub</Database>
-                    <Host>localhost</Host>
-                    <Password>root</Password>
-                    <ProviderClass>MySqlDataProvider</ProviderClass>
-                    <ProviderName>Second</ProviderName>
-                    <User>root</User>
-                </Provider>
-                <Provider>
-                    <ProviderClass>MongoDbDataProvider</ProviderClass>
-                    <ProviderName>MongoDb</ProviderName>
-                </Provider>
-            </Providers>
+            <Providers></Providers>
         </DataModule>
         <InvarModule>
             <SectionKeyName>section</SectionKeyName>
@@ -70,42 +31,15 @@
         </InvarModule>
         <LogModule>
             <Level>255</Level>
-            <Providers>
-                <Provider>
-                    <Class>StreamLogProvider</Class>
-                    <StreamName>php://stderr</StreamName>
-                </Provider>
-                <Provider>
-                    <Class>FileLogProvider</Class>
-                    <FileName>log/error.log</FileName>
-                </Provider>
-                <Provider>
-                    <Class>EmailLogProvider</Class>
-                    <Recipient>eas@prof-club.ru</Recipient>
-                    <Sender>mail@prof-club.ru</Sender>
-                    <Subject>Error log</Subject>
-                </Provider>
-            </Providers>
+            <Providers></Providers>
         </LogModule>
-        <TemplateModule>
-            <DelimiterBegin>{</DelimiterBegin>
-            <DelimiterEnd>}</DelimiterEnd>
-            <Ext>tpl</Ext>
-            <FactoryClass>Smarty3TemplateFactory</FactoryClass>
-            <Separator>_</Separator>
-            <SmartyDirCache>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\cache\</SmartyDirCache>
-            <SmartyDirTemplate>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\templates\</SmartyDirTemplate>
-            <SmartyDirCompile>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\templates_c\</SmartyDirCompile>
-            <SmartyDirConfig>C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\projects\gveniver\profile\Dummy\</SmartyDirConfig>
-        </TemplateModule>
+        <TemplateModule></TemplateModule>
         <RedirectModule>
             <WaitTime>300</WaitTime>
             <Template></Template>
         </RedirectModule>
     </Module>
     <Profile>
-        <UseScriptTemplate>1</UseScriptTemplate>
-        <UseStyleTemplate>1</UseStyleTemplate>
         <CacheScript>1</CacheScript>
         <CacheStyle>1</CacheStyle>
     </Profile>

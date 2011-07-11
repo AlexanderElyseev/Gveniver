@@ -93,6 +93,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         $this->_cSmarty->registerPlugin('modifier', 'upper', '\\Gveniver\\strtoupper_ex');
         $this->_cSmarty->registerPlugin('modifier', 'lower', '\\Gveniver\\strtolower_ex');
         $this->_cSmarty->registerPlugin('modifier', 'substr', 'mb_substr');
+        $this->_cSmarty->error_reporting = ini_get('error_reporting');
         return true;
         
     } // End function

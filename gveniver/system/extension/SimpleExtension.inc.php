@@ -48,7 +48,6 @@ class SimpleExtension extends Extension
                 foreach ($this->getConfig()->get('Extension/ActList') as $aAction) {
                     if (isset($aAction['Name']) && $aAction['Name'] == $sAction && isset($aAction['FormatList'])) {
                         foreach ($aAction['FormatList'] as $aFormat) {
-
                             if (isset($aFormat['Method']) && isset($aFormat['Name']) && $aFormat['Name'] == $sFormat) {
                                 $sMethodName = $aFormat['Method'];
                                 break 2;
