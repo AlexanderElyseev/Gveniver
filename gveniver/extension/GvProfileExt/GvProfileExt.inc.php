@@ -55,9 +55,6 @@ class GvProfileExt extends SimpleExtension
         $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/CacheScript'));
         $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/CacheStyle'));
 
-        $this->_aConfig['UseScriptTemplate'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/UseScriptTemplate'));
-        $this->_aConfig['UseStyleTemplate'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/UseStyleTemplate'));
-        
     } // End function
     //-----------------------------------------------------------------------------
 
