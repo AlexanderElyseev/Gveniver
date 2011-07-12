@@ -29,15 +29,18 @@ class GvExtensionExt extends SimpleExtension
     /**
      * Executin query to external extension.
      *
-     * @param string $sExt    Extension.
-     * @param string $sAct    Action.
-     * @param array  $aParams Parameters of call.
-     * @param string $sFormat Output format.
+     * @param string $sExt       Extension.
+     * @param string $sAct       Action.
+     * @param array  $aArguments Parameters of call.
+     * @param string $sFormat    Output format.
      *
      * @return ExtensionReply
      */
-    public function externalQuery($sExt = null, $sAct = null, array $aParams = array(), $sFormat = null)
+    public function externalQuery($sExt = null, $sAct = null, $aArguments = null, $sFormat = null)
     {
+        if (!$aArguments)
+            $aArguments = array();
+
         $cReply = new ExtensionReply();
         
         // Extension and action must be specified.
@@ -57,7 +60,14 @@ class GvExtensionExt extends SimpleExtension
         } // End if
 
         // Executing query.
-        $cResult = $cExtension->query($sAct, $aParams, array('format' => $sFormat, 'external' => true));
+        $cResult = $cExtension->query(
+            $sAct,
+            $aArguments,
+            array(
+                 'format'   => $sFormat,
+                 'external' => true
+            )
+        );
         if (!$cResult instanceof ExtensionReply) {
             $cReply->setStatus(true);
             $cReply->setReply($cResult);
