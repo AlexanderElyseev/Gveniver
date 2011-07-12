@@ -1,6 +1,7 @@
 <Extension>
     <ActList>
         <Act>
+            <External>false</External>
             <Name>getTrace</Name>
             <FormatList>
                 <Format><Name>string</Name><Method>getTraceAsString</Method></Format>

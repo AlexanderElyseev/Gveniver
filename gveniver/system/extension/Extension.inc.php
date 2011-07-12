@@ -26,6 +26,15 @@ namespace Gveniver\Extension;
 abstract class Extension
 {
     /**
+     * Name of cache group for caching extension replies.
+     *
+     * @var string
+     */
+    const CACHE_GROUP = 'extension';
+    //-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
+
+    /**
      * Configuration of extension.
      *
      * @var \Gveniver\Config
@@ -70,14 +79,17 @@ abstract class Extension
     /**
      * Query to extension.
      *
-     * @param string $sAction Name of action handler.
-     * @param array  $aParams Arguments to extension query.
-     * @param string $sFormat Output format name.
+     * @param string $sAction  Name of action handler.
+     * @param array  $aParams  Arguments to extension query.
+     * @param array  $aOptions Options for query.
+     * Elements:
+     * ['format']   - target output format.
+     * ['external'] - external call of extension (required permessions in export list).
      *
      * @return mixed
      * @abstract
      */
-    public abstract function query($sAction, $aParams = array(), $sFormat = null);
+    public abstract function query($sAction, $aParams = array(), $aOptions = array());
     //-----------------------------------------------------------------------------
 
     /**

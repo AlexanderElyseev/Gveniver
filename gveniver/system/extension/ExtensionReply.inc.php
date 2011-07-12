@@ -35,6 +35,7 @@ class ExtensionReply
 
     /**
      * Result status of query.
+     * True seems that query was executed.
      * 
      * @var bool
      */
@@ -116,6 +117,7 @@ class ExtensionReply
     
     /**
      * Getter for result status of query.
+     * True seems that query was executed.
      * 
      * @return boolean
      */
@@ -128,6 +130,7 @@ class ExtensionReply
     
     /**
      * Setter for result status of query.
+     * True seems that query was executed.
      * 
      * @param boolean $bStatus Tesult status of query to set.
      * 

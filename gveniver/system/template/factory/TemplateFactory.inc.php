@@ -27,15 +27,6 @@ namespace Gveniver\Template;
 abstract class TemplateFactory
 {
     /**
-     * Name of cache group for caching extension replies.
-     *
-     * @var string
-     */
-    const CACHE_GROUP = 'extension';
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
-
-    /**
      * Current application.
      * 
      * @var \Gveniver\Kernel\Application

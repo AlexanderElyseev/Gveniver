@@ -124,7 +124,7 @@ class RedirectModule extends Module
         }
 
         // Save.
-        $this->_aPostData = $aData['Data'];
+        $this->_aPostData = $aData;
         return;
         
     } // End function
@@ -187,7 +187,7 @@ class RedirectModule extends Module
     public function __toString()
     {
         // Do not redirect to incorrect url.
-        if (!$this->_sRedirectionTemplateName || !$this->_sUrl || !$this->isCorrectUrl($this->_sUrl))
+        if (!$this->_sRedirectionTemplateName || !$this->_sUrl || !\Gveniver\is_correct_url($this->_sUrl))
             return '';
 
         // Load template for redirection.
