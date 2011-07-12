@@ -313,7 +313,7 @@ class InvarModule extends Module
 
         $bByRef = func_num_args() == 2;
 
-        // Try to Load from GET.
+        // Try to Load from POST.
         if (array_key_exists($sName, $this->_aPost['post'])) {
             $this->getApplication()->trace->addLine('[%s] Invar ("%s") loaded from POST.', __CLASS__, $sName);
             

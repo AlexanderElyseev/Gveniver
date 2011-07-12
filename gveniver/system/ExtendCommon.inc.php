@@ -334,7 +334,7 @@ function mail($sFrom, $sTo, $sSubject, $sText)
 
     // Standart sending.
     // TODO: check address.
-    return mail(
+    return \mail(
         $sTo,
         $sSubject,
         $sText,
