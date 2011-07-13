@@ -457,7 +457,7 @@ final class Loader
         $sRealFileName = realpath($sFileName);
         $sFileName =  $sRealFileName ? $sRealFileName : $sFileName;
 
-        if ($bAddDirSeparator && is_dir($sFileName) && substr($sFileName, -1) != GV_DS)
+        if (($bAddDirSeparator || is_dir($sFileName)) && substr($sFileName, -1) != GV_DS)
             $sFileName = $sFileName.GV_DS;
 
         return $sFileName;

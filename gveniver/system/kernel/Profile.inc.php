@@ -26,7 +26,7 @@ namespace Gveniver\Kernel;
  * @license    http://prof-club.ru/license.txt Prof-Club License
  * @link       http://prof-club.ru
  */
-abstract class Profile
+class Profile
 {
     /**
      * Path to directory with profile.
