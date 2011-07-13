@@ -45,6 +45,5 @@ Todo list for project.
     9.1. PHP templates.                                                                             [--]
     9.2. Parameters for building factory at separated part.                                         [--]
 
-
-// Other
+// Other.
 Move config: kernel/profilepath -> profile/directory (kernel/loadingdirectory)
