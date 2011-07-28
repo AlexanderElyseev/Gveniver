@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Kernel;
-\Gveniver\Loader::i('Module.inc.php');
+\Gveniver\Loader::i('system/kernel/Module.inc.php');
 
 /**
  * Class of module for redirections.
@@ -82,7 +82,7 @@ class RedirectModule extends Module
         // Load session data.
         $this->_loadSessionData();
 
-        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
 
     } // End function

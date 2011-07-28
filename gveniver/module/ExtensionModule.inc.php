@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Kernel;
-\Gveniver\Loader::i('Module.inc.php');
+\Gveniver\Loader::i('system/kernel/Module.inc.php');
 
 /**
  * Class of extension module.
@@ -62,7 +62,7 @@ class ExtensionModule extends Module
             return false;
         }
 
-        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
         
     } // End function

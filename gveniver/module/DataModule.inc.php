@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Kernel;
-\Gveniver\Loader::i('Module.inc.php');
+\Gveniver\Loader::i('system/kernel/Module.inc.php');
 
 /**
  * Data module class.
@@ -57,7 +57,7 @@ class DataModule extends Module
         // Load data of providers.
         $this->_aConfiguration = $this->getApplication()->getConfig()->get('Module/DataModule/Providers');
 
-        $this->getApplication()->trace->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
         
     } // End function

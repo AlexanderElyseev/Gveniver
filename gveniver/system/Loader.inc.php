@@ -552,11 +552,10 @@ final class Loader
         // Create object instance.
         $aArguments = isset($aParams['args']) ? $aParams['args'] : null;
         try {
-            if ($aArguments) {
-                $cObj = $cRc->newInstanceArgs($aArguments);
-            } else {
-                $cObj = $cRc->newInstance();
-            }
+            $cObj = $aArguments
+                ? $cRc->newInstanceArgs($aArguments)
+                : $cRc->newInstance();
+
         } catch (\Exception $cEx) {
             $nErrorCode = self::ERRROR_CONSTRUCTOR;
             //echo $cEx->getMessage();

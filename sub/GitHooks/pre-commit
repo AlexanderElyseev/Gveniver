@@ -6,11 +6,10 @@
 # @author Alexander Elyseev <alexander.elyseev@gmail.com>
 #
 
-REPOSITORY_PATH=
 PHPCS_BIN=/usr/bin/phpcs
 PHPCS_CODING_STANDARD=PEAR
 PHPCS_IGNORE=
-TMP_STAGING=".tmp_staging"
+TMP_STAGING="/tmp/git/staging/"
 CONFIG_FILE=$(dirname $0)/pre-commit.config
 
 # Parse config file.
@@ -82,10 +81,10 @@ do
     # path as the original file so that the phpcs ignore filters can be applied
     mkdir -p "$TMP_STAGING/$(dirname $FILE)"
     git cat-file blob $ID > "$TMP_STAGING/$FILE"
-    STAGED_FILES="$STAGED_FILES $REPOSITORY_PATH$TMP_STAGING/$FILE"
+    STAGED_FILES="$STAGED_FILES $TMP_STAGING/$FILE"
 done
 
-OUTPUT=$(exec "$PHP_BIN" "$PHPCS_FILE" -s -n --standard=$PHPCS_CODING_STANDARD $IGNORE $REPOSITORY_PATH$TMP_STAGING)
+OUTPUT=$(exec $PHPCS_BIN -s -n --standard=$PHPCS_CODING_STANDARD $IGNORE $TMP_STAGING)
 RETVAL=$?
 
 # Delete temporary copy of staging area.

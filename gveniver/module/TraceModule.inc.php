@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver\Kernel;
-\Gveniver\Loader::i('Module.inc.php');
+\Gveniver\Loader::i('system/kernel/Module.inc.php');
 
 /**
  * Tracing module class.
@@ -56,7 +56,7 @@ class TraceModule extends Module
             )
         );
 
-        $this->addLine('[%s] Init sucessful.', __CLASS__);
+        $this->addLine('[%s] Init successful.', __CLASS__);
         return true;
         
     } // End function

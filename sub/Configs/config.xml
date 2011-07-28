@@ -38,6 +38,17 @@
                 </Provider>
             </Providers>
         </CacheModule>
+        <CaptchaModule>
+            <Providers>
+                <Provider>
+                    <Args>
+                        <PublicKey>123</PublicKey>
+                        <PrivateKey>456</PrivateKey>
+                    </Args>
+                    <Class>ReCaptcha</Class>
+                </Provider>
+            </Providers>
+        </CaptchaModule>
         <DataModule>
             <Providers>
                 <Provider>

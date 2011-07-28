@@ -19,6 +19,9 @@
         <CacheModule>
             <Providers></Providers>
         </CacheModule>
+        <CaptchaModule>
+            <Providers></Providers>
+        </CaptchaModule>
         <DataModule>
             <Providers></Providers>
         </DataModule>
