@@ -36,13 +36,10 @@ abstract class Captcha
     /**
      * Check answer of user.
      *
-     * @param string $sKey      Key for check response.
-     * @param string $sResponse Response of user.
-     *
      * @return boolean
      * @abstract
      */
-    public abstract function check($sKey, $sResponse);
+    public abstract function check();
     //-----------------------------------------------------------------------------
 
 } // End class

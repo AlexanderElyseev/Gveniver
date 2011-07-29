@@ -75,19 +75,18 @@ class ReCaptcha extends Captcha
     /**
      * Check answer of user.
      *
-     * @param string $sKey      Key for check response.
-     * @param string $sResponse Response of user.
-     *
      * @return boolean
      */
-    public function check($sKey, $sResponse)
+    public function check()
     {
-        return recaptcha_check_answer(
+        $resp = recaptcha_check_answer(
             $this->_sPrivateKey,
-            $_SERVER["REMOTE_ADDR"],
-            $sKey,
-            $sResponse
-        )->is_valid;
+            $_SERVER['REMOTE_ADDR'],
+            isset($_POST['recaptcha_challenge_field']) ? $_POST['recaptcha_challenge_field'] : null,
+            isset($_POST['recaptcha_response_field']) ? $_POST['recaptcha_response_field'] : null
+        );
+
+        return $resp->is_valid;
 
     } // End function
     //-----------------------------------------------------------------------------

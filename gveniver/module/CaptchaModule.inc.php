@@ -106,14 +106,11 @@ class CaptchaModule extends Module
     /**
      * Check answer of user.
      *
-     * @param string $sKey      Key for check response.
-     * @param string $sResponse Response of user.
-     *
      * @return boolean
      */
-    public function check($sKey, $sResponse)
+    public function check()
     {
-        return $this->_cCaptcha->check($sKey, $sResponse);
+        return $this->_cCaptcha->check();
 
     } // End function
     //-----------------------------------------------------------------------------
