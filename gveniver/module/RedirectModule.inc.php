@@ -58,11 +58,19 @@ class RedirectModule extends Module
     //-----------------------------------------------------------------------------
 
     /**
-     * Data for saving session.
+     * Data from previous page, loaded from session.
      * 
      * @var array
      */
-    private $_aPostData = array();
+    private $_aLoadedSessionData = array();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Data for next page.
+     *
+     * @var array
+     */
+    private $_aNewSessionData = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
@@ -79,7 +87,7 @@ class RedirectModule extends Module
         $this->_nRedirectionTime = (int)$this->getApplication()->getConfig()->get('Module/RedirectModule/WaitTime');
         $this->_sRedirectionTemplateName = $this->getApplication()->getConfig()->get('Module/RedirectModule/Template');
 
-        // Load session data.
+        // Session.
         $this->_loadSessionData();
 
         $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
@@ -106,16 +114,16 @@ class RedirectModule extends Module
      */
     private function _loadSessionData()
     {
-        if (!isset($_SESSION['Gveniver']['RedirectModule']['Data'])) {
+        if (!isset($_SESSION['Gveniver'][__CLASS__]['Data'])) {
             $this->getApplication()->trace->addLine('[%s] Session data is not set.', __CLASS__);
             return;
         }
 
         // Load.
-        $aData = $_SESSION['Gveniver']['RedirectModule']['Data'];
+        $aData = $_SESSION['Gveniver'][__CLASS__]['Data'];
 
         // Clean.
-        unset($_SESSION['Gveniver']['RedirectModule']['Data']);
+        unset($_SESSION['Gveniver'][__CLASS__]['Data']);
 
         // Do not save wrong data.
         if (!is_array($aData)) {
@@ -124,7 +132,7 @@ class RedirectModule extends Module
         }
 
         // Save.
-        $this->_aPostData = $aData;
+        $this->_aLoadedSessionData = $aData;
         return;
         
     } // End function
@@ -137,10 +145,10 @@ class RedirectModule extends Module
      */
     private function _saveSessionData()
     {
-        if (!count($this->_aPostData))
+        if (!count($this->_aNewSessionData))
             return;
 
-        $_SESSION['Gveniver']['RedirectModule']['Data'] = $this->_aPostData;
+        $_SESSION['Gveniver'][__CLASS__]['Data'] = $this->_aNewSessionData;
         return;
         
     } // End function
@@ -155,7 +163,7 @@ class RedirectModule extends Module
      */
     public function getSessionVariable($sName)
     {
-        return isset($this->_aPostData[$sName]) ? $this->_aPostData[$sName] : null;
+        return isset($this->_aLoadedSessionData[$sName]) ? $this->_aLoadedSessionData[$sName] : null;
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -172,9 +180,9 @@ class RedirectModule extends Module
     public function setSessionVariable($mData, $sName = null)
     {
         if (!$sName && is_array($mData))
-            $this->_aPostData = $mData;
+            $this->_aNewSessionData = $mData;
         elseif ($sName)
-            $this->_aPostData[$sName] = $mData;
+            $this->_aNewSessionData[$sName] = $mData;
         
     } // End function
     //-----------------------------------------------------------------------------
