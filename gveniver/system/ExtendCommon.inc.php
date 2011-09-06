@@ -113,28 +113,95 @@ function explode_ex($delimiter, $string)
 // @codingStandardsIgnoreStart
 function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
 // @codingStandardsIgnoreEnd
-{ 
+{
+
+    $tidy_config = array(
+         'clean'          => true,
+         'output-xml'     => true,
+         'show-body-only' => true,
+         'wrap' => 0,
+
+    );
+
+    $cTidy = new \Tidy();
+    $cTidy ->parseString($string, $tidy_config, 'UTF8');
+    $cTidy->cleanRepair();
+
+    $string = $cTidy->repairString(
+        $string,
+        array(
+            'output-xhtml'    => true,
+            'show-body-only'  => true,
+            //'alt-text'        => '',
+            //'drop-font-tags'  => true,
+            'escape-cdata'    => true,
+            'hide-comments'   => true,
+            'join-styles'     => true,
+            'join-classes'    => true,
+            'quote-ampersand' => true,
+            'quote-marks'     => true,
+            'break-before-br' => true,
+            'indent'          => 'auto',
+            'newline'         => 'LF',
+            'quote-nbsp'      => true,
+            'quote-marks'     => true,
+            'quote-ampersand' => true
+        ),
+        'UTF8'
+    );
+
+    $cDom = new \DomDocument();
+    $string = str_replace('&nbsp;', '&#160;', $string);
+    $string = str_replace('&quot;', '&#34;', $string);
+    $string = str_replace('&gt;', '&#62;;', $string);
+    $string = str_replace('&lt;', '&#60;', $string);
+    $string = str_replace('&laquo;', '&#171;', $string);
+    $string = str_replace('&raquo;', '&#187;', $string);
+
+    //if (substr($string, 0, 1) != "<")
+        $string = "<xml_main>".$string."</xml_main>";
+
+    $cDom->loadXML($string);
+
     if ($allowattributes) {
-        if (!is_array($allowattributes)) 
-            $allowattributes = explode(",", $allowattributes); 
-        if (is_array($allowattributes)) 
-            $allowattributes = implode("|", $allowattributes); 
-            
-        $rep = '/([^>]*) ('.$allowattributes.')(=)(\'.*\'|".*")/i'; 
-        $string = preg_replace($rep, '$1 $2_-_-$4', $string); 
-        
-    } // End if
-    
-    if (preg_match('/([^>]*) (.*)(=\'.*\'|=".*")(.*)/i', $string) > 0)
-        $string = preg_replace('/([^>]*) (.*)(=\'.*\'|=".*")(.*)/i', '$1$4', $string); 
-    
-    $rep = '/([^>]*) ('.$allowattributes.')(_-_-)(\'.*\'|".*")/i'; 
-    
-    if ($allowattributes) 
-        $string = preg_replace($rep, '$1 $2=$4', $string); 
-        
-    return strip_tags($string, $allowtags); 
-    
+        if (!is_array($allowattributes))
+            $allowattributes = explode(",", $allowattributes);
+    }
+
+    if ($allowtags) {
+        $allowtags = explode(" ", $allowtags);
+        for ($i = 0; $i < count($allowtags); $i++) {
+            $allowtags[$i] = trim(str_replace(">", "", str_replace("<", "", $allowtags[$i])));
+        }
+    }
+
+    $cXml = $cDom->getElementsByTagName('xml_main')->item(0);
+    $strip_tag = function(&$cElement, $allowattributes, $allowtags, $strip_tag) {
+        foreach ($cElement->childNodes as $cNode) {
+            if ($cNode->nodeType != XML_ELEMENT_NODE)
+                continue;
+
+            if ($allowtags) {
+                if (!in_array($cNode->tagName, $allowtags))
+                    $cElement->removeChild($cNode);
+            }
+
+            if ($allowattributes) {
+                foreach ($cNode->attributes as $cAttribute) {
+                    if (!in_array($cAttribute->name, $allowattributes))
+                        $cNode->removeAttribute($cAttribute->name);
+                }
+            }
+
+            $strip_tag($cNode, $allowattributes, $allowtags, $strip_tag);
+        }
+    };
+    $strip_tag($cXml, $allowattributes, $allowtags, $strip_tag);
+    $string = $cDom->saveXML($cXml);
+    $string = substr($string, 10, $string - 11);
+
+    return $string;
+
 } // End function
 //-----------------------------------------------------------------------------
 
