@@ -77,7 +77,7 @@ class DataModule extends Module
         $sCacheIndex = $sProviderName ? $sProviderName : 0;
         if (array_key_exists($sCacheIndex, $this->_aProviders)) {
             $this->getApplication()->trace->addLine('[%s] Provider ("%s") loaded from cache.', __CLASS__, $sCacheIndex);
-            return $this->_aProviders[$sCacheIndex];
+            return $this->_aProviders[$sCacheIndex]->getConnection();
         }
 
         // Try to load for existing provider.

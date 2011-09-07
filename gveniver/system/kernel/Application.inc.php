@@ -382,7 +382,7 @@ final class Application
         // After including of all module files, class of module must exists.
         if (!class_exists($sModuleClassName))
             return null;
-        
+
         // Class of module must extends base module class.
         if (!in_array('Gveniver\\Kernel\\Module', class_parents($sModuleClassName)))
             return null;

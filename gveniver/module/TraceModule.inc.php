@@ -99,7 +99,7 @@ class TraceModule extends Module
         }
 
         //echo $sMessage."<br/>\n";
-        
+
         $dMemory = memory_get_usage();
         $dTime = microtime(true);
         $nPrevIndex = count($this->_aMessages) - 1;
