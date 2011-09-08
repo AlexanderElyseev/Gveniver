@@ -157,9 +157,8 @@ final class Application
         // Display errors.
         $bDisplayErrors = self::toBoolean($this->getConfig()->get('Kernel/DisplayErrors'));
         ini_set('display_errors', $bDisplayErrors);
-        if ($bDisplayErrors)
-            $this->trace->addLine('[%s] Display errors: %s.', __CLASS__, $bDisplayErrors);
-
+        $this->trace->addLine('[%s] Display errors: %s.', __CLASS__, $bDisplayErrors ? 'true' : 'false');
+        
         // Start session.
         $bStartSession = self::toBoolean($this->getConfig()->get('Kernel/StartSession'));
         if ($bStartSession) {

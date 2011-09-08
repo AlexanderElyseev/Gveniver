@@ -102,18 +102,21 @@ class Config
         $aTarget = array();
         foreach ($cXml->children() as $cParameter) {
             $sKey = $cParameter->getName();
-            if (count($cParameter) > 0) {           // Complex parameter.
+
+            // Complex parameter.
+            if (count($cParameter) > 0) {
                 $aChilds = $this->_buildXmlConfig($cParameter);
                 if (count($aChilds) == 0)
                     continue;
 
-                if (count($cXml->{$sKey}) > 1 || $cXml["_list"])      // List of elements with equal type.
+                // List of elements with equal type.
+                if (count($cXml->{$sKey}) > 1 || $cXml['_list'])
                     $aTarget[] = $aChilds;
                 else                                // List of unique.
                     $aTarget[$sKey] = $aChilds;
             } else {                                // Simple parameter.
                 $sValue = trim($cParameter);
-                if ($sValue)
+                if (mb_strlen($sValue))
                     $aTarget[$sKey] = $sValue;
             }
         }
