@@ -477,7 +477,7 @@ final class Loader
         if (defined('GV_OS_WIN') && GV_OS_WIN)
             return preg_match('/^[a-z]:/i', $sPath);
         
-        return $sPath[0] === '/';
+        return isset($sPath[0]) && $sPath[0] === '/';
 
     } // End function
     //-----------------------------------------------------------------------------

@@ -48,8 +48,19 @@ class FileLogProvider extends LogProvider
 
         if (!isset($aConfigData['FileName']) || !is_string($aConfigData['FileName']))
             throw new \Gveniver\Exception\Exception('Log file name must be specified.');
-        
+
+        $bRelativeByProfile = isset($aConfigData['RelativeByProfile'])
+            && \Gveniver\Kernel\Application::toBoolean($aConfigData['RelativeByProfile']);
+    
         $this->_sFileName = $aConfigData['FileName'];
+
+        // Convert to absolute path.
+        if ($bRelativeByProfile)
+            $this->_sFileName = $cApplication->getProfile()->getPath().$this->_sFileName;
+        elseif (!\Gveniver\Loader::isAbsolutePath($this->_sFileName))
+            $this->_sFileName = GV_PATH_BASE.$this->_sFileName;
+        
+        $this->_sFileName = \Gveniver\Loader::correctPath($this->_sFileName);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -63,15 +74,15 @@ class FileLogProvider extends LogProvider
      */
     public function save(array $aData)
     {
-        // Convert to absolute path.
-        if (!\Gveniver\Loader::isAbsolutePath($this->_sFileName))
-            $this->_sFileName = GV_PATH_BASE.$this->_sFileName;
-
         // Check permissions to write in log directory.
         $sLogDir = dirname($this->_sFileName);
         if (!is_dir($sLogDir) || !is_writable($sLogDir)) {
             if (!mkdir($sLogDir, 0777, true)) {
-                $this->getApplication()->trace->addLine('[%s] Permissions denied in writeing log  at "%s".', __CLASS__, $sLogDir);
+                $this->getApplication()->trace->addLine(
+                    '[%s] Permissions denied in writeing log  at "%s".',
+                    __CLASS__,
+                    $sLogDir
+                );
                 return;
             }
         }
@@ -79,7 +90,11 @@ class FileLogProvider extends LogProvider
         // Open file for writing.
         $cFile = fopen($this->_sFileName, 'a');
         if (!$cFile) {
-            $this->getApplication()->trace->addLine('[%s] Error in opening log "%s".', __CLASS__, $this->_sFileName);
+            $this->getApplication()->trace->addLine(
+                '[%s] Error in opening log "%s".',
+                __CLASS__,
+                $this->_sFileName
+            );
             return;
         }
 
