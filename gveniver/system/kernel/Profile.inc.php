@@ -43,6 +43,14 @@ class Profile
      */
     private $_cApplication;
     //-----------------------------------------------------------------------------
+
+    /**
+     * Parent profile for current.
+     *
+     * @var Profile
+     */
+    private $_cParentProfile;
+    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
@@ -59,7 +67,55 @@ class Profile
 
     } // End function
     //-----------------------------------------------------------------------------
-    
+
+    /**
+     * Start profile logic.
+     * By default, load and parse main template with current section and action.
+     *
+     * @return string
+     */
+    public function start()
+    {
+        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
+        $sResult = $this->getApplication()->template->parseTemplate(
+            $this->getMainTemplate(
+                $this->getCurrentSectionName(),
+                $this->getCurrentAction()
+            )
+        );
+        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
+        return $sResult;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Getter for parent profile.
+     *
+     * @return Profile
+     */
+    public function getParentProfile()
+    {
+        return $this->_cParentProfile;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Setter for parent profile.
+     *
+     * @param Profile $cProfile Parent profile to set.
+     *
+     * @return void
+     */
+    public function setParentProfile(Profile $cProfile)
+    {
+        //var_dump($cProfile);
+        $this->_cParentProfile = $cProfile;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
     /**
      * Getter for current application.
      *
@@ -82,28 +138,6 @@ class Profile
         return $this->_sProfilePath;
 
     } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Start profile logic.
-     * By default, load and parse main template with current section and action.
-     *
-     * @return string
-     */
-    public function start()
-    {
-        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
-        $sResult = $this->getApplication()->template->parseTemplate(
-            $this->getMainTemplate(
-                $this->getCurrentSectionName(),
-                $this->getCurrentAction()
-            )
-        );
-        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
-        return $sResult;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**

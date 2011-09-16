@@ -12,6 +12,7 @@
 
 namespace Gveniver\Extension;
 \Gveniver\Loader::i('system/extension/Extension.inc.php');
+\Gveniver\Loader::i('system/extension/ExtensionReply.inc.php');
 
 /**
  * Class of simple extension.

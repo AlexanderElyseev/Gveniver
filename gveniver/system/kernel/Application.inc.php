@@ -234,6 +234,12 @@ final class Application
      */
     private function _loadProfile($sProfileName)
     {
+        // Name of profile must be correct.
+        if (!$sProfileName) {
+            $this->trace->addLine('[%s] Try to load profile without name.', __CLASS__);
+            return null;
+        }
+
         // Check profile directory.
         if (is_dir($sProfileName)) {
             $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfileName);
@@ -257,9 +263,23 @@ final class Application
 
         $this->trace->addLine('[%s] Profile class ("%s") successfully loaded.', __CLASS__, $sProfileClass);
 
+        // Load parent profile.
+        $cParentProfile = null;
+        $sParentProfileName = $this->_getProfileNmaeByClassName(get_parent_class($sProfileClass));
+        if ($sParentProfileName) {
+            $this->trace->addLine('[%s] Load base profile ("%s").', __CLASS__, $sParentProfileName);
+            $cParentProfile = $this->_loadProfile($sParentProfileName);
+            if ($cParentProfile)
+                $this->trace->addLine('[%s] Load profile ("%s") successfully loaded.', __CLASS__, $sParentProfileName);
+            else
+                $this->trace->addLine('[%s] Load profile ("%s") is not loaded.', __CLASS__, $sParentProfileName);
+        }
+
         // Create instance of profile.
         try {
             $cProfile = new $sProfileClass($this, $sProfileDir);
+            if ($cParentProfile)
+                $cProfile->setParentProfile($cParentProfile);
         } catch (\Gveniver\Exception\Exception $cEx) {
             $this->trace->addLine(
                 '[%s] Exception in profile ("%s") constructor: "%s".',
@@ -283,6 +303,23 @@ final class Application
         }
 
         return $cProfile;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Returns name of profile by full class name with namespaces or without.
+     *
+     * @param string $sFullProfileClassName Full class name.
+     * 
+     * @return string
+     */
+    private function _getProfileNmaeByClassName($sFullProfileClassName)
+    {
+        $sClassNameWithoutNamespaces = array_pop(explode('\\', $sFullProfileClassName));
+
+        preg_match('/(\w+)Profile/', $sClassNameWithoutNamespaces, $aMatches);
+        return isset($aMatches[1]) ? $aMatches[1] : null;
 
     } // End function
     //-----------------------------------------------------------------------------

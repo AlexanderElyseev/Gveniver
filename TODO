@@ -1,6 +1,6 @@
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 Todo list for project.
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
 0. Kernel.
     0.1. Restore environment after running profile.                                                 [**]
@@ -35,17 +35,23 @@ Todo list for project.
     4.3. Extensions must returns raw data, not HTML.                                                [ok]
 5. Ajax.                                                                                            [**]
 6. Configuration.                                                                                   [**]
-    6.1. Smart XML parsing for build PHP array. Use attributes for build structure.
+    6.1. Smart XML parsing for build PHP array. Use attributes for build structure.                 [**]
          Use attributes for converting parameters in specified type.                                [--]
     6.2. Correct algorithm for read configs.                                                        [--] !
 7. Deploy.                                                                                          [**]
     7.1. Use some builder (ant? phing?).                                                            [--]
     7.2. Automatically minimize scripts and styles with builder.                                    [--]
-8. Redirection module.																				[**]
-	8.1. Create module.																				[ok]
+8. Redirection module.                                                                              [**]
+    8.1. Create module.                                                                             [ok]
 9. Template module.                                                                                 [**]
     9.1. PHP templates.                                                                             [--]
     9.2. Parameters for building factory at separated part.                                         [--]
+--------------------------------------------------------------------------------------------------------
 
-// Other.
-Move config: kernel/profilepath -> profile/directory (kernel/loadingdirectory)
+
+--------------------------------------------------------------------------------------------------------
+Other
+--------------------------------------------------------------------------------------------------------
+
+0. Move config: kernel/profilepath -> profile/directory (kernel/loadingdirectory)                   [--]
+--------------------------------------------------------------------------------------------------------

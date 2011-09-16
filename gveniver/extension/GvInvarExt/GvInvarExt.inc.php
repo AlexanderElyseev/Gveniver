@@ -28,16 +28,19 @@ class GvInvarExt extends SimpleExtension
     /**
      * Return value of input variable by name.
      *
-     * @param string $sInvarName Name of invar for loading value.
+     * @param string  $sInvarName Name of invar for loading value.
+     * @param boolean $bFromPost  Load variable from POST.
      *
      * @return mixed|null
      */
-    public function getVariable($sInvarName)
+    public function getVariable($sInvarName, $bFromPost = false)
     {
         if (!$sInvarName)
             return null;
 
-        return $this->getApplication()->invar->get($sInvarName);
+        return $bFromPost
+            ? $this->getApplication()->invar->post($sInvarName)
+            : $this->getApplication()->invar->get($sInvarName);
         
     } // End function
     //-----------------------------------------------------------------------------
