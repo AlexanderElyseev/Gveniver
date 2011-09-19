@@ -20,6 +20,16 @@ namespace Gveniver\Kernel;
  *
  * PHP version 5
  *
+ * @property  \Gveniver\Kernel\CacheModule     $cache
+ * @property  \Gveniver\Kernel\CaptchaModule   $captcha
+ * @property  \Gveniver\Kernel\DataModule      $data
+ * @property  \Gveniver\Kernel\ExtensionModule $extension
+ * @property  \Gveniver\Kernel\InvarModule     $invar
+ * @property  \Gveniver\Kernel\LogModule       $log
+ * @property  \Gveniver\Kernel\RedirectModule  $redirect
+ * @property  \Gveniver\Kernel\TemplateModule  $template
+ * @property  \Gveniver\Kernel\TraceModule     $trace
+ *
  * @category  Gveniver
  * @package   Kernel
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
@@ -226,6 +236,9 @@ final class Application
     /**
      * Load application profile instance by name.
      *
+     * If current profile extends other profile, load this profile by name.
+     * All configurations are combined start from base.
+     *
      * @param string $sProfileName Path to application profile dir or name of application profile for loading.
      * If directory is specified, load from directory. Otherwise, load from base profile directory
      * with specified profile name.
@@ -260,12 +273,11 @@ final class Application
             $this->trace->addLine('[%s] Profile class ("%s") is not loaded.', __CLASS__, $sProfileClass);
             return null;
         }
-
         $this->trace->addLine('[%s] Profile class ("%s") successfully loaded.', __CLASS__, $sProfileClass);
 
         // Load parent profile.
         $cParentProfile = null;
-        $sParentProfileName = $this->_getProfileNmaeByClassName(get_parent_class($sProfileClass));
+        $sParentProfileName = $this->_getProfileNameByClassName(get_parent_class($sProfileClass));
         if ($sParentProfileName) {
             $this->trace->addLine('[%s] Load base profile ("%s").', __CLASS__, $sParentProfileName);
             $cParentProfile = $this->_loadProfile($sParentProfileName);
@@ -277,9 +289,7 @@ final class Application
 
         // Create instance of profile.
         try {
-            $cProfile = new $sProfileClass($this, $sProfileDir);
-            if ($cParentProfile)
-                $cProfile->setParentProfile($cParentProfile);
+            $cProfile = new $sProfileClass($this, $sProfileDir, $cParentProfile);
         } catch (\Gveniver\Exception\Exception $cEx) {
             $this->trace->addLine(
                 '[%s] Exception in profile ("%s") constructor: "%s".',
@@ -291,9 +301,10 @@ final class Application
         }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $sProfileClass);
 
-        // Load configuration of profile append to main configuration.
+        // Load configuration of profile and append to main configuration.
         $sProfileXmlFile = $sProfileDir.'config.xml';
-        if ($this->getConfig()->mergeXmlFile($sProfileXmlFile)) {
+        if ($cProfile->getConfig()->mergeXmlFile($sProfileXmlFile)) {
+            $this->getConfig()->mergeConfig($cProfile->getConfig());
             $this->trace->addLine(
                 '[%s] Configuration parameters of profile ("%s") successfully loaded (from "%s").',
                 __CLASS__,
@@ -314,7 +325,7 @@ final class Application
      * 
      * @return string
      */
-    private function _getProfileNmaeByClassName($sFullProfileClassName)
+    private function _getProfileNameByClassName($sFullProfileClassName)
     {
         $sClassNameWithoutNamespaces = array_pop(explode('\\', $sFullProfileClassName));
 

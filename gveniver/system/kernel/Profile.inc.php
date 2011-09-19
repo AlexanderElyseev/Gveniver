@@ -29,6 +29,14 @@ namespace Gveniver\Kernel;
 class Profile
 {
     /**
+     * Configuration of current profile.
+     *
+     * @var \Gveniver\Config
+     */
+    private $_cConfig;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Path to directory with profile.
      *
      * @var string
@@ -39,7 +47,7 @@ class Profile
     /**
      * Reference to current kernel.
      *
-     * @var Application
+     * @var \Gveniver\Kernel\Application
      */
     private $_cApplication;
     //-----------------------------------------------------------------------------
@@ -47,7 +55,7 @@ class Profile
     /**
      * Parent profile for current.
      *
-     * @var Profile
+     * @var \Gveniver\Kernel\Profile
      */
     private $_cParentProfile;
     //-----------------------------------------------------------------------------
@@ -57,13 +65,65 @@ class Profile
      * Constructor of {@see Profile} class.
      * Initialize new instance of application profile.
      *
-     * @param Application $cApplication Current application.
-     * @param string      $sPath        Path to directory with profile.
+     * @param \Gveniver\Kernel\Application $cApplication   Current application.
+     * @param string                       $sProfileDir    Path to directory with profile.
+     * @param \Gveniver\Kernel\Profile     $cParentProfile Parent profile for current.
      */
-    public function __construct(Application $cApplication, $sPath)
+    public function __construct(Application $cApplication, $sProfileDir, Profile $cParentProfile = null)
     {
+        $this->_cConfig = new \Gveniver\Config();
+        
         $this->_cApplication = $cApplication;
-        $this->_sProfilePath = $sPath;
+        $this->_sProfilePath = $sProfileDir;
+        $this->_cParentProfile = $cParentProfile;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Getter for configuration of profile..
+     *
+     * @return \Gveniver\Config
+     */
+    public function getConfig()
+    {
+        return $this->_cConfig;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Getter for current application.
+     *
+     * @return \Gveniver\Kernel\Application
+     */
+    public function getApplication()
+    {
+        return $this->_cApplication;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Getter for directory of profile.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->_sProfilePath;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Getter for parent profile.
+     *
+     * @return Profile
+     */
+    public function getParentProfile()
+    {
+        return $this->_cParentProfile;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -85,57 +145,6 @@ class Profile
         );
         $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
         return $sResult;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Getter for parent profile.
-     *
-     * @return Profile
-     */
-    public function getParentProfile()
-    {
-        return $this->_cParentProfile;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Setter for parent profile.
-     *
-     * @param Profile $cProfile Parent profile to set.
-     *
-     * @return void
-     */
-    public function setParentProfile(Profile $cProfile)
-    {
-        //var_dump($cProfile);
-        $this->_cParentProfile = $cProfile;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Getter for current application.
-     *
-     * @return Application
-     */
-    public function getApplication()
-    {
-        return $this->_cApplication;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Getter for directory of profile.
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->_sProfilePath;
 
     } // End function
     //-----------------------------------------------------------------------------

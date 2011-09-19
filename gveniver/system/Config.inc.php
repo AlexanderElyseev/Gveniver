@@ -91,6 +91,20 @@ class Config
     //-----------------------------------------------------------------------------
 
     /**
+     * Merge configuration with other configuration.
+     *
+     * @param Config $cConfig Configuration for merging.
+     *
+     * @return boolean Returns true on success.
+     */
+    public function mergeConfig(Config $cConfig)
+    {
+        $this->_merge($cConfig->_aConfig);
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Recursive function for building configuration using SimpleXML library.
      *
      * @param \SimpleXMLElement $cXml Element to parse.

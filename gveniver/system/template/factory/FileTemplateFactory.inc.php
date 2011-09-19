@@ -51,11 +51,11 @@ abstract class FileTemplateFactory extends TemplateFactory
     //-----------------------------------------------------------------------------
 
     /**
-     * Folder for template files.
+     * Directories for template files.
      *
-     * @var string
+     * @var array
      */
-    protected $sTplFolder;
+    protected $aTplDirectories = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
@@ -86,34 +86,36 @@ abstract class FileTemplateFactory extends TemplateFactory
         if (!$this->sTplFileNameSeparator)
             throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
 
-        // Template folder.
-        $this->sTplFolder = $this->getApplication()->getConfig()->get('Profile/Path/AbsTemplate');
-        if (!$this->sTplFolder  || !is_dir($this->sTplFolder) || !is_readable($this->sTplFolder))
+        // Template folders.
+        $cP = $this->getApplication()->getProfile();
+        do {
+            $sTplDirectory = $cP->getConfig()->get('Profile/Path/AbsTemplate');
+            if (!$sTplDirectory  || !is_dir($sTplDirectory) || !is_readable($sTplDirectory)) {
+                $cApplication->trace->addLine(
+                    '[%s] wrong template directory of profile ("%s").',
+                    __CLASS__,
+                    $sTplDirectory
+                );
+            }
+
+            $this->aTplDirectories[] = $sTplDirectory;
+            
+            if ($cP->getParentProfile())
+                $cP = $cP->getParentProfile();
+            else
+                break;
+
+        } while (true);
+
+        if (!count($this->aTplDirectories))
             throw new \Gveniver\Exception\Exception('Wrong template directory.');
-        
+
+
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns the content of template file by template name.
-     *
-     * @param string $sTemplateName Template name for loading file content.
-     * 
-     * @return string|null Returns null if file not found.
-     */
-    protected function getTemplateFileContent($sTemplateName)
-    {
-        $sTemplateFileName = $this->getTemplateFileName($sTemplateName);
-        if ($sTemplateFileName)
-            return file_get_contents($this->sTplFolder.$sTemplateFileName);
-
-        return null;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Returns correct template file name by template name.
+     * Returns correct template file path by template name.
      *
      * @param string $sName Template name for loading file name.
      *
@@ -121,13 +123,17 @@ abstract class FileTemplateFactory extends TemplateFactory
      */
     protected function getTemplateFileName($sName)
     {
-        if (isset($this->_aNameCache[$sName])) {
+        // Load from cache.
+        if (isset($this->_aNameCache[$sName]))
             return $this->_aNameCache[$sName];
-        } else {
-            $sAbsFileName = $this->sTplFolder . $sName;
-            $sAbsFileNameWithExt = $sAbsFileName . $this->sTplFileNameExtension;
+
+        // Search in all template directories.
+        foreach ($this->aTplDirectories as $sTplDirectory) {
+
+            $sAbsFileName = $sTplDirectory.$sName;
+            $sAbsFileNameWithExt = $sAbsFileName.$this->sTplFileNameExtension;
             if (file_exists($sAbsFileNameWithExt) && !is_dir($sAbsFileNameWithExt))
-                return $this->_aNameCache[$sName] = $sName . $this->sTplFileNameExtension;
+                return $this->_aNameCache[$sName] = $sName.$this->sTplFileNameExtension;
             elseif (file_exists($sAbsFileName) && !is_dir($sAbsFileName))
                 return $this->_aNameCache[$sName] = $sName;
             else {
@@ -143,8 +149,8 @@ abstract class FileTemplateFactory extends TemplateFactory
                     $sName[$i] = GV_DS;
 
                     // Try to load template content.
-                    $sComplexAbsFileName = $this->sTplFolder . $sName;
-                    $sComplexAbsFileNameWithExt = $this->sTplFolder . $sName . $this->sTplFileNameExtension;
+                    $sComplexAbsFileName = $sTplDirectory.$sName;
+                    $sComplexAbsFileNameWithExt = $sTplDirectory.$sName . $this->sTplFileNameExtension;
 
                     if (file_exists($sComplexAbsFileNameWithExt) && !is_dir($sComplexAbsFileNameWithExt))
                         return $this->_aNameCache[$sName] = $sComplexAbsFileNameWithExt;
@@ -157,7 +163,7 @@ abstract class FileTemplateFactory extends TemplateFactory
 
             } // End else
 
-        } // End else
+        } // End foreach
 
         return null;
         
