@@ -90,26 +90,22 @@ abstract class FileTemplateFactory extends TemplateFactory
         $cP = $this->getApplication()->getProfile();
         do {
             $sTplDirectory = $cP->getConfig()->get('Profile/Path/AbsTemplate');
-            if (!$sTplDirectory  || !is_dir($sTplDirectory) || !is_readable($sTplDirectory)) {
+            if (!$sTplDirectory || !is_dir($sTplDirectory) || !is_readable($sTplDirectory)) {
                 $cApplication->trace->addLine(
                     '[%s] wrong template directory of profile ("%s").',
                     __CLASS__,
                     $sTplDirectory
                 );
+                continue;
             }
 
-            $this->aTplDirectories[] = $sTplDirectory;
-            
-            if ($cP->getParentProfile())
-                $cP = $cP->getParentProfile();
-            else
-                break;
+            if (!in_array($sTplDirectory, $this->aTplDirectories))
+                $this->aTplDirectories[] = $sTplDirectory;
 
-        } while (true);
+        } while (null !== ($cP = $cP->getParentProfile()));
 
         if (!count($this->aTplDirectories))
             throw new \Gveniver\Exception\Exception('Wrong template directory.');
-
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -127,30 +123,31 @@ abstract class FileTemplateFactory extends TemplateFactory
         if (isset($this->_aNameCache[$sName]))
             return $this->_aNameCache[$sName];
 
+        $sStartName = $sName;
+        
         // Search in all template directories.
         foreach ($this->aTplDirectories as $sTplDirectory) {
-
-            $sAbsFileName = $sTplDirectory.$sName;
+            $sAbsFileName = $sTplDirectory.$sStartName;
             $sAbsFileNameWithExt = $sAbsFileName.$this->sTplFileNameExtension;
             if (file_exists($sAbsFileNameWithExt) && !is_dir($sAbsFileNameWithExt))
-                return $this->_aNameCache[$sName] = $sName.$this->sTplFileNameExtension;
+                return $this->_aNameCache[$sStartName] = $sAbsFileNameWithExt;
             elseif (file_exists($sAbsFileName) && !is_dir($sAbsFileName))
-                return $this->_aNameCache[$sName] = $sName;
+                return $this->_aNameCache[$sStartName] = $sAbsFileName;
             else {
                 // Load template content by complex file name from base folder.
                 // a_b_c_d.tpl ---> a/b_c_d.tpl ---> ... ---> a/b/c/d.tpl
-                $sStartName = $sName;
-                $nLength = mb_strlen($sName);
+                $sLoopName = $sStartName;
+                $nLength = mb_strlen($sLoopName);
                 for ($i = 0; $i < $nLength; $i++) {
-                    if ($sName[$i] !== $this->sTplFileNameSeparator)
+                    if ($sLoopName[$i] !== $this->sTplFileNameSeparator)
                         continue;
 
                     // Replace with separator.
-                    $sName[$i] = GV_DS;
+                    $sLoopName[$i] = GV_DS;
 
                     // Try to load template content.
-                    $sComplexAbsFileName = $sTplDirectory.$sName;
-                    $sComplexAbsFileNameWithExt = $sTplDirectory.$sName . $this->sTplFileNameExtension;
+                    $sComplexAbsFileName = $sTplDirectory.$sLoopName;
+                    $sComplexAbsFileNameWithExt = $sTplDirectory.$sLoopName.$this->sTplFileNameExtension;
 
                     if (file_exists($sComplexAbsFileNameWithExt) && !is_dir($sComplexAbsFileNameWithExt))
                         return $this->_aNameCache[$sName] = $sComplexAbsFileNameWithExt;
