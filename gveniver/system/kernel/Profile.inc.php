@@ -129,6 +129,24 @@ class Profile
     //-----------------------------------------------------------------------------
 
     /**
+     * Return array of all parent profiles from curretn.
+     *
+     * @return array
+     */
+    public function getParentProfileList()
+    {
+        $aRet = array();
+        $cP = $this;
+        do {
+            $aRet[] = $cP;
+        } while (null !== ($cP = $cP->getParentProfile()));
+
+        return $aRet;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Start profile logic.
      * By default, load and parse main template with current section and action.
      *
@@ -591,26 +609,25 @@ class Profile
         $aActionSectionScripts = array();
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
                             foreach ($aSection['ActList'] as $aAction)
                                 if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['ScriptList']))
-                                    $aActionSectionScripts = $aAction['Section']['ScriptList'];
+                                    $aActionSectionScripts = array_values($aAction['Section']['ScriptList']);
 
         // Load for section.
         $aSectionScripts = array();
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ScriptList']))
-                        $aSectionScripts = $aSection['ScriptList'];
+                        $aSectionScripts = array_values($aSection['ScriptList']);
 
         // Load for default section.
-        $aBaseScripts = array();
-        $this->_cApplication->getConfig()->get('Profile/SectionList/Default/ScriptList', $aBaseScripts);
+        $aBaseScripts = array_values($this->getConfig()->get('Profile/SectionList/Default/ScriptList'));
 
         return array_merge($aBaseScripts, $aSectionScripts, $aActionSectionScripts);
 
@@ -631,26 +648,25 @@ class Profile
         $aActionSectionStyles = array();
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
                             foreach ($aSection['ActList'] as $aAction)
                                 if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['StyleList']))
-                                    $aActionSectionStyles = $aAction['Section']['StyleList'];
+                                    $aActionSectionStyles = array_values($aAction['Section']['StyleList']);
 
         // Load for section.
         $aSectionStyles = array();
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['StyleList']))
-                        $aSectionStyles = $aSection['StyleList'];
+                        $aSectionStyles = array_values($aSection['StyleList']);
 
         // Load for default section.
-        $aBaseStyles = array();
-        $this->_cApplication->getConfig()->get('Profile/SectionList/Default/StyleList', $aBaseStyles);
+        $aBaseStyles = array_values($this->getConfig()->get('Profile/SectionList/Default/StyleList'));
 
         return array_merge($aBaseStyles, $aSectionStyles, $aActionSectionStyles);
 

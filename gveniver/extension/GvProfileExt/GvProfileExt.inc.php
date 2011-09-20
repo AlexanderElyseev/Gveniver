@@ -113,6 +113,7 @@ class GvProfileExt extends SimpleExtension
 
     /**
      * Returns list scripts for current section and action.
+     * TODO: Filter not unique.
      *
      * @return array
      */
@@ -123,19 +124,14 @@ class GvProfileExt extends SimpleExtension
         // Add JavaScript configuration.
         if ($this->_aConfig['UseConfigScript'])
             $aRet[] = array(
-                'FileName' => $this->getApplication()->invar->getLink(
+                'WebFileName' => $this->getApplication()->invar->getLink(
                     array($this->_aConfig['InvarSectionKey'] => $this->_aConfig['ConfigScriptSection'])
                 )
             );
 
-        // Load scripts data from profile configuration.
         $cProfile = $this->getApplication()->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
-        $aScriptDataList = $cProfile->getScriptList(
-            $sSectionName,
-            $sActionValue
-        );
 
         // Load scripts from cache.
         if ($this->_aConfig['CacheScripts']) {
@@ -146,19 +142,53 @@ class GvProfileExt extends SimpleExtension
 
             // If cache not loaded, save and reload script cache.
             // This action for prevent using of not cached scripts.
-            $this->_saveCacheScripts($aScriptDataList, $sSectionName, $sActionValue);
+            $this->_saveCacheScripts(
+                $this->_buildScriptList($sSectionName, $sActionValue),
+                $sSectionName,
+                $sActionValue
+            );
             $aCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
             if ($aCacheScripts)
                 return array_merge($aRet, $aCacheScripts);
         }
 
-        // Set absolute path to scripts.
-        $sScriptWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsScriptWeb');
-        foreach ($aScriptDataList as &$aScript) {
-            $aScript['FileName'] = $sScriptWebPath.$aScript['FileName'];
-        }
+        // Load scripts without cache.
+        return array_merge($aRet, $this->_buildScriptList($sSectionName, $sActionValue));
 
-        return array_merge($aRet, $aScriptDataList);
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Build list of scripts from profile and from parent profiles.
+     *
+     * @param string $sSectionName Name of section for load list of scripts.
+     * @param string $sActionValue Value of action for load list of scripts.
+     *
+     * @return array
+     */
+    private function _buildScriptList($sSectionName, $sActionValue)
+    {
+        $aRet = array();
+
+        // For each profile, build list of scripts.
+        foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+            /* @var $cProfile \Gveniver\Kernel\Profile */
+
+            // Load scripts data from profile configuration.
+            $aScriptDataList = $cProfile->getScriptList($sSectionName, $sActionValue);
+
+            // Set absolute path to scripts.
+            $sScriptAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsScript');
+            $sScriptWebPath = $cProfile->getConfig()->get('Profile/Path/AbsScriptWeb');
+            foreach ($aScriptDataList as $nIndex => $aScript) {
+                $aScriptDataList[$nIndex]['WebFileName'] = $sScriptWebPath.$aScriptDataList[$nIndex]['FileName'];
+                $aScriptDataList[$nIndex]['AbsFileName'] = $sScriptAbsPath.$aScriptDataList[$nIndex]['FileName'];
+            }
+            $aRet = array_merge($aRet, $aScriptDataList);
+
+        } // End foreach
+
+        return $aRet;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -210,7 +240,7 @@ class GvProfileExt extends SimpleExtension
             return;
 
         try {
-            $sScriptAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsScript');
+
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
             $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
@@ -218,7 +248,7 @@ class GvProfileExt extends SimpleExtension
                 new \Gveniver\Cache\ScriptPacker()
             );
             foreach ($aList as $aScript)
-                $cCacheSplitter->addFile($sScriptAbsPath.$aScript['FileName']);
+                $cCacheSplitter->addFile($aScript['AbsFileName']);
 
             $cCacheSplitter->save();
 
@@ -246,7 +276,8 @@ class GvProfileExt extends SimpleExtension
 
     /**
      * Returns list of styles for current page.
-     *
+     * TODO: Filter not unique.
+     * 
      * @return array
      */
     public function getStyles()
@@ -255,37 +286,70 @@ class GvProfileExt extends SimpleExtension
         $cProfile = $this->getApplication()->getProfile();
         $sSectionName = $cProfile->getCurrentSectionName();
         $sActionValue = $cProfile->getCurrentAction();
-        $aStyleList = $cProfile->getStyleList(
-            $sSectionName,
-            $sActionValue
-        );
 
         // Load styles from cache.
         if ($this->_aConfig['CacheStyles']) {
-            $aCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
+            $aCacheStyles = $this->_getCacheStyles(
+                $this->_buildStyleList($sSectionName, $sActionValue),
+                $sSectionName,
+                $sActionValue
+            );
             if ($aCacheStyles)
                 return $aCacheStyles;
 
             // If cache not loaded, save and reload style cache.
             // This action for preventing use of not cached styles.
-            $this->_saveCacheStyles($aStyleList, $sSectionName, $sActionValue);
-            $aCacheStyles = $this->_getCacheStyles($aStyleList, $sSectionName, $sActionValue);
+            $this->_saveCacheStyles(
+                $this->_buildStyleList($sSectionName, $sActionValue),
+                $sSectionName,
+                $sActionValue
+            );
+            $aCacheStyles = $this->_getCacheStyles(
+                $this->_buildStyleList($sSectionName, $sActionValue),
+                $sSectionName,
+                $sActionValue
+            );
             if ($aCacheStyles)
                 return $aCacheStyles;
         }
 
-        // Build result list of styles.
+        // Load styles without cache.
+        return $this->_buildStyleList($sSectionName, $sActionValue);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Build list of styles from profile and from parent profiles.
+     *
+     * @param string $sSectionName Name of section for load list of styles.
+     * @param string $sActionValue Value of action for load list of styles.
+     *
+     * @return array
+     */
+    private function _buildStyleList($sSectionName, $sActionValue)
+    {
         $aRet = array();
-        $sStyleWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsStyleWeb');
-        if (is_array($aStyleList)) {
-            foreach ($aStyleList as $aStyle) {
-                $aRet[] = array(
-                    'FileName'  => $sStyleWebPath.$aStyle['FileName'],
-                    'Condition' => isset($aStyle['Condition']) ? $aStyle['Condition'] : null
-                );
+
+        // For each profile, build list of styles.
+        foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+            /* @var $cProfile \Gveniver\Kernel\Profile */
+
+            // Load styles data from profile configuration.
+            $aStyleDataList = $cProfile->getStyleList($sSectionName, $sActionValue);
+
+            // Set absolute path to styles.
+            $sScriptAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsStyle');
+            $sScriptWebPath = $cProfile->getConfig()->get('Profile/Path/AbsStyleWeb');
+            foreach ($aStyleDataList as $nIndex => $aStyle) {
+                $aStyleDataList[$nIndex]['WebFileName'] = $sScriptWebPath.$aStyleDataList[$nIndex]['FileName'];
+                $aStyleDataList[$nIndex]['AbsFileName'] = $sScriptAbsPath.$aStyleDataList[$nIndex]['FileName'];
+                $aStyleDataList[$nIndex]['Condition'] = isset($aStyle['Condition']) ? $aStyle['Condition'] : null;
             }
-        }
-        
+            $aRet = array_merge($aRet, $aStyleDataList);
+
+        } // End foreach
+
         return $aRet;
 
     } // End function
@@ -320,7 +384,7 @@ class GvProfileExt extends SimpleExtension
                     return null;
 
                 $aRet[] = array(
-                    'FileName'  => $sStyleCacheWebPath.$sCacheFile,
+                    'WebFileName'  => $sStyleCacheWebPath.$sCacheFile,
                     'Condition' => $sCondition
                 );
 
@@ -352,7 +416,6 @@ class GvProfileExt extends SimpleExtension
             return;
 
         try {
-            $sStyleAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsStyle');
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
 
             // Group styles by condition.
@@ -368,7 +431,7 @@ class GvProfileExt extends SimpleExtension
                     new \Gveniver\Cache\StylePacker()
                 );
                 foreach ($aSameConditions as $aSameConditionStyle)
-                    $cCacheSplitter->addFile($sStyleAbsPath.$aSameConditionStyle['FileName']);
+                    $cCacheSplitter->addFile($aSameConditionStyle['AbsFileName']);
 
                 $cCacheSplitter->save();
 
