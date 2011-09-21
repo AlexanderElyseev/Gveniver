@@ -59,6 +59,40 @@ class GvProfileExt extends SimpleExtension
     //-----------------------------------------------------------------------------
 
     /**
+     * Returns full web url to image by name.
+     *
+     * @param string $sImageName Name of image for loading.
+     *
+     * @return null|string
+     */
+    public function getImage($sImageName)
+    {
+        if (!$sImageName) {
+            $sText = sprintf('[%s::%s] Image name not specified.', __CLASS__, __METHOD__);
+            $this->getApplication()->log->error($sText);
+            $this->getApplication()->trace->addLine($sText);
+            return null;
+        }
+
+        foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+            /* @var $cProfile \Gveniver\Kernel\Profile */
+
+            $sImageAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsImage');
+            $sImageWebPath = $cProfile->getConfig()->get('Profile/Path/AbsImageWeb');
+            $sImageFilePath = \Gveniver\Loader::correctPath($sImageAbsPath.$sImageName);
+            if (file_exists($sImageFilePath))
+                return $sImageWebPath.$sImageName;
+        }
+
+        $sText = sprintf('[%s::%s] Image ("%s") not found.', __CLASS__, __METHOD__, $sImageName);
+        $this->getApplication()->log->error($sText);
+        $this->getApplication()->trace->addLine($sText);
+        return null;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Returns configuration parameters.
      *
      * @param string $sPath Path to configuration parameter.
