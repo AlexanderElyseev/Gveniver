@@ -113,7 +113,6 @@ class GvProfileExt extends SimpleExtension
 
     /**
      * Returns list scripts for current section and action.
-     * TODO: Filter not unique.
      *
      * @return array
      */
@@ -171,6 +170,7 @@ class GvProfileExt extends SimpleExtension
         $aRet = array();
 
         // For each profile, build list of scripts.
+        $aUniqueScripts = array();
         foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
             /* @var $cProfile \Gveniver\Kernel\Profile */
 
@@ -181,7 +181,14 @@ class GvProfileExt extends SimpleExtension
             $sScriptAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsScript');
             $sScriptWebPath = $cProfile->getConfig()->get('Profile/Path/AbsScriptWeb');
             foreach ($aScriptDataList as $nIndex => $aScript) {
-                $aScriptDataList[$nIndex]['WebFileName'] = $sScriptWebPath.$aScriptDataList[$nIndex]['FileName'];
+                
+                // Check duplicate styles by absolute web path.
+                $sAbsWebPath = $sScriptWebPath.$aScriptDataList[$nIndex]['FileName'];
+                if (in_array($sAbsWebPath, $aUniqueScripts))
+                    continue;
+
+                $aUniqueScripts[] = $sAbsWebPath;
+                $aScriptDataList[$nIndex]['WebFileName'] = $sAbsWebPath;
                 $aScriptDataList[$nIndex]['AbsFileName'] = $sScriptAbsPath.$aScriptDataList[$nIndex]['FileName'];
             }
             $aRet = array_merge($aRet, $aScriptDataList);
@@ -240,9 +247,9 @@ class GvProfileExt extends SimpleExtension
             return;
 
         try {
-
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
+            
             $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                 $sCacheAbsPath.$sCacheFile,
                 new \Gveniver\Cache\ScriptPacker()
@@ -276,7 +283,6 @@ class GvProfileExt extends SimpleExtension
 
     /**
      * Returns list of styles for current page.
-     * TODO: Filter not unique.
      * 
      * @return array
      */
@@ -332,6 +338,7 @@ class GvProfileExt extends SimpleExtension
         $aRet = array();
 
         // For each profile, build list of styles.
+        $aUniqueStyles = array();
         foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
             /* @var $cProfile \Gveniver\Kernel\Profile */
 
@@ -339,11 +346,18 @@ class GvProfileExt extends SimpleExtension
             $aStyleDataList = $cProfile->getStyleList($sSectionName, $sActionValue);
 
             // Set absolute path to styles.
-            $sScriptAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsStyle');
-            $sScriptWebPath = $cProfile->getConfig()->get('Profile/Path/AbsStyleWeb');
+            $sStyleAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsStyle');
+            $sStyleWebPath = $cProfile->getConfig()->get('Profile/Path/AbsStyleWeb');
             foreach ($aStyleDataList as $nIndex => $aStyle) {
-                $aStyleDataList[$nIndex]['WebFileName'] = $sScriptWebPath.$aStyleDataList[$nIndex]['FileName'];
-                $aStyleDataList[$nIndex]['AbsFileName'] = $sScriptAbsPath.$aStyleDataList[$nIndex]['FileName'];
+
+                // Check duplicate styles by absolute web path.
+                $sAbsWebPath = $sStyleWebPath.$aStyleDataList[$nIndex]['FileName'];
+                if (in_array($sAbsWebPath, $aUniqueStyles))
+                    continue;
+
+                $aUniqueStyles[] = $sAbsWebPath;
+                $aStyleDataList[$nIndex]['WebFileName'] = $sAbsWebPath;
+                $aStyleDataList[$nIndex]['AbsFileName'] = $sStyleAbsPath.$aStyleDataList[$nIndex]['FileName'];
                 $aStyleDataList[$nIndex]['Condition'] = isset($aStyle['Condition']) ? $aStyle['Condition'] : null;
             }
             $aRet = array_merge($aRet, $aStyleDataList);
