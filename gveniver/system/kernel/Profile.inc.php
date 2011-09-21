@@ -129,7 +129,7 @@ class Profile
     //-----------------------------------------------------------------------------
 
     /**
-     * Return array of all parent profiles from curretn.
+     * Return array of all parent profiles from current.
      *
      * @return array
      */

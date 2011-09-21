@@ -159,6 +159,9 @@ class GvProfileExt extends SimpleExtension
 
     /**
      * Build list of scripts from profile and from parent profiles.
+     * Scripts of child clubs ovverides scripts of parent clubs by file name.
+     *
+     * Duplicate scripts cheks by absolute web path.
      *
      * @param string $sSectionName Name of section for load list of scripts.
      * @param string $sActionValue Value of action for load list of scripts.
@@ -167,11 +170,11 @@ class GvProfileExt extends SimpleExtension
      */
     private function _buildScriptList($sSectionName, $sActionValue)
     {
-        $aRet = array();
+        $aScriptNames = array();
 
         // For each profile, build list of scripts.
         $aUniqueScripts = array();
-        foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+        foreach (array_reverse($this->getApplication()->getProfile()->getParentProfileList()) as $cProfile) {
             /* @var $cProfile \Gveniver\Kernel\Profile */
 
             // Load scripts data from profile configuration.
@@ -190,13 +193,13 @@ class GvProfileExt extends SimpleExtension
                 $aUniqueScripts[] = $sAbsWebPath;
                 $aScript['WebFileName'] = $sAbsWebPath;
                 $aScript['AbsFileName'] = $sScriptAbsPath.$aScript['FileName'];
-                $aRet[] = $aScript;
+                $aScriptNames[$aScript['FileName']] = $aScript;
 
             } // End foreach
 
         } // End foreach
 
-        return $aRet;
+        return array_values($aScriptNames);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -328,6 +331,9 @@ class GvProfileExt extends SimpleExtension
 
     /**
      * Build list of styles from profile and from parent profiles.
+     * Styles of child clubs ovverides styles of parent clubs by file name.
+     *
+     * Duplicate styles cheks by absolute web path.
      *
      * @param string $sSectionName Name of section for load list of styles.
      * @param string $sActionValue Value of action for load list of styles.
@@ -336,11 +342,11 @@ class GvProfileExt extends SimpleExtension
      */
     private function _buildStyleList($sSectionName, $sActionValue)
     {
-        $aRet = array();
+        $aStyleNames = array();
 
         // For each profile, build list of styles.
         $aUniqueStyles = array();
-        foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+        foreach (array_reverse($this->getApplication()->getProfile()->getParentProfileList()) as $cProfile) {
             /* @var $cProfile \Gveniver\Kernel\Profile */
 
             // Load styles data from profile configuration.
@@ -360,13 +366,13 @@ class GvProfileExt extends SimpleExtension
                 $aStyle['WebFileName'] = $sAbsWebPath;
                 $aStyle['AbsFileName'] = $sStyleAbsPath.$aStyle['FileName'];
                 $aStyle['Condition'] = isset($aStyle['Condition']) ? $aStyle['Condition'] : null;
-                $aRet[] = $aStyle;
+                $aStyleNames[$aStyle['FileName']] = $aStyle;
 
             } // End foreach
 
         } // End foreach
 
-        return $aRet;
+        return array_values($aStyleNames);
 
     } // End function
     //-----------------------------------------------------------------------------
