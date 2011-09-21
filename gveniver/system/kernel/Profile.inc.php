@@ -627,7 +627,9 @@ class Profile
                         $aSectionScripts = array_values($aSection['ScriptList']);
 
         // Load for default section.
-        $aBaseScripts = array_values($this->getConfig()->get('Profile/SectionList/Default/ScriptList'));
+        $aBaseScripts = array();
+        if ($this->getConfig()->get('Profile/SectionList/Default/ScriptList', $aBaseScripts))
+            $aBaseScripts = array_values($aBaseScripts);
 
         return array_merge($aBaseScripts, $aSectionScripts, $aActionSectionScripts);
 
@@ -666,7 +668,9 @@ class Profile
                         $aSectionStyles = array_values($aSection['StyleList']);
 
         // Load for default section.
-        $aBaseStyles = array_values($this->getConfig()->get('Profile/SectionList/Default/StyleList'));
+        $aBaseStyles = array();
+        if ($this->getConfig()->get('Profile/SectionList/Default/StyleList', $aBaseStyles))
+            $aBaseStyles = array_values($aBaseStyles);
 
         return array_merge($aBaseStyles, $aSectionStyles, $aActionSectionStyles);
 
