@@ -180,18 +180,19 @@ class GvProfileExt extends SimpleExtension
             // Set absolute path to scripts.
             $sScriptAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsScript');
             $sScriptWebPath = $cProfile->getConfig()->get('Profile/Path/AbsScriptWeb');
-            foreach ($aScriptDataList as $nIndex => $aScript) {
+            foreach ($aScriptDataList as $aScript) {
                 
                 // Check duplicate styles by absolute web path.
-                $sAbsWebPath = $sScriptWebPath.$aScriptDataList[$nIndex]['FileName'];
+                $sAbsWebPath = $sScriptWebPath.$aScript['FileName'];
                 if (in_array($sAbsWebPath, $aUniqueScripts))
                     continue;
 
                 $aUniqueScripts[] = $sAbsWebPath;
-                $aScriptDataList[$nIndex]['WebFileName'] = $sAbsWebPath;
-                $aScriptDataList[$nIndex]['AbsFileName'] = $sScriptAbsPath.$aScriptDataList[$nIndex]['FileName'];
-            }
-            $aRet = array_merge($aRet, $aScriptDataList);
+                $aScript['WebFileName'] = $sAbsWebPath;
+                $aScript['AbsFileName'] = $sScriptAbsPath.$aScript['FileName'];
+                $aRet[] = $aScript;
+
+            } // End foreach
 
         } // End foreach
 
@@ -348,19 +349,20 @@ class GvProfileExt extends SimpleExtension
             // Set absolute path to styles.
             $sStyleAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsStyle');
             $sStyleWebPath = $cProfile->getConfig()->get('Profile/Path/AbsStyleWeb');
-            foreach ($aStyleDataList as $nIndex => $aStyle) {
+            foreach ($aStyleDataList as $aStyle) {
 
                 // Check duplicate styles by absolute web path.
-                $sAbsWebPath = $sStyleWebPath.$aStyleDataList[$nIndex]['FileName'];
+                $sAbsWebPath = $sStyleWebPath.$aStyle['FileName'];
                 if (in_array($sAbsWebPath, $aUniqueStyles))
                     continue;
 
                 $aUniqueStyles[] = $sAbsWebPath;
-                $aStyleDataList[$nIndex]['WebFileName'] = $sAbsWebPath;
-                $aStyleDataList[$nIndex]['AbsFileName'] = $sStyleAbsPath.$aStyleDataList[$nIndex]['FileName'];
-                $aStyleDataList[$nIndex]['Condition'] = isset($aStyle['Condition']) ? $aStyle['Condition'] : null;
-            }
-            $aRet = array_merge($aRet, $aStyleDataList);
+                $aStyle['WebFileName'] = $sAbsWebPath;
+                $aStyle['AbsFileName'] = $sStyleAbsPath.$aStyle['FileName'];
+                $aStyle['Condition'] = isset($aStyle['Condition']) ? $aStyle['Condition'] : null;
+                $aRet[] = $aStyle;
+
+            } // End foreach
 
         } // End foreach
 
