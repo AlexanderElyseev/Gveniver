@@ -20,6 +20,13 @@ namespace Gveniver\Kernel;
  *
  * PHP version 5
  *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ * 
  * @property  \Gveniver\Kernel\CacheModule     $cache
  * @property  \Gveniver\Kernel\CaptchaModule   $captcha
  * @property  \Gveniver\Kernel\DataModule      $data
@@ -29,13 +36,6 @@ namespace Gveniver\Kernel;
  * @property  \Gveniver\Kernel\RedirectModule  $redirect
  * @property  \Gveniver\Kernel\TemplateModule  $template
  * @property  \Gveniver\Kernel\TraceModule     $trace
- *
- * @category  Gveniver
- * @package   Kernel
- * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
- * @copyright 2008-2011 Elyseev Alexander
- * @license   http://prof-club.ru/license.txt Prof-Club License
- * @link      http://prof-club.ru
  */
 final class Application
 {
@@ -300,6 +300,8 @@ final class Application
             return null;
         }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $sProfileClass);
+
+        /* @var $cProfile \Gveniver\Kernel\Profile */
 
         // Load configuration of profile and append to main configuration.
         $sProfileXmlFile = $sProfileDir.'config.xml';

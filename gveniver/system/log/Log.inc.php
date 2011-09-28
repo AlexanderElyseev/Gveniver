@@ -89,8 +89,8 @@ class Log
 
         // Build log record data.
         $sMessage = isset($arguments[0]) ? (string)$arguments[0] : null;
-        $nCode = isset($arguments[1]) ? (int)$arguments[1] : null;
-        $aData = isset($arguments[2]) ? $arguments[2] : null;
+        $aData = isset($arguments[1]) ? $arguments[1] : null;
+        $nCode = isset($arguments[2]) ? (int)$arguments[2] : null;
         $aRecord = array(
             'time' => time(),
             'level' => $nLevel,

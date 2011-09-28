@@ -77,6 +77,8 @@ class CacheModule extends Module
         if (!$cProvider)
             throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
 
+        /* @var $cProvider \Gveniver\Cache\CacheProvider */
+
         return $cProvider->generateId($sDataName);
 
     } // End function
@@ -217,6 +219,8 @@ class CacheModule extends Module
         if (!$cProvider)
             throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
 
+        /* @var $cProvider \Gveniver\Cache\CacheProvider */
+
         // Load data from cache by default provider.
         $mData = null;
         $bResult = $cProvider->get($sCacheId, $sCacheGroupId, $mData);
@@ -239,7 +243,7 @@ class CacheModule extends Module
      * Save data to cache.
      *
      * @param mixed  $mData         Data to save.
-     * @param strin  $sCacheId      Identifier of cache.
+     * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
      * @param int    $nTtl          Time to live for cache.
      *
@@ -251,6 +255,8 @@ class CacheModule extends Module
         $cProvider = $this->getProvider();
         if (!$cProvider)
             throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
+
+        /* @var $cProvider \Gveniver\Cache\CacheProvider */
 
         // Save data to cache by default provider.
         return $cProvider->set($mData, $sCacheId, $sCacheGroupId, $nTtl);
@@ -271,6 +277,8 @@ class CacheModule extends Module
         $cProvider = $this->getProvider();
         if (!$cProvider)
             throw new \Gveniver\Exception\Exception('Default cache provider not loaded.');
+
+        /* @var $cProvider \Gveniver\Cache\CacheProvider */
 
         // Flush cache data by default provider.
         return $cProvider->flush($sCacheGroupId);

@@ -15,7 +15,7 @@ namespace Gveniver\Kernel;
 \Gveniver\Loader::i('system/log/Log.inc.php');
 
 /**
- * module class for log subsystem.
+ * Module class for log subsystem.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -23,15 +23,23 @@ namespace Gveniver\Kernel;
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
+ *
+ * TODO: Types of arguments.
+ * @method fatalError($message, $data = null, $code = null) Log for fatal error.
+ * @method error($message, $data = null, $code = null)      Log for error.
+ * @method security($message, $data = null, $code = null)   Log for security accident.
+ * @method warning($message, $data = null, $code = null)    Log for warning.
+ * @method info($message, $data = null, $code = null)       Log for information message.
  */
 class LogModule extends Module
 {
     /**
      * Logger object.
      *
-     * @var Log
+     * @var \Gveniver\Log\Log
      */
     private $_cLog;
+    //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
 
     /**
