@@ -28,7 +28,7 @@ class TemplateModule extends Module
     /**
      * Current factory for templating system.
      *
-     * @var TemplateFactory
+     * @var \Gveniver\template\TemplateFactory
      */
     private $_cFactory;
     //-----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ class TemplateModule extends Module
      * If specified, then the template loads to variable by refernce and returns
      * result of operation (boolean). Otherwise, returns template.
      *
-     * @return Template|boolean Returns template instance or boolean result of
+     * @return \Gveniver\template\Template|boolean Returns template instance or boolean result of
      * loading operation if specified reference varaible.
      */
     public function getTemplate($sTemplateName, &$cRef = null)
