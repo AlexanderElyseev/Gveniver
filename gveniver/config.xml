@@ -43,7 +43,7 @@
         </RedirectModule>
     </Module>
     <Profile>
-        <CacheScript>1</CacheScript>
-        <CacheStyle>1</CacheStyle>
+        <CacheScript>0</CacheScript>
+        <CacheStyle>0</CacheStyle>
     </Profile>
 </Configuration>

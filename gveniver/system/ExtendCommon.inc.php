@@ -381,6 +381,20 @@ function is_correct_url($sUrl)
 //-----------------------------------------------------------------------------
 
 /**
+ * Replace special symbols for XML CDATA.
+ *
+ * @param string $sContent Text for replacing.
+ *
+ * @return string
+ */
+function cdata($sContent)
+{
+    return '<![CDATA['.str_replace(']]>', ']]]]><![CDATA[>', $sContent).']]>';
+
+} // End function
+//-----------------------------------------------------------------------------
+
+/**
  * Send the mail.
  *
  * @param $sFrom    Author of message.
@@ -410,3 +424,4 @@ function mail($sFrom, $sTo, $sSubject, $sText)
 
 } // End function
 //-----------------------------------------------------------------------------
+
