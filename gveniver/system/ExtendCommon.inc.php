@@ -433,7 +433,7 @@ function mail($sFrom, $sTo, $sSubject, $sText)
  * @return string
  */
 // @codingStandardsIgnoreStart
-function real_url($sAddress)
+function realurl($sAddress)
 // @codingStandardsIgnoreEnd
 {
     $address = explode('/', $sAddress);

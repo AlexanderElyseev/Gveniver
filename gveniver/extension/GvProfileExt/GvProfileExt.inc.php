@@ -516,7 +516,7 @@ class GvProfileExt extends SimpleExtension
                             preg_match_all('/url\(["|\']?(?!https?|ftp)(.*?)["|\']?\)/', $sContent, $aMatches);
                             foreach ($aMatches[1] as $nIndex => $sUrl) {
                                 $sReplace = $aMatches[0][$nIndex];
-                                $sFullFilePath = $sAbsStyleDirName.GV_DS.$sUrl;
+                                $sFullFilePath = realpath($sAbsStyleDirName.GV_DS.$sUrl);
                                 if (!file_exists($sFullFilePath) || in_array($sFullFilePath, $aReplacedEntries))
                                     continue;
 
