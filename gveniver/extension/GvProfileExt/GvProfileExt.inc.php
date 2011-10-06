@@ -513,7 +513,7 @@ class GvProfileExt extends SimpleExtension
                         function ($sContent) use ($sStyleName, $sAbsStyleDirName, $sStylesWebPath)
                         {
                             $aReplacedEntries = array();
-                            preg_match_all('/url\(["|\']?(.*?)["|\']?\)/', $sContent, $aMatches);
+                            preg_match_all('/url\(["|\']?(?!https?|ftp)(.*?)["|\']?\)/', $sContent, $aMatches);
                             foreach ($aMatches[1] as $nIndex => $sUrl) {
                                 $sReplace = $aMatches[0][$nIndex];
                                 $sFullFilePath = $sAbsStyleDirName.GV_DS.$sUrl;
