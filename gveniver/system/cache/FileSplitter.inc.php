@@ -64,7 +64,7 @@ class FileSplitter
      * Class constructor.
      * 
      * @param string     $sOutputFileName Output cache file name.
-     * @param DataPacker $cPacker         Packer for data.
+     * @param DataPacker $cPacker         Packer for data. Optional.
      */
     public function __construct($sOutputFileName, DataPacker $cPacker = null)
     {
@@ -88,11 +88,35 @@ class FileSplitter
     //-----------------------------------------------------------------------------------
 
     /**
+     * Adding file for caching.
+     *
+     * @param string   $sAbsoluteFilePath Absolute file path to add.
+     * @param callback $fModifier         Modifier for file.
+     *
+     * @return boolean
+     */
+    public function addFile($sAbsoluteFilePath, $fModifier = null)
+    {
+        $sAbsoluteFilePath = \Gveniver\Loader::correctPath($sAbsoluteFilePath);
+        if (!file_exists($sAbsoluteFilePath) || is_dir($sAbsoluteFilePath))
+            return false;
+
+        $this->_aFileList[] = array(
+            'file'     => $sAbsoluteFilePath,
+            'modifier' => $fModifier
+        );
+        return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------------
+
+    /**
      * Checking correctness of existing cache.
      *
      * @param string $sOutputFileName File name to check.
      *
-     * @return boolean True if correct.
+     * @return bool True if correct.
+     * @static
      */
     public static function isCorrectCache($sOutputFileName)
     {
@@ -100,7 +124,7 @@ class FileSplitter
         if (!file_exists($sOutputFileName))
             return false;
         
-        return time() - filemtime($sOutputFileName) < self::CACHE_TTL;
+        return (time() - filemtime($sOutputFileName)) < self::CACHE_TTL;
                 
     } // End function
     //-----------------------------------------------------------------------------------
@@ -114,25 +138,6 @@ class FileSplitter
     {
         if (file_exists($this->_sOutputFileName))
             unlink($this->_sOutputFileName);
-        
-    } // End function
-    //-----------------------------------------------------------------------------------
-        
-    /**
-     * Adding file for caching.
-     * 
-     * @param string $sFileName File name to add.
-     *
-     * @return boolean
-     */
-    public function addFile($sFileName)
-    {
-        $sFileName = \Gveniver\Loader::correctPath($sFileName);
-        if (!file_exists($sFileName) || is_dir($sFileName))
-            return false;
-
-        $this->_aFileList[] = $sFileName;
-        return true;
         
     } // End function
     //-----------------------------------------------------------------------------------
@@ -150,11 +155,17 @@ class FileSplitter
             return false;
     
         flock($fp, LOCK_EX);
-        foreach ($this->_aFileList as $sFileName)
-            fwrite(
-                $fp,
-                $this->_cPacker ? $this->_cPacker->pack(file_get_contents($sFileName)) : file_get_contents($sFileName)
-            );
+        foreach ($this->_aFileList as $aFileData) {
+
+            $sSaveContent = $this->_cPacker
+                ? $this->_cPacker->pack(file_get_contents($aFileData['file']))
+                : file_get_contents($aFileData['file']);
+
+            if ($aFileData['modifier'])
+                $sSaveContent = $aFileData['modifier']($sSaveContent);
+
+            fwrite($fp, $sSaveContent);
+        }
         
         flock($fp, LOCK_UN);
         fclose($fp);

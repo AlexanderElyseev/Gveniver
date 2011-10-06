@@ -86,7 +86,7 @@ abstract class CacheProvider
      * Save data to cache.
      *
      * @param mixed  $mData         Data to save.
-     * @param strin  $sCacheId      Identifier of cache.
+     * @param string $sCacheId      Identifier of cache.
      * @param string $sCacheGroupId Identifier of cache group.
      * @param int    $nTtl          Time to live for cache.
      * 

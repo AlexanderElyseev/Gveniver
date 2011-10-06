@@ -29,7 +29,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
     /**
      * Smarty object.
      *
-     * @var Smarty
+     * @var \Smarty
      */
     private $_cSmarty;
     //-----------------------------------------------------------------------------
@@ -153,8 +153,6 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      */
     public function extension($aParams, &$cSmarty)
     {
-        $aCopyParams = $aParams;
-
         $cExtModule = $this->getApplication()->extension;
         if (!$cExtModule) {
             $this->getApplication()->trace->addLine('[%s] Extension module not found for Smarty query.', __CLASS__);
@@ -192,6 +190,8 @@ class Smarty3TemplateFactory extends FileTemplateFactory
 
             return null;
         }
+
+        /* @var $cExt \Gveniver\Extension\Extension */
 
         // Execute query.
         $sRet = $cExt->query(

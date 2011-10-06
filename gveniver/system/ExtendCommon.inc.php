@@ -425,3 +425,25 @@ function mail($sFrom, $sTo, $sSubject, $sText)
 } // End function
 //-----------------------------------------------------------------------------
 
+/**
+ * Function to canonicalize a URL containing relative paths.
+ *
+ * @param string $sAddress Address for analyzing.
+ *
+ * @return string
+ */
+// @codingStandardsIgnoreStart
+function real_url($sAddress)
+// @codingStandardsIgnoreEnd
+{
+    $address = explode('/', $sAddress);
+    $keys = array_keys($address, '..');
+
+    foreach($keys AS $keypos => $key)
+        array_splice($address, $key - ($keypos * 2 + 1), 2);
+
+    $address = implode('/', $address);
+    return str_replace('./', '', $address);
+
+} // End function
+//-----------------------------------------------------------------------------

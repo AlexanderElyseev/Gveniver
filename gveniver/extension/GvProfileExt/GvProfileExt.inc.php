@@ -48,12 +48,18 @@ class GvProfileExt extends SimpleExtension
         parent::__construct($cApplication);
 
         // Configuration parameters.
-        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Kernel/UseConfigScript'));
+        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Application::toBoolean(
+            $this->getApplication()->getConfig()->get('Kernel/UseConfigScript')
+        );
         $this->_aConfig['ConfigScriptSection'] = $this->getApplication()->getConfig()->get('Kernel/ConfigScriptSection');
         $this->_aConfig['InvarSectionKey'] = $this->getApplication()->getConfig()->get('Kernel/InvarSectionKey');
 
-        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/CacheScript'));
-        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean($this->getApplication()->getConfig()->get('Profile/CacheStyle'));
+        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Application::toBoolean(
+            $this->getApplication()->getConfig()->get('Profile/CacheScript')
+        );
+        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean(
+            $this->getApplication()->getConfig()->get('Profile/CacheStyle')
+        );
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -75,8 +81,9 @@ class GvProfileExt extends SimpleExtension
         }
 
         foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
-            /* @var $cProfile \Gveniver\Kernel\Profile */
 
+            /* @var $cProfile \Gveniver\Kernel\Profile */
+            
             $sImageAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsImage');
             $sImageWebPath = $cProfile->getConfig()->get('Profile/Path/AbsImageWeb');
             $sImageFilePath = \Gveniver\Loader::correctPath($sImageAbsPath.$sImageName);
@@ -101,10 +108,9 @@ class GvProfileExt extends SimpleExtension
      */
     public function getConfigVariable($sPath)
     {
-        if ($sPath)
-            return $this->getApplication()->getConfig()->get($sPath);
-
-        return null;
+        return $sPath
+            ? $this->getApplication()->getConfig()->get($sPath)
+            : null;
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -168,6 +174,7 @@ class GvProfileExt extends SimpleExtension
 
         // Load scripts from cache.
         if ($this->_aConfig['CacheScripts']) {
+
             // First, try to load scripts from cache.
             $aCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
             if ($aCacheScripts)
@@ -209,6 +216,7 @@ class GvProfileExt extends SimpleExtension
         // For each profile, build list of scripts.
         $aUniqueScripts = array();
         foreach (array_reverse($this->getApplication()->getProfile()->getParentProfileList()) as $cProfile) {
+
             /* @var $cProfile \Gveniver\Kernel\Profile */
 
             // Load scripts data from profile configuration.
@@ -381,6 +389,7 @@ class GvProfileExt extends SimpleExtension
         // For each profile, build list of styles.
         $aUniqueStyles = array();
         foreach (array_reverse($this->getApplication()->getProfile()->getParentProfileList()) as $cProfile) {
+
             /* @var $cProfile \Gveniver\Kernel\Profile */
 
             // Load styles data from profile configuration.
@@ -395,9 +404,11 @@ class GvProfileExt extends SimpleExtension
                 $sAbsWebPath = $sStyleWebPath.$aStyle['FileName'];
                 if (in_array($sAbsWebPath, $aUniqueStyles))
                     continue;
-
                 $aUniqueStyles[] = $sAbsWebPath;
+
+                // Add style data to result list.
                 $aStyle['WebFileName'] = $sAbsWebPath;
+                $aStyle['AbsStyleWeb'] = $sStyleWebPath;
                 $aStyle['AbsFileName'] = $sStyleAbsPath.$aStyle['FileName'];
                 $aStyle['Condition'] = isset($aStyle['Condition']) ? $aStyle['Condition'] : null;
                 $aStyleNames[$aStyle['FileName']] = $aStyle;
@@ -435,6 +446,7 @@ class GvProfileExt extends SimpleExtension
             // Build result list.
             $aRet = array();
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
+                
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
                 if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
                     return null;
@@ -474,20 +486,56 @@ class GvProfileExt extends SimpleExtension
         try {
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
 
-            // Group styles by condition.
+            // Group styles by condition for saving in separate cache files.
             $aVariousConditions = array();
             foreach ($aList as $aStyle)
                 $aVariousConditions[isset($aStyle['Condition']) ? $aStyle['Condition'] : ''][] = $aStyle;
 
-            // Save each group of styles.
+            // Save each group of styles in separate cache style file.
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
+                
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
                 $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                     $sCacheAbsPath.$sCacheFile,
                     new \Gveniver\Cache\StylePacker()
                 );
-                foreach ($aSameConditions as $aSameConditionStyle)
-                    $cCacheSplitter->addFile($aSameConditionStyle['AbsFileName']);
+
+                foreach ($aSameConditions as $aSameConditionStyle) {
+
+                    $sStyleName = $aSameConditionStyle['FileName'];
+                    $sAbsStyleFileName = $aSameConditionStyle['AbsFileName'];
+                    $sStylesWebPath = $aSameConditionStyle['AbsStyleWeb'];
+                    $sAbsStyleDirName = dirname($sAbsStyleFileName);
+
+                    // @codingStandardsIgnoreStart
+                    $cCacheSplitter->addFile(
+                        $sAbsStyleFileName,
+                        function ($sContent) use ($sStyleName, $sAbsStyleDirName, $sStylesWebPath)
+                        {
+                            $aReplacedEntries = array();
+                            preg_match_all('/url\(["|\']?(.*?)["|\']?\)/', $sContent, $aMatches);
+                            foreach ($aMatches[1] as $nIndex => $sUrl) {
+                                $sReplace = $aMatches[0][$nIndex];
+                                $sFullFilePath = $sAbsStyleDirName.GV_DS.$sUrl;
+                                if (!file_exists($sFullFilePath) || in_array($sFullFilePath, $aReplacedEntries))
+                                    continue;
+
+                                $aStyleNameItems = array_reverse(explode('/', $sStyleName));
+                                $sStyleRelDir = isset($aStyleNameItems[1]) ? $aStyleNameItems[1].'/' : '';
+
+                                // Replace url to absolute.
+                                $sContent = str_replace(
+                                    $sReplace,
+                                    'url('.$sStylesWebPath.$sStyleRelDir.$sUrl.')',
+                                    $sContent
+                                );
+                            }
+                            return $sContent;
+                        }
+                    );
+                    // @codingStandardsIgnoreEnd
+
+                } // End foreach
 
                 $cCacheSplitter->save();
 
@@ -501,7 +549,7 @@ class GvProfileExt extends SimpleExtension
     //-----------------------------------------------------------------------------
 
     /**
-     * Build file name for cache style file.
+     * Build file name for cached style.
      *
      * @param string $sSectionName Section name of cache style.
      * @param string $sActionValue Action name of cache style.
