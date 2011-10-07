@@ -27,15 +27,6 @@ namespace Gveniver\Cache;
 class FileSplitter
 {
     /**
-     * TimeToLive of cache in seconds.
-     *
-     * @var int
-     */
-    const CACHE_TTL = 1200;
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    
-    /**
      * Current packer for files content.
      * 
      * @var DataPacker
@@ -114,17 +105,27 @@ class FileSplitter
      * Checking correctness of existing cache.
      *
      * @param string $sOutputFileName File name to check.
+     * @param array  $aSplittedFiles  Array with absolute paths.
      *
      * @return bool True if correct.
      * @static
      */
-    public static function isCorrectCache($sOutputFileName)
+    public static function isCorrectCache($sOutputFileName, array $aSplittedFiles)
     {
         // File existance.
         if (!file_exists($sOutputFileName))
             return false;
-        
-        return (time() - filemtime($sOutputFileName)) < self::CACHE_TTL;
+
+        $nOutputFileModifyTime = filemtime($sOutputFileName);
+        foreach ($aSplittedFiles as $sAbsFilePath) {
+            if (!file_exists($sAbsFilePath))
+                return false;
+
+            if (filemtime($sAbsFilePath) > $nOutputFileModifyTime)
+                return false;
+        }
+
+        return true;
                 
     } // End function
     //-----------------------------------------------------------------------------------

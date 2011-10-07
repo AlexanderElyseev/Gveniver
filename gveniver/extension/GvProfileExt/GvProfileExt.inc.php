@@ -176,7 +176,11 @@ class GvProfileExt extends SimpleExtension
         if ($this->_aConfig['CacheScripts']) {
 
             // First, try to load scripts from cache.
-            $aCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
+            $aCacheScripts = $this->_getCacheScripts(
+                $this->_buildScriptList($sSectionName, $sActionValue),
+                $sSectionName,
+                $sActionValue
+            );
             if ($aCacheScripts)
                 return array_merge($aRet, $aCacheScripts);
 
@@ -187,7 +191,11 @@ class GvProfileExt extends SimpleExtension
                 $sSectionName,
                 $sActionValue
             );
-            $aCacheScripts = $this->_getCacheScripts($sSectionName, $sActionValue);
+            $aCacheScripts = $this->_getCacheScripts(
+                $this->_buildScriptList($sSectionName, $sActionValue),
+                $sSectionName,
+                $sActionValue
+            );
             if ($aCacheScripts)
                 return array_merge($aRet, $aCacheScripts);
         }
@@ -250,20 +258,26 @@ class GvProfileExt extends SimpleExtension
      * Load cached scripts.
      * Returns html code for connecting to cached scripts.
      *
+     * @param array  $aList        List of styles in section.
      * @param string $sSectionName Name of current section for load cached scripts.
      * @param string $sActionValue Current value of action.
      *
      * @return array|null List of cached scripts for this section and action or null on error.
      */
-    private function _getCacheScripts($sSectionName, $sActionValue)
+    private function _getCacheScripts(array $aList, $sSectionName, $sActionValue)
     {
+        $aSplittedList = array();
+        foreach ($aList as $aScriptData)
+            $aSplittedList[] = $aScriptData['AbsFileName'];
+
         try {
-            // Check script cache.
+            // Check cache.
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
             $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
+            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aSplittedList)) {
                 return null;
-
+            }
+            
             $sScriptCacheWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb');
             return array(
                 array('WebFileName' => $sScriptCacheWebPath.$sCacheFile)
@@ -432,7 +446,7 @@ class GvProfileExt extends SimpleExtension
      *
      * @return array|null List of cached styles or null on error.
      */
-    private function _getCacheStyles($aList, $sSectionName, $sActionValue)
+    private function _getCacheStyles(array $aList, $sSectionName, $sActionValue)
     {
         try {
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
@@ -446,11 +460,17 @@ class GvProfileExt extends SimpleExtension
             // Build result list.
             $aRet = array();
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
-                
-                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
-                if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile))
-                    return null;
 
+                $aSplittedList = array();
+                foreach ($aSameConditions as $aStyleData)
+                    $aSplittedList[] = $aStyleData['AbsFileName'];
+
+                // Check cache.
+                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
+                if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aSplittedList)) {
+                    return null;
+                }
+                
                 $aRet[] = array(
                     'WebFileName'  => $sStyleCacheWebPath.$sCacheFile,
                     'Condition' => $sCondition
