@@ -155,6 +155,16 @@ class Profile
     public function start()
     {
         $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
+
+        $sContentType = $this->getContentType(
+            $this->getCurrentSectionName(),
+            $this->getCurrentAction()
+        );
+        if ($sContentType) {
+            $this->getApplication()->trace->addLine('[%s] Using "%s" as content-type.', __CLASS__, $sContentType);
+            header('Content-type: '.$sContentType);
+        }
+        
         $sResult = $this->getApplication()->template->parseTemplate(
             $this->getMainTemplate(
                 $this->getCurrentSectionName(),

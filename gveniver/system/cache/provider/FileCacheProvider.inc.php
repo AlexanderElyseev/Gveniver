@@ -203,9 +203,9 @@ class FileCacheProvider extends CacheProvider
         $fp = fopen($sFileName, 'wb');
         flock($fp, LOCK_EX);
 
-        fwrite($fp, pack('L', $nTtl));                  // TTL.
-        fwrite($fp, pack('L', strlen($sData)));         // Length.
-        fwrite($fp, pack('a*', $sData));                // Data.
+        fwrite($fp, pack('L', $nTtl));              // TTL.
+        fwrite($fp, pack('L', strlen($sData)));     // Length.
+        fwrite($fp, pack('a*', $sData));            // Data.
 
         // Unlock and close file.
         flock($fp, LOCK_UN);
