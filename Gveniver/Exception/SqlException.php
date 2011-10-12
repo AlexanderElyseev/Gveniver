@@ -22,7 +22,7 @@ namespace Gveniver\Exception;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class SqlException extends Exception
+class SqlException extends BaseException
 {
 } // End class
 //-----------------------------------------------------------------------------

@@ -22,7 +22,7 @@ namespace Gveniver\Cache\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class MemcachedCacheProvider extends CacheProvider
+class MemcachedCacheProvider extends BaseCacheProvider
 {
     /**
      * memcached object.
@@ -46,13 +46,13 @@ class MemcachedCacheProvider extends CacheProvider
 
         // Check for existing Mecached PHP extension.
         if (!class_exists('Memcache'))
-            throw new \Gveniver\Exception\Exception('Memcache PHP extension not loaded.');
+            throw new \Gveniver\Exception\BaseException('Memcache PHP extension not loaded.');
 
         $this->_cMemcace = new \Memcache();
 
         // Adding  servers.
         if (!isset($this->aOptions['Servers']))
-            throw new \Gveniver\Exception\Exception('Memcache servers not loaded.');
+            throw new \Gveniver\Exception\BaseException('Memcache servers not loaded.');
 
         foreach ($this->aOptions['Servers'] as $aServerData) {
             $sServerHost = isset($aServerData['Host']) ? $aServerData['Host'] : null;

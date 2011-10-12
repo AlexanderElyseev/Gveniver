@@ -22,7 +22,7 @@ namespace Gveniver\Data\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class MongoDbDataProvider extends DataProvider
+class MongoDbDataProvider extends BaseDataProvider
 {
     /**
      * MongoDB object.

@@ -44,7 +44,7 @@ abstract class BaseModule
     {
         $this->_cApplication = $cApplication;
         if (!$this->init())
-            throw new \Gveniver\Exception\Exception(
+            throw new \Gveniver\Exception\BaseException(
                 sprintf('Initialization of module "%s" failed.', get_class($this))
             );
 
@@ -62,7 +62,7 @@ abstract class BaseModule
 
     } // End function
     //-----------------------------------------------------------------------------
-
+    
     /**
      * Full initialization of module.
      *

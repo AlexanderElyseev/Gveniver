@@ -23,7 +23,7 @@ namespace Gveniver\Data\Provider;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class DataProvider
+abstract class BaseDataProvider
 {
     /**
      * Current application.
@@ -56,7 +56,7 @@ abstract class DataProvider
 
         // Try to connect.
         if (!$this->connect())
-            throw new \Gveniver\Exception\Exception('Error in connection to data source.');
+            throw new \Gveniver\Exception\BaseException('Error in connection to data source.');
 
     } // End function
     //-----------------------------------------------------------------------------

@@ -23,7 +23,7 @@ namespace Gveniver\Extension;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class SimpleExtension extends Extension
+class SimpleExtension extends BaseExtension
 {
     /**
      * Query to extension.

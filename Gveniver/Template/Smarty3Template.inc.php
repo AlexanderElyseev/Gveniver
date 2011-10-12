@@ -35,14 +35,13 @@ class Smarty3Template extends BaseTemplate
 
     /**
      * Class constructor.
-     * Initialize system template by smarty object and template name.
+     * Initialize template by smarty object and template name.
      *
      * @param \Smarty &$cSmarty      Base Smarty object for initialization.
      * @param string  $sTemplateName Full path to template file.
      */
     public function __construct(\Smarty &$cSmarty, $sTemplateName)
     {
-        // Compile template.
         $this->_cTpl = $cSmarty->createTemplate($sTemplateName);
 
     } // End function

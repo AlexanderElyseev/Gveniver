@@ -23,7 +23,7 @@ namespace Gveniver\Extension;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class Extension
+abstract class BaseExtension
 {
     /**
      * Name of cache group for caching extension replies.

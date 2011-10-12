@@ -64,7 +64,7 @@ class Invar extends BaseModule
     /**
      * Loader for invars.
      *
-     * @var InvarLoader
+     * @var \Gveniver\Invar\Loader\BaseInvarLoader
      */
     private $_cLoader;
     //-----------------------------------------------------------------------------
@@ -85,13 +85,46 @@ class Invar extends BaseModule
     private $_aPost = array();
     //-----------------------------------------------------------------------------
 
+    /**
+     * Section key name in invars.
+     * 
+     * @var string
+     */
     private $_sSectionKey;
-    private $_sSectionKeyTpl;
-    private $_sActionKey;
-    private $_sActionKeyTpl;
-    private $_sAbsWebPath;
     //-----------------------------------------------------------------------------
 
+    /**
+     * Section key template for replacements.
+     *
+     * @var string
+     */
+    private $_sSectionKeyTpl;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Action key name in invars.
+     *
+     * @var string
+     */
+    private $_sActionKey;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Action key template for replacements.
+     *
+     * @var string
+     */
+    private $_sActionKeyTpl;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Abolute web path to root.
+     *
+     * @var string
+     */
+    private $_sAbsWebPath;
+    //-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /**
      * Full initialization of module.
@@ -103,7 +136,8 @@ class Invar extends BaseModule
         $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
         // Load factory for template subsystem.
-        $sLoaderClassName = '\\Gveniver\\Invar\\Loader\\'.$this->getApplication()->getConfig()->get('Module/InvarModule/LoaderClass');
+        $sLoaderClassName = '\\Gveniver\\Invar\\Loader\\';
+        $sLoaderClassName .= $this->getApplication()->getConfig()->get('Module/InvarModule/LoaderClass');
 
         $this->_cLoader = new $sLoaderClassName();
         if (!$this->_cLoader) {

@@ -10,7 +10,8 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver\Cache;
+namespace Gveniver\Cache\Packer;
+require_once 'Lib/class.JavaScriptPacker.php';
 
 /**
  * Class for packing JavaScript data.
@@ -22,7 +23,7 @@ namespace Gveniver\Cache;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class ScriptPacker extends DataPacker
+class ScriptPacker extends BaseDataPacker
 {
     /**
      * Method for packing data.

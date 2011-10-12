@@ -22,7 +22,7 @@ namespace Gveniver\Log\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class EmailLogProvider extends BaseProvider
+class EmailLogProvider extends BaseLogProvider
 {
     /**
      * Recipient of email.
@@ -66,7 +66,7 @@ class EmailLogProvider extends BaseProvider
         $bExistsSubject = isset($aConfigData['Subject']) && is_string($aConfigData['Subject']);
         
         if (!$bExistsRecipient || !$bExistsFrom || !$bExistsSubject)
-            throw new \Gveniver\Exception\Exception('One ore more of configuration parameters not loaded.');
+            throw new \Gveniver\Exception\BaseException('One ore more of configuration parameters not loaded.');
 
         $this->_sRecipient = $aConfigData['Recipient'];
         $this->_sSender = $aConfigData['Sender'];

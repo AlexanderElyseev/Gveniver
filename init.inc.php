@@ -11,7 +11,7 @@
  */
 
 namespace Gveniver;
-require 'Gveniver/ExtendCommon.inc.php';
+require_once 'Gveniver/ExtendCommon.inc.php';
 
 define('GV_EXEC', 1);                                           // Execution flag.
 define('GV_DS', DIRECTORY_SEPARATOR);                           // Directory separator.
@@ -29,11 +29,14 @@ spl_autoload_register(
         // Include classes only from Gveniver namespace.
         $aItems = explode('\\', $sClassName);
         if (count($aItems) <= 1 || $aItems[0] !== __NAMESPACE__)
-            return;
+            return false;
 
         $sFilePath = GV_PATH_BASE.str_replace('\\', GV_DS, $sClassName).'.inc.php';
+        if (!file_exists($sFilePath))
+            return false;
 
         /** @noinspection PhpIncludeInspection */
-        include $sFilePath;
+        include_once $sFilePath;
+        return true;
     }
 );

@@ -22,7 +22,7 @@ namespace Gveniver\Data\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class MySqlDataProvider extends DataProvider
+class MySqlDataProvider extends BaseDataProvider
 {
     /**
      * MySql connection link.

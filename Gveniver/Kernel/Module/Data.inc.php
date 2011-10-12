@@ -25,7 +25,7 @@ namespace Gveniver\Kernel\Module;
 class Data extends BaseModule
 {
     /**
-     * Array of {@see DataProvider} for access to data.
+     * Array of {@see \Gveniver\Data\Provider\BaseDataProvider} for access to data.
      *
      * @var array
      */

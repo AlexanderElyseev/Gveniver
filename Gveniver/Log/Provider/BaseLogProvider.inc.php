@@ -23,7 +23,7 @@ namespace Gveniver\Log\Provider;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseProvider
+abstract class BaseLogProvider
 {
     /**
      * Log level for fatal errors.

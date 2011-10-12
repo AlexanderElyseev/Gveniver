@@ -21,7 +21,7 @@ AddHandler cgi-script .cgi
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteOptions MaxRedirects=1
-    RewriteCond %{REQUEST_FILENAME} !\.(ico|gif|jpe?g|png|js|css)$ [NC]
+    RewriteCond %{REQUEST_URI} !\.(ico|gif|jpe?g|png|js|css)$ [NC]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php/$1 [L,QSA]

@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver\Cache;
+namespace Gveniver\Cache\Packer;
 
 /**
  * Class for packing CSS style data.
@@ -22,7 +22,7 @@ namespace Gveniver\Cache;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class StylePacker extends DataPacker
+class StylePacker extends BaseDataPacker
 {
     /**
      * Method for packing data.

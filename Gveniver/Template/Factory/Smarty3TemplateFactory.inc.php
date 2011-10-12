@@ -48,12 +48,12 @@ class Smarty3TemplateFactory extends FileTemplateFactory
 
         // Check, is SMarty is exists on system.
         if (!class_exists('\Smarty'))
-            throw new \Gveniver\Exception\Exception('Smarty is not installed.');
+            throw new \Gveniver\Exception\BaseException('Smarty is not installed.');
         
         // Initialize smarty.
         $this->_cSmarty = new \Smarty();
         if (!$this->_reinstallSmarty())
-            throw new \Gveniver\Exception\Exception('Smarty configuration failed.');
+            throw new \Gveniver\Exception\BaseException('Smarty configuration failed.');
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -144,8 +144,8 @@ class Smarty3TemplateFactory extends FileTemplateFactory
     /**
      * Smarty plugin function for executing query to extension from templates.
      *
-     * @param array  $aParams  Parameters.
-     * @param Smarty &$cSmarty Smarty object.
+     * @param array   $aParams  Parameters.
+     * @param \Smarty &$cSmarty Smarty object.
      *
      * @return string Result of extension call.
      */
@@ -175,7 +175,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         
         // Load extension.
         $cExt = $cExtModule->getExtension($sExtensionName);
-        if (!$cExt instanceof \Gveniver\Extension\Extension) {
+        if (!$cExt instanceof \Gveniver\Extension\BaseExtension) {
             $this->getApplication()->trace->addLine(
                 '[%s] Extension ("%s") not found for Smarty query.',
                 __CLASS__,
@@ -189,7 +189,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
             return null;
         }
 
-        /* @var $cExt \Gveniver\Extension\Extension */
+        /* @var $cExt \Gveniver\Extension\BaseExtension */
 
         // Execute query.
         $sRet = $cExt->query(

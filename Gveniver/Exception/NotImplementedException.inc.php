@@ -22,7 +22,7 @@ namespace Gveniver\Exception;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class NotImplementedException extends Exception
+class NotImplementedException extends BaseException
 {
 } // End class
 //-----------------------------------------------------------------------------

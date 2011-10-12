@@ -114,7 +114,6 @@ function explode_ex($delimiter, $string)
 function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
 // @codingStandardsIgnoreEnd
 {
-
     $tidy_config = array(
          'clean'          => true,
          'output-xml'     => true,
@@ -176,8 +175,11 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
     }
 
     $cXml = $cDom->getElementsByTagName('xml_main')->item(0);
-    $strip_tag = function(&$cElement, $allowattributes, $allowtags, $strip_tag) {
+    $strip_tag = function(\DOMNode &$cElement, $allowattributes, $allowtags, $strip_tag) {
         foreach ($cElement->childNodes as $cNode) {
+
+            /* @var $cNode \DOMElement */
+
             if ($cNode->nodeType != XML_ELEMENT_NODE)
                 continue;
 
@@ -188,6 +190,9 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
 
             if ($allowattributes) {
                 foreach ($cNode->attributes as $cAttribute) {
+
+                    /* @var $cAttribute \DOMAttr */
+
                     if (!in_array($cAttribute->name, $allowattributes))
                         $cNode->removeAttribute($cAttribute->name);
                 }

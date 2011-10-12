@@ -279,7 +279,7 @@ class GvProfileExt extends SimpleExtension
                 array('WebFileName' => $sScriptCacheWebPath.$sCacheFile)
             );
 
-        } catch (\Gveniver\Exception\Exception $cEx) {
+        } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
@@ -308,14 +308,14 @@ class GvProfileExt extends SimpleExtension
             
             $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                 $sCacheAbsPath.$sCacheFile,
-                new \Gveniver\Cache\ScriptPacker()
+                new \Gveniver\Cache\Packer\ScriptPacker()
             );
             foreach ($aList as $aScript)
                 $cCacheSplitter->addFile($aScript['AbsFileName']);
 
             $cCacheSplitter->save();
 
-        } catch (\Gveniver\Exception\Exception $cEx) {
+        } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
@@ -476,7 +476,7 @@ class GvProfileExt extends SimpleExtension
 
             return $aRet;
 
-        } catch (\Gveniver\Exception\Exception $cEx) {
+        } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 
@@ -513,7 +513,7 @@ class GvProfileExt extends SimpleExtension
                 $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
                 $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                     $sCacheAbsPath.$sCacheFile,
-                    new \Gveniver\Cache\StylePacker()
+                    new \Gveniver\Cache\Packer\StylePacker()
                 );
 
                 foreach ($aSameConditions as $aSameConditionStyle) {
@@ -557,7 +557,7 @@ class GvProfileExt extends SimpleExtension
 
             } // End foreach
 
-        } catch (\Gveniver\Exception\Exception $cEx) {
+        } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->getApplication()->trace->addLine('[%s] Exception: %s.', __CLASS__, $cEx->getMessage());
         }
 

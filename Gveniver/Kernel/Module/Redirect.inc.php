@@ -202,6 +202,8 @@ class Redirect extends BaseModule
         if (!$this->getApplication()->template->getTemplate($this->_sRedirectionTemplateName, $cTpl))
             return '';
 
+        /* @var $cTpl \Gveniver\Template\BaseTemplate */
+
         return $cTpl->parse(
             array(
                  'href' => $this->_sUrl,

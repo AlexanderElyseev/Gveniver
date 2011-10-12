@@ -23,7 +23,7 @@ namespace Gveniver\Template\Factory;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class FileTemplateFactory extends BaseFactory
+abstract class FileTemplateFactory extends BaseTemplateFactory
 {
     /**
      * Cache of template file names.
@@ -75,7 +75,7 @@ abstract class FileTemplateFactory extends BaseFactory
         // Template files extension.
         $sExt = $this->getApplication()->getConfig()->get('Module/TemplateModule/Ext');
         if (!$sExt)
-            throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
+            throw new \Gveniver\Exception\BaseException('Extension of template files not loaded from configuration.');
         $this->sTplFileNameExtension = ($sExt[0] != '.') ? '.'.$sExt : $sExt;
 
         // Template files separator.
@@ -83,7 +83,7 @@ abstract class FileTemplateFactory extends BaseFactory
             array('Module/TemplateModule/Separator')
         );
         if (!$this->sTplFileNameSeparator)
-            throw new \Gveniver\Exception\Exception('Extension of template files not loaded from configuration.');
+            throw new \Gveniver\Exception\BaseException('Extension of template files not loaded from configuration.');
 
         // Template folders.
         $cP = $this->getApplication()->getProfile();
@@ -104,7 +104,7 @@ abstract class FileTemplateFactory extends BaseFactory
         } while (null !== ($cP = $cP->getParentProfile()));
 
         if (!count($this->aTplDirectories))
-            throw new \Gveniver\Exception\Exception('Wrong template directory.');
+            throw new \Gveniver\Exception\BaseException('Wrong template directory.');
 
     } // End function
     //-----------------------------------------------------------------------------

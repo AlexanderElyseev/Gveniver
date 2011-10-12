@@ -84,7 +84,7 @@ class Log
      */
     public function __call($name, array $arguments)
     {
-        $nLevel = Provider\BaseProvider::getLevelByName($name);
+        $nLevel = Provider\BaseLogProvider::getLevelByName($name);
 
         // Build log record data.
         $sMessage = isset($arguments[0]) ? (string)$arguments[0] : null;
@@ -111,12 +111,12 @@ class Log
     /**
      * Save log with specified provider or with all providers in list.
      * 
-     * @param Provider\BaseProvider $cProvider Target provider to save (if need).
-     * @param int                   $nLevel    Log level for specified provider (if need).
+     * @param Provider\BaseLogProvider $cProvider Target provider to save (if need).
+     * @param int                      $nLevel    Log level for specified provider (if need).
      *
      * @return void
      */
-    public function save(Provider\BaseProvider $cProvider = null, $nLevel = null)
+    public function save(Provider\BaseLogProvider $cProvider = null, $nLevel = null)
     {
         if (count($this->_aCommonContainer) == 0)
             return;
@@ -164,12 +164,12 @@ class Log
      *
      * All records from common list adds to list of provider by provider log level. 
      *
-     * @param Provider\BaseProvider $cProvider   Provider to add.
-     * @param int                   $nErrorLevel Error level for this provider. By default, equal to base.
+     * @param Provider\BaseLogProvider $cProvider   Provider to add.
+     * @param int                      $nErrorLevel Error level for this provider. By default, equal to base.
      *
      * @return void
      */
-    public function appendProvider(Provider\BaseProvider $cProvider, $nErrorLevel = null)
+    public function appendProvider(Provider\BaseLogProvider $cProvider, $nErrorLevel = null)
     {
         if (!$nErrorLevel) {
             // If providwer level is not set, log level of provider is equal to base log level.

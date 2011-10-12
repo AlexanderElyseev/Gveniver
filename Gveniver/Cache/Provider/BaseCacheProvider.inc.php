@@ -23,7 +23,7 @@ namespace Gveniver\Cache\Provider;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class CacheProvider
+abstract class BaseCacheProvider
 {
     /**
      * Current application.

@@ -22,7 +22,7 @@ namespace Gveniver\Log\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class FileLogProvider extends BaseProvider
+class FileLogProvider extends BaseLogProvider
 {
     /**
      * Absolute path to log file.
@@ -46,7 +46,7 @@ class FileLogProvider extends BaseProvider
         parent::__construct($cApplication, $aConfigData);
 
         if (!isset($aConfigData['FileName']) || !is_string($aConfigData['FileName']))
-            throw new \Gveniver\Exception\Exception('Log file name must be specified.');
+            throw new \Gveniver\Exception\BaseException('Log file name must be specified.');
 
         $bRelativeByProfile = isset($aConfigData['RelativeByProfile'])
             && \Gveniver\Kernel\Application::toBoolean($aConfigData['RelativeByProfile']);
@@ -56,7 +56,7 @@ class FileLogProvider extends BaseProvider
         // Convert to absolute path.
         if ($bRelativeByProfile)
             $this->_sFileName = $cApplication->getProfile()->getPath().$this->_sFileName;
-        elseif (!\Gveniver\Loader::isAbsolutePath($this->_sFileName))
+        elseif (!\Gveniver\isAbsolutePath($this->_sFileName))
             $this->_sFileName = GV_PATH_BASE.$this->_sFileName;
         
         $this->_sFileName = \Gveniver\correctPath($this->_sFileName);

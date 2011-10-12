@@ -22,7 +22,7 @@ namespace Gveniver\Cache\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class FileCacheProvider extends CacheProvider
+class FileCacheProvider extends BaseCacheProvider
 {
     /**
      * Path to directory for cache.
@@ -47,7 +47,7 @@ class FileCacheProvider extends CacheProvider
         // Load cache folder.
         $this->_sBaseCacheDirectory = (string)$this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
         if (!$this->_sBaseCacheDirectory || !file_exists($this->_sBaseCacheDirectory) || !is_dir($this->_sBaseCacheDirectory))
-            throw new \Gveniver\Exception\Exception('Wrong cache directory.');
+            throw new \Gveniver\Exception\BaseException('Wrong cache directory.');
 
     } // End function
     //-----------------------------------------------------------------------------

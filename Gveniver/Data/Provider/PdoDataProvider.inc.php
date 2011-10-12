@@ -22,7 +22,7 @@ namespace Gveniver\Data\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class PdoDataProvider extends DataProvider
+class PdoDataProvider extends BaseDataProvider
 {
     /**
      * PDO object.
@@ -56,7 +56,7 @@ class PdoDataProvider extends DataProvider
         // Try to connect.
         try {
             $this->_cPdo = new \PDO($sDsn, $sUser, $sPassword, $aOptions);
-        } catch (\Gveniver\Exception\Exception $cEx) {
+        } catch (\Gveniver\Exception\BaseException $cEx) {
             return false;
         }
 

@@ -27,7 +27,7 @@ class Captcha extends BaseModule
     /**
      * Current CAPTCHA controller.
      *
-     * @var \Gveniver\Captcha\Captcha
+     * @var \Gveniver\Captcha\BaseCaptcha
      */
     private $_cCaptcha;
     //-----------------------------------------------------------------------------

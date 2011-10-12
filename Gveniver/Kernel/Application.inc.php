@@ -89,7 +89,7 @@ final class Application
         // Load profile.
         $this->_cProfile = $this->_loadProfile($sProfile);
         if (!$this->_cProfile)
-            throw new \Gveniver\Exception\Exception(sprintf('Profile with name "%s" not found.', $sProfile));
+            throw new \Gveniver\Exception\BaseException(sprintf('Profile with name "%s" not found.', $sProfile));
 
         // Initialization of environment.
         $this->_initEnvironment();
@@ -121,7 +121,7 @@ final class Application
     {
         $cModule = $this->getModule($sName);
         if (!$cModule)
-            throw new \Gveniver\Exception\Exception(sprintf('Module ("%s") not loaded.', $sName));
+            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") not loaded.', $sName));
 
         return $cModule;
 
@@ -268,7 +268,7 @@ final class Application
         // Create instance of profile.
         try {
             $cProfile = new $sProfileClass($this, $sProfileDir, $cParentProfile);
-        } catch (\Gveniver\Exception\Exception $cEx) {
+        } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->trace->addLine(
                 '[%s] Exception in profile ("%s") constructor: "%s".',
                 __CLASS__,
@@ -426,7 +426,7 @@ final class Application
     /**
      * Returns current application profile.
      *
-     * @return Profile
+     * @return \Gveniver\Kernel\Profile
      */
     public function getProfile()
     {

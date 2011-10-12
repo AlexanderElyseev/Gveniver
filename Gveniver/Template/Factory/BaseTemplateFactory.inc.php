@@ -15,8 +15,6 @@ namespace Gveniver\Template\Factory;
 /**
  * Base abstract class for template objects factory.
  * 
- * TODO: Cache of templates.
- *
  * @category  Gveniver
  * @package   Template
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
@@ -24,7 +22,7 @@ namespace Gveniver\Template\Factory;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class BaseFactory
+abstract class BaseTemplateFactory
 {
     /**
      * Current application.
@@ -73,24 +71,24 @@ abstract class BaseFactory
      *
      * @param string $sTemplateName Name of template for loading.
      *
-     * @return Template
+     * @return \Gveniver\Template\BaseTemplate
      */
     public function load($sTemplateName)
     {
         return array_key_exists($sTemplateName, $this->_aTemplateCache)
-            ? ($this->_aTemplateCache[$sTemplateName])
-            : ($this->_aTemplateCache[$sTemplateName] = $this->build($sTemplateName));
+            ? $this->_aTemplateCache[$sTemplateName]
+            : $this->_aTemplateCache[$sTemplateName] = $this->build($sTemplateName);
         
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Build template by template name.
-     * Must implements specific actions for specific template types.
+     * Build template by name.
+     * Implements specific actions for specific template types.
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return Template
+     * @return \Gveniver\Template\BaseTemplate
      * @abstract
      */
     protected abstract function build($sTemplateName);

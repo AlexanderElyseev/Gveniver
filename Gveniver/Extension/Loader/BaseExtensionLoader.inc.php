@@ -23,7 +23,7 @@ namespace Gveniver\Extension\Loader;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseLoader
+abstract class BaseExtensionLoader
 {
     /**
      * Current application.

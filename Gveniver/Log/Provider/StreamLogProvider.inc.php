@@ -22,7 +22,7 @@ namespace Gveniver\Log\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class StreamLogProvider extends BaseProvider
+class StreamLogProvider extends BaseLogProvider
 {
     /**
      * Name of stream for saving log data.
@@ -46,7 +46,7 @@ class StreamLogProvider extends BaseProvider
         parent::__construct($cApplication, $aConfigData);
 
         if (!isset($aConfigData['StreamName']) || !is_string($aConfigData['StreamName']))
-            throw new \Gveniver\Exception\Exception('Log stream name must be specified.');
+            throw new \Gveniver\Exception\BaseException('Log stream name must be specified.');
         
         $this->_sStreamName = $aConfigData['StreamName'];
 

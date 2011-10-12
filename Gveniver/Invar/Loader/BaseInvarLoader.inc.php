@@ -23,7 +23,7 @@ namespace Gveniver\Invar\Loader;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseLoader
+abstract class BaseInvarLoader
 {
     /**
      * Analyze invars from request query string.

@@ -27,7 +27,7 @@ class FileSplitter
     /**
      * Current packer for files content.
      * 
-     * @var DataPacker
+     * @var Packer\BaseDataPacker
      */
     private $_cPacker;
     //-----------------------------------------------------------------------------------
@@ -52,10 +52,10 @@ class FileSplitter
     /**
      * Class constructor.
      * 
-     * @param string     $sOutputFileName Output cache file name.
-     * @param DataPacker $cPacker         Packer for data. Optional.
+     * @param string                $sOutputFileName Output cache file name.
+     * @param Packer\BaseDataPacker $cPacker         Packer for data. Optional.
      */
-    public function __construct($sOutputFileName, DataPacker $cPacker = null)
+    public function __construct($sOutputFileName, Packer\BaseDataPacker $cPacker = null)
     {
         // Checks.
         $sOutputFileName = \Gveniver\correctPath($sOutputFileName);

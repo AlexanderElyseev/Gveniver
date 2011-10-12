@@ -27,7 +27,7 @@ class Extension extends BaseModule
     /**
      * Current loader for extensions.
      *
-     * @var \BaseLoader\Extension\Loader\Base
+     * @var \Gveniver\Extension\Loader\BaseExtensionLoader
      */
     private $_cLoader;
     //-----------------------------------------------------------------------------

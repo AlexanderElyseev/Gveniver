@@ -10,7 +10,7 @@
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver\Cache;
+namespace Gveniver\Cache\Packer;
 
 /**
  * Base abstract class for packing data.
@@ -23,7 +23,7 @@ namespace Gveniver\Cache;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class DataPacker
+abstract class BaseDataPacker
 {
     /**
      * Method for packing data.

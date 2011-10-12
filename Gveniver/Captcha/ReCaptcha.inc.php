@@ -3,7 +3,7 @@
  * File contains controller class for CAPTCHA using reCAPTCHA system.
  *
  * @category  Gveniver
- * @package   Captcha
+ * @package   BaseCaptcha
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -17,13 +17,13 @@ require_once 'Lib/recaptchalib.php';
  * Controller class for CAPTCHA using reCAPTCHA system.
  *
  * @category  Gveniver
- * @package   Captcha
+ * @package   BaseCaptcha
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class ReCaptcha extends Captcha
+class ReCaptcha extends BaseCaptcha
 {
     /**
      * Public key for reCaptcha.

@@ -26,7 +26,7 @@ namespace Gveniver\Extension\Loader;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class DirectoryExtensionLoader extends BaseLoader
+class DirectoryExtensionLoader extends BaseExtensionLoader
 {
     /**
      * Force caching of export data.
@@ -41,7 +41,7 @@ class DirectoryExtensionLoader extends BaseLoader
      * 
      * @var string
      */
-    private $_aExtensionFolderList = array();
+    private $_aExtensionDirList = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
@@ -93,7 +93,7 @@ class DirectoryExtensionLoader extends BaseLoader
         }
 
         // Check, is path already exists.
-        if (in_array($sDir, $this->_aExtensionFolderList)) {
+        if (in_array($sDir, $this->_aExtensionDirList)) {
             $this->getApplication()->trace->addLine(
                 '[%s] Extension directory ("%s") already registered.',
                 __CLASS__,
@@ -106,7 +106,7 @@ class DirectoryExtensionLoader extends BaseLoader
         if ($sDir && file_exists($sDir) && is_dir($sDir) && is_readable($sDir)) {
 
             $this->getApplication()->trace->addLine('[%s] Extension directory ("%s") registered.',  __CLASS__, $sDir);
-            array_unshift($this->_aExtensionFolderList, $sDir);
+            array_unshift($this->_aExtensionDirList, $sDir);
 
         } else {
             $this->getApplication()->trace->addLine('[%s] Wrong extension directory ("%s").',  __CLASS__, $sDir);
@@ -126,54 +126,107 @@ class DirectoryExtensionLoader extends BaseLoader
      */
     protected function load($sExtensionName)
     {
+        $sExtensionClassName = '\\Gveniver\\Extension\\'.$sExtensionName;
+
+        $bNeedInclude = !class_exists($sExtensionClassName, false);
+
         // Load extension in registered directories.
-        foreach ($this->_aExtensionFolderList as $sExtensionFolder) {
+        foreach ($this->_aExtensionDirList as $sExtensionDir) {
 
-            // Build extension class name.
-            $sExtensionClassName = $sExtensionName;
-            $sExtensionFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.$sExtensionClassName.'.inc.php';
-            
-            $this->getApplication()->trace->addLine(
-                '[%s] Loading extension ("%s") in "%s".',
-                __CLASS__,
-                $sExtensionName,
-                $sExtensionFileName
-            );
+            $sExtensionDir = $sExtensionDir.$sExtensionName.GV_DS;
 
-            // Dynamically load extension.
-            $sClassName = '\\Gveniver\\Extension'.$sExtensionClassName;
-            $cExtension = new $sClassName($this->getApplication());
-            if (!$cExtension) {
+            if ($bNeedInclude) {
+                $sExtensionFileName = $sExtensionDir.$sExtensionName.'.inc.php';
                 $this->getApplication()->trace->addLine(
-                    '[%s] Extension ("%s") not loaded loaded at "%s".',
+                    '[%s] Loading extension ("%s") in "%s".',
                     __CLASS__,
                     $sExtensionName,
                     $sExtensionFileName
                 );
-                continue;
+
+                // File with class must exists.
+                if (!file_exists($sExtensionFileName)) {
+                    $this->getApplication()->trace->addLine(
+                        '[%s] Extension file "%s" not exists.',
+                        __CLASS__,
+                        $sExtensionFileName
+                    );
+                    continue;
+                }
+
+                /** @noinspection PhpIncludeInspection */
+                include_once $sExtensionFileName;
+
+                // After including, class must exists.
+                $bNeedInclude = !class_exists($sExtensionClassName, false);
+                if ($bNeedInclude) {
+                    $this->getApplication()->trace->addLine(
+                        '[%s] Extension "%s" not found in "%s".',
+                        __CLASS__,
+                        $sExtensionName,
+                        $sExtensionFileName
+                    );
+                    continue;
+                }
             }
-
-            /* @var $cExtension \Gveniver\Extension\Extension */
-
-            // Load extension configuration.
-            $sExtensionExportFileName = $sExtensionFolder.$sExtensionClassName.GV_DS.'export.xml';
-            if (file_exists($sExtensionExportFileName) && is_readable($sExtensionExportFileName))
-                $cExtension->getConfig()->mergeXmlFile($sExtensionExportFileName, $this->_bForceExportCache);
             
             $this->getApplication()->trace->addLine(
-                '[%s] Extension ("%s") successfully loaded.',
+                '[%s] Loading extension "%s".',
                 __CLASS__,
                 $sExtensionName
             );
-            return $cExtension;
 
+            // Dynamically load extension.
+            return $this->_buildExtension($sExtensionClassName, $sExtensionDir);
+            
         } // End foreach
- 
+
         $this->getApplication()->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
         return null;
 
     } // End function
     //-----------------------------------------------------------------------------
-    
+
+    /**
+     * Build extension instance.
+     * 
+     * @param string $sExtensionClassName Class name of extension.
+     * @param string $sExtensionDirectory Directory with extension.
+     * 
+     * @return \Gveniver\Extension\BaseExtension|null
+     */
+    private function _buildExtension($sExtensionClassName, $sExtensionDirectory)
+    {
+        try {
+            $cExtension = new $sExtensionClassName($this->getApplication());
+
+            /* @var $cExtension \Gveniver\Extension\BaseExtension */
+
+            // Load extension configuration.
+            $sExtensionExportFileName = $sExtensionDirectory.'export.xml';
+            if (file_exists($sExtensionExportFileName) && is_readable($sExtensionExportFileName))
+                $cExtension->getConfig()->mergeXmlFile($sExtensionExportFileName, $this->_bForceExportCache);
+
+            $this->getApplication()->trace->addLine(
+                '[%s] Extension ("%s") successfully loaded.',
+                __CLASS__,
+                $sExtensionClassName
+            );
+            return $cExtension;
+
+        } catch (\Exception $cEx) {
+            $this->getApplication()->trace->addLine(
+                '[%s] Extension ("%s") not loaded loaded: "%s".',
+                __CLASS__,
+                $sExtensionClassName,
+                $cEx->getMessage()
+            );
+        }
+
+        return null;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
 } // End class
 //-----------------------------------------------------------------------------

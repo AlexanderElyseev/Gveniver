@@ -22,17 +22,17 @@ namespace Gveniver\Exception;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Exception extends \Exception
+class BaseException extends \Exception
 {
     /**
      * Class constructor.
      * 
-     * @param string $message Error message.
-     * @param int    $code    Error code.
+     * @param string $sMessage Error sMessage.
+     * @param int    $nCode    Error nCode.
      */
-    public function __construct($message = '', $code = 0) 
+    public function __construct($sMessage = '', $nCode = 0)
     {
-        parent::__construct($message, $code);
+        parent::__construct($sMessage, $nCode);
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -45,7 +45,7 @@ class Exception extends \Exception
     public function __toString() 
     {
         return sprintf(
-            '[%s] Exception. Message="%s", code="%d".',
+            '[%s] Exception. Message="%s", Code="%d".',
             __CLASS__,
             $this->message,
             $this->code

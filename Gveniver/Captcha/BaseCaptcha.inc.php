@@ -3,7 +3,7 @@
  * File contains base abstract controller class for CAPTCHA.
  *
  * @category  Gveniver
- * @package   Captcha
+ * @package   BaseCaptcha
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -16,13 +16,13 @@ namespace Gveniver\Captcha;
  * Base abstract controller class for CAPTCHA.
  *
  * @category  Gveniver
- * @package   Captcha
+ * @package   BaseCaptcha
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class Captcha
+abstract class BaseCaptcha
 {
     /**
      * Display CAPTCHA for user.

@@ -22,7 +22,7 @@ namespace Gveniver\Invar\Loader;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class SimpleInvarLoader extends BaseLoader
+class SimpleInvarLoader extends BaseInvarLoader
 {
     /**
      * Analyze invars from request query string.
