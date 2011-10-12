@@ -64,7 +64,7 @@ abstract class FileTemplateFactory extends BaseTemplateFactory
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      *
-     * @throws \Gveniver\Exception\Exception Throws if directory with templates not loaded
+     * @throws \Gveniver\Exception\BaseException Throws if directory with templates not loaded
      * correctly.
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication)

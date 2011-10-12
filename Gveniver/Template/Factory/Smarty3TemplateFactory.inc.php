@@ -38,7 +38,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      * 
-     * @throws \Gveniver\Exception\Exception Throws if Smarty library not loaded or
+     * @throws \Gveniver\Exception\BaseException Throws if Smarty library not loaded or
      * loaded incorrectly.
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication)

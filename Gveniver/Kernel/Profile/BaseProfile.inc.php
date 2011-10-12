@@ -11,7 +11,7 @@
  * @link       http://prof-club.ru
  */
 
-namespace Gveniver\Kernel;
+namespace Gveniver\Kernel\Profile;
 
 /**
  * Base abstract application profile class.
@@ -26,7 +26,7 @@ namespace Gveniver\Kernel;
  * @license    http://prof-club.ru/license.txt Prof-Club License
  * @link       http://prof-club.ru
  */
-class Profile
+class BaseProfile
 {
     /**
      * Configuration of current profile.
@@ -55,7 +55,7 @@ class Profile
     /**
      * Parent profile for current.
      *
-     * @var \Gveniver\Kernel\Profile
+     * @var BaseProfile
      */
     private $_cParentProfile;
     //-----------------------------------------------------------------------------
@@ -67,9 +67,9 @@ class Profile
      *
      * @param \Gveniver\Kernel\Application $cApplication   Current application.
      * @param string                       $sProfileDir    Path to directory with profile.
-     * @param \Gveniver\Kernel\Profile     $cParentProfile Parent profile for current.
+     * @param BaseProfile                  $cParentProfile Parent profile for current.
      */
-    public function __construct(Application $cApplication, $sProfileDir, Profile $cParentProfile = null)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, $sProfileDir, BaseProfile $cParentProfile = null)
     {
         $this->_cConfig = new \Gveniver\Config();
         
@@ -119,7 +119,7 @@ class Profile
     /**
      * Getter for parent profile.
      *
-     * @return Profile
+     * @return BaseProfile
      */
     public function getParentProfile()
     {

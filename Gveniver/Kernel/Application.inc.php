@@ -279,7 +279,7 @@ final class Application
         }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $sProfileClass);
 
-        /* @var $cProfile \Gveniver\Kernel\Profile */
+        /* @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
 
         // Load configuration of profile and append to main configuration.
         $sProfileXmlFile = $sProfileDir.'config.xml';
@@ -334,10 +334,10 @@ final class Application
                 __CLASS__,
                 $sProfilePhpFile
             );
-            return '\\Gveniver\\Kernel\\Profile';
+            return '\\Gveniver\\Kernel\\Profile\\BaseProfile';
         } else {
             // Include profile file with class, if target class is not exists.
-            $sProfileClass = '\\Gveniver\\Kernel\\'.$sProfileName.'Profile';
+            $sProfileClass = '\\Gveniver\\Kernel\\Profile\\'.$sProfileName.'Profile';
             if (!class_exists($sProfileClass)) {
                 $this->trace->addLine(
                     '[%s] Profile class ("%s") is not exists. Start of including file: "%s".',
@@ -358,7 +358,7 @@ final class Application
             }
 
             // Profile class must extend base profile class.
-            if (!in_array('Gveniver\\Kernel\\Profile', class_parents($sProfileClass))) {
+            if (!in_array('Gveniver\\Kernel\\Profile\\BaseProfile', class_parents($sProfileClass))) {
                 $this->trace->addLine(
                     '[%s] Profile class ("%s") must extends base profile class. Loading base profile.',
                     __CLASS__,
@@ -426,7 +426,7 @@ final class Application
     /**
      * Returns current application profile.
      *
-     * @return \Gveniver\Kernel\Profile
+     * @return \Gveniver\Kernel\Profile\BaseProfile
      */
     public function getProfile()
     {
