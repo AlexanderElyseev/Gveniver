@@ -200,7 +200,7 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
         try {
             $cExtension = new $sExtensionClassName($this->getApplication());
 
-            /* @var $cExtension \Gveniver\Extension\BaseExtension */
+            /** @var $cExtension \Gveniver\Extension\BaseExtension */
 
             // Load extension configuration.
             $sExtensionExportFileName = $sExtensionDirectory.'export.xml';

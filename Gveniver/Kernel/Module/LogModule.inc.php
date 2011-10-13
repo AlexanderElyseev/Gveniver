@@ -29,7 +29,7 @@ namespace Gveniver\Kernel\Module;
  * @method warning($message, $data = null, $code = null)    Log for warning.
  * @method info($message, $data = null, $code = null)       Log for information message.
  */
-class Log extends BaseModule
+class LogModule extends BaseModule
 {
     /**
      * Logger object.

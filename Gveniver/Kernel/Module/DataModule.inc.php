@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Data extends BaseModule
+class DataModule extends BaseModule
 {
     /**
      * Array of {@see \Gveniver\Data\Provider\BaseDataProvider} for access to data.

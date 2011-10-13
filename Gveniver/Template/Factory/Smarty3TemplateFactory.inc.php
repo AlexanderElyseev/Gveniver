@@ -189,7 +189,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
             return null;
         }
 
-        /* @var $cExt \Gveniver\Extension\BaseExtension */
+        /** @var $cExt \Gveniver\Extension\BaseExtension */
 
         // Execute query.
         $sRet = $cExt->query(

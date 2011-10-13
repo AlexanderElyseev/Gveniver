@@ -57,7 +57,7 @@ class GvExtensionExt extends SimpleExtension
             
         } // End if
 
-        /* @var $cExtension BaseExtension */
+        /** @var $cExtension BaseExtension */
 
         // Executing query.
         $cResult = $cExtension->query(

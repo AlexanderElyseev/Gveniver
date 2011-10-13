@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Extension extends BaseModule
+class ExtensionModule extends BaseModule
 {
     /**
      * Current loader for extensions.
@@ -65,7 +65,7 @@ class Extension extends BaseModule
      * If specified, then the extension loads to variable by refernce and returns
      * result of operation (boolean). Otherwise, returns template.
      *
-     * @return Extension|bool
+     * @return ExtensionModule|bool
      */
     public function getExtension($sExtensionName, &$cRef = null)
     {

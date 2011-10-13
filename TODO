@@ -2,48 +2,45 @@
 Todo list for project.
 --------------------------------------------------------------------------------------------------------
 
-0. Kernel.
-    0.1. Restore environment after running profile.                                                 [**]
+0. Kernel.                                                                                          [**]
+    0.1. Restore environment after running profile.                                                 [--]
     0.2. Parameters for error reporting on loading module: exception or dummy class.                [--]
         0.2.1. DummyModule class with overloaded __call, __get, __set etc. methods.                 [--]
-    0.3. Initialize profile by profile path or profile name.                                        [ok]
-    0.4. Run over njinx and fcgi.                                                                   [--]
     0.5. Fatal errors handling. Clear caches.                                                       [--]
-    0.6. Correct processing of cache code files (<?php, ?>, etc)                                    [--]
     0.7. PHAR archives support.                                                                     [--]
     0.8. New system for connecting modules with external dirs and aliases.                          [--]
     0.9. New system of relative paths at profile.                                                   [--]
-1. Data module.                                                                                     [**]
+
+1. Data.                                                                                            [**]
     1.1. Base architecture.                                                                         [ok]
     1.2. Data providers for mysql and mongodb.                                                      [ok]
     1.3. Multiple providers / connections.                                                          [ok]
     1.4. Reorganize structure of provider data in confiuration (like CAPTCHA).                      [--] !
-2. Cache module.                                                                                    [**]
-    2.1. Base architecture.                                                                         [ok]
-    2.2. Cache providers for files and memcached.                                                   [ok]
-    2.3. Cache extension calls by some parameter.                                                   [--] !
-    2.4. TTL for script cache and style cache based on content files (not on constant).             [--]
-3. Log module.                                                                                      [**]
+
+2. Cache.                                                                                           [**]
+
+3. Log.                                                                                             [**]
     3.1. Base architecture.                                                                         [ok]
     3.2. Log providers for files and emails.                                                        [ok]
+
 4. Extensions.                                                                                      [**]
     4.1. ProfileExt - extension for getting various profile data.                                   [--]
-        4.1.1. Output and cache scripts.                                                            [ok]
-        4.1.2. Output and cache styles.                                                             [ok]
-        4.1.3. Html meta data.                                                                      [ok]
         4.1.4. Check for non-canonical URLs in caching styles.                                      [--]
     4.2. Profiling for each extension. Calculate call time.                                         [--]
-    4.3. Extensions must returns raw data, not HTML.                                                [ok]
+
 5. Ajax.                                                                                            [**]
+
 6. Configuration.                                                                                   [**]
     6.1. Smart XML parsing for build PHP array. Use attributes for build structure.                 [**]
          Use attributes for converting parameters in specified type.                                [--]
     6.2. Correct algorithm for read configs.                                                        [--] !
+
 7. Deploy.                                                                                          [**]
     7.1. Use some builder (ant? phing?).                                                            [--]
     7.2. Automatically minimize scripts and styles with builder.                                    [--]
+
 8. Redirection module.                                                                              [**]
-    8.1. Create module.                                                                             [ok]
+
 9. Template module.                                                                                 [**]
     9.1. PHP templates.                                                                             [--]
     9.2. Parameters for building factory at separated part.                                         [--]

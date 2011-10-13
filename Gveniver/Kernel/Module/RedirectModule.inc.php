@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Redirect extends BaseModule
+class RedirectModule extends BaseModule
 {
     /**
      * Redirection url.
@@ -202,7 +202,7 @@ class Redirect extends BaseModule
         if (!$this->getApplication()->template->getTemplate($this->_sRedirectionTemplateName, $cTpl))
             return '';
 
-        /* @var $cTpl \Gveniver\Template\BaseTemplate */
+        /** @var $cTpl \Gveniver\Template\BaseTemplate */
 
         return $cTpl->parse(
             array(

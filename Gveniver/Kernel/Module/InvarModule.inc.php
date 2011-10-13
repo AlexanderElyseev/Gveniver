@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Invar extends BaseModule
+class InvarModule extends BaseModule
 {
     /**
      * Target for loading invar parameter for request.

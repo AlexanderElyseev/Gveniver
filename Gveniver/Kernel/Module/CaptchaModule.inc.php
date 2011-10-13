@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Captcha extends BaseModule
+class CaptchaModule extends BaseModule
 {
     /**
      * Current CAPTCHA controller.

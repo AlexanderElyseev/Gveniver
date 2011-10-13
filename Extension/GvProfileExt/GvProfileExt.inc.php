@@ -78,7 +78,7 @@ class GvProfileExt extends SimpleExtension
 
         foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
 
-            /* @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
+            /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
             
             $sImageAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsImage');
             $sImageWebPath = $cProfile->getConfig()->get('Profile/Path/AbsImageWeb');
@@ -221,7 +221,7 @@ class GvProfileExt extends SimpleExtension
         $aUniqueScripts = array();
         foreach (array_reverse($this->getApplication()->getProfile()->getParentProfileList()) as $cProfile) {
 
-            /* @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
+            /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
 
             // Load scripts data from profile configuration.
             $aScriptDataList = $cProfile->getScriptList($sSectionName, $sActionValue);
@@ -400,7 +400,7 @@ class GvProfileExt extends SimpleExtension
         $aUniqueStyles = array();
         foreach (array_reverse($this->getApplication()->getProfile()->getParentProfileList()) as $cProfile) {
 
-            /* @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
+            /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
 
             // Load styles data from profile configuration.
             $aStyleDataList = $cProfile->getStyleList($sSectionName, $sActionValue);

@@ -116,7 +116,7 @@ class Config
         $aTarget = array();
         foreach ($cXml->children() as $cParameter) {
 
-            /* @var $cParameter \SimpleXMLElement */
+            /** @var $cParameter \SimpleXMLElement */
 
             $sKey = $cParameter->getName();
 

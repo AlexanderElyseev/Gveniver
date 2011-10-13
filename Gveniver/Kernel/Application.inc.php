@@ -24,15 +24,15 @@ namespace Gveniver\Kernel;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  * 
- * @property  \Gveniver\Kernel\Module\Cache     $cache
- * @property  \Gveniver\Kernel\Module\Captcha   $captcha
- * @property  \Gveniver\Kernel\Module\Data      $data
- * @property  \Gveniver\Kernel\Module\Extension $extension
- * @property  \Gveniver\Kernel\Module\Invar     $invar
- * @property  \Gveniver\Kernel\Module\Log       $log
- * @property  \Gveniver\Kernel\Module\Redirect  $redirect
- * @property  \Gveniver\Kernel\Module\Template  $template
- * @property  \Gveniver\Kernel\Module\Trace     $trace
+ * @property  \Gveniver\Kernel\Module\CacheModule     $cache
+ * @property  \Gveniver\Kernel\Module\CaptchaModule   $captcha
+ * @property  \Gveniver\Kernel\Module\DataModule      $data
+ * @property  \Gveniver\Kernel\Module\ExtensionModule $extension
+ * @property  \Gveniver\Kernel\Module\InvarModule     $invar
+ * @property  \Gveniver\Kernel\Module\LogModule       $log
+ * @property  \Gveniver\Kernel\Module\RedirectModule  $redirect
+ * @property  \Gveniver\Kernel\Module\TemplateModule  $template
+ * @property  \Gveniver\Kernel\Module\TraceModule     $trace
  */
 final class Application
 {
@@ -96,7 +96,7 @@ final class Application
 
     } // End function
     //-----------------------------------------------------------------------------
-    
+
     /**
      * Getter for configuration of application.
      *
@@ -279,7 +279,7 @@ final class Application
         }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $sProfileClass);
 
-        /* @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
+        /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
 
         // Load configuration of profile and append to main configuration.
         $sProfileXmlFile = $sProfileDir.'config.xml';
@@ -393,7 +393,7 @@ final class Application
         // Build correct module class name.
         $sModuleClassName = isset($this->_aModuleAliasList[$sModuleName])
             ? 'Gveniver\\Kernel\\Module\\'.$this->_aModuleAliasList[$sModuleName]
-            : 'Gveniver\\Kernel\\Module\\'.ucfirst($sModuleName);
+            : 'Gveniver\\Kernel\\Module\\'.ucfirst($sModuleName).'Module';
 
         // Class of module must exists.
         if (!class_exists($sModuleClassName))

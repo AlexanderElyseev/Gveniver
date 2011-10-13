@@ -178,7 +178,7 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
     $strip_tag = function(\DOMNode &$cElement, $allowattributes, $allowtags, $strip_tag) {
         foreach ($cElement->childNodes as $cNode) {
 
-            /* @var $cNode \DOMElement */
+            /** @var $cNode \DOMElement */
 
             if ($cNode->nodeType != XML_ELEMENT_NODE)
                 continue;
@@ -191,7 +191,7 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
             if ($allowattributes) {
                 foreach ($cNode->attributes as $cAttribute) {
 
-                    /* @var $cAttribute \DOMAttr */
+                    /** @var $cAttribute \DOMAttr */
 
                     if (!in_array($cAttribute->name, $allowattributes))
                         $cNode->removeAttribute($cAttribute->name);

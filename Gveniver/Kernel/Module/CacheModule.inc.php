@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Cache extends BaseModule
+class CacheModule extends BaseModule
 {
     /**
      * Array of {@see BaseCacheProvider} for access to cached data.
@@ -73,7 +73,7 @@ class Cache extends BaseModule
         if (!$cProvider)
             throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
 
-        /* @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
 
         return $cProvider->generateId($sDataName);
 
@@ -207,7 +207,7 @@ class Cache extends BaseModule
         if (!$cProvider)
             throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
 
-        /* @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
 
         // Load data from cache by default provider.
         $mData = null;
@@ -244,7 +244,7 @@ class Cache extends BaseModule
         if (!$cProvider)
             throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
 
-        /* @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
 
         // Save data to cache by default provider.
         return $cProvider->set($mData, $sCacheId, $sCacheGroupId, $nTtl);
@@ -266,7 +266,7 @@ class Cache extends BaseModule
         if (!$cProvider)
             throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
 
-        /* @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
 
         // Flush cache data by default provider.
         return $cProvider->flush($sCacheGroupId);

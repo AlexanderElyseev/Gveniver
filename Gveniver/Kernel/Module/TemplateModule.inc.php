@@ -22,7 +22,7 @@ namespace Gveniver\Kernel\Module;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class Template extends BaseModule
+class TemplateModule extends BaseModule
 {
     /**
      * Current factory for templating system.
