@@ -47,7 +47,7 @@ final class Application
     /**
      * Current profile of application.
      *
-     * @var Profile
+     * @var Profile\BaseProfile
      */
     private $_cProfile;
     //-----------------------------------------------------------------------------
@@ -73,10 +73,9 @@ final class Application
      * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @param string $sProfile               Path to profile directory or name of profile.
      * @param string $sApplicationConfigFile Path to XML configuration file for application.
      */
-    public function __construct($sProfile, $sApplicationConfigFile = null)
+    public function __construct($sApplicationConfigFile = null)
     {
         // Initialize and load base configuration.
         $this->_cConfig = new \Gveniver\Config();
@@ -85,11 +84,6 @@ final class Application
         // Append additional application configuration, if specified.
         if ($sApplicationConfigFile)
             $this->_cConfig->mergeXmlFile($sApplicationConfigFile);
-
-        // Load profile.
-        $this->_cProfile = $this->_loadProfile($sProfile);
-        if (!$this->_cProfile)
-            throw new \Gveniver\Exception\BaseException(sprintf('Profile with name "%s" not found.', $sProfile));
 
         // Initialization of environment.
         $this->_initEnvironment();
@@ -221,7 +215,7 @@ final class Application
      * If directory is specified, load from directory. Otherwise, load from base profile directory
      * with specified profile name.
      *
-     * @return Profile|null Returns application profile by specified name or null, if module not loaded.
+     * @return Profile\BaseProfile|null Returns application profile by specified name or null, if module not loaded.
      */
     private function _loadProfile($sProfileName)
     {
@@ -422,7 +416,27 @@ final class Application
 
     } // End function
     //-----------------------------------------------------------------------------
-    
+
+    /**
+     * Start profile of application.
+     *
+     * @param string $sProfile Path to profile directory or name of profile.
+     *
+     * @throws \Gveniver\Exception\BaseException
+     * @return string
+     */
+    public function startProfile($sProfile)
+    {
+        // Load profile.
+        $this->_cProfile = $this->_loadProfile($sProfile);
+        if (!$this->_cProfile)
+            throw new \Gveniver\Exception\BaseException(sprintf('Profile with name "%s" not found.', $sProfile));
+
+        return $this->_cProfile->start();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
     /**
      * Returns current application profile.
      *
@@ -486,7 +500,7 @@ final class Application
      *
      * @param mixed $mValue Value to convert.
      *
-     * @return integer|null Convert result.
+     * @return integer|null Converted result.
      * @static
      */
     public static function toIntegerOrNull($mValue)

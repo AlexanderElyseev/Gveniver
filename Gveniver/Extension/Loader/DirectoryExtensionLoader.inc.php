@@ -29,14 +29,6 @@ namespace Gveniver\Extension\Loader;
 class DirectoryExtensionLoader extends BaseExtensionLoader
 {
     /**
-     * Force caching of export data.
-     *
-     * @var boolean
-     */
-    private $_bForceExportCache;
-    //-----------------------------------------------------------------------------
-
-    /**
      * Path to extension folder.
      * 
      * @var string
@@ -65,11 +57,6 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
         // Register extension directory from profile configuration.
         $this->_registerExtDir($this->getApplication()->getConfig()->get('Profile/Path/AbsExtension'));
 
-        // Load caching settings.
-        $this->_bForceExportCache = \Gveniver\Kernel\Application::toBoolean(
-            $this->getApplication()->getConfig()->get('Kernel/EnableCache')
-        );
-        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -205,7 +192,7 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
             // Load extension configuration.
             $sExtensionExportFileName = $sExtensionDirectory.'export.xml';
             if (file_exists($sExtensionExportFileName) && is_readable($sExtensionExportFileName))
-                $cExtension->getConfig()->mergeXmlFile($sExtensionExportFileName, $this->_bForceExportCache);
+                $cExtension->getConfig()->mergeXmlFile($sExtensionExportFileName);
 
             $this->getApplication()->trace->addLine(
                 '[%s] Extension ("%s") successfully loaded.',

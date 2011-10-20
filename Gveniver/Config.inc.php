@@ -49,34 +49,37 @@ class Config
      * 
      * !!! It is important that first load data and then read cache parameters. !!!
      *
-     * @param string  $sConfigFile Path configuration XML file.
-     * @param boolean $bForceCache Force caching of this file.
+     * @param string $sConfigFile Path configuration XML file.
      *
      * @return boolean Returns true on success.
      */
-    public function mergeXmlFile($sConfigFile, $bForceCache = null)
+    public function mergeXmlFile($sConfigFile)
     {
         $sConfigFile = correctPath($sConfigFile);
         if (!file_exists($sConfigFile))
             return false;
 
         // Try to read configuration from cache.
-        $sCacheFile = GV_PATH_CACHE.'config-'.md5($sConfigFile).'.dat';
-        if (file_exists($sCacheFile) && filemtime($sCacheFile) >= filemtime($sConfigFile)) {
-            // Unserialize the array of configuration and check correctness.
-            $aConfig = unserialize(file_get_contents($sCacheFile));
-            if (is_array($aConfig)) {
-                $this->_merge($aConfig);
-                return true;
+        $bCacheEnabled = Kernel\Application::toBoolean($this->get('Kernel/EnableCache'));
+        $sCacheFile = null;
+        if ($bCacheEnabled) {
+            $sCacheFile = GV_PATH_CACHE.'config-'.md5($sConfigFile).'.dat';
+            if (file_exists($sCacheFile) && filemtime($sCacheFile) >= filemtime($sConfigFile)) {
+
+                // Unserialize the array of configuration and check correctness.
+                $aConfig = unserialize(file_get_contents($sCacheFile));
+                if (is_array($aConfig)) {
+                    $this->_merge($aConfig);
+                    return true;
+                }
             }
         }
 
         // Load an array of configuration from XML configuration file.
         $aConfig = $this->_buildXmlConfig(simplexml_load_file($sConfigFile));
         $this->_merge($aConfig);
-
+        
         // Save cache if need.
-        $bCacheEnabled = is_null($bForceCache) ? Kernel\Application::toBoolean($this->get('Kernel/EnableCache')) : $bForceCache;
         if ($bCacheEnabled) {
             $sCacheDir = dirname($sCacheFile);
             if (!file_exists($sCacheDir))

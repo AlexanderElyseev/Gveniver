@@ -21,7 +21,7 @@ namespace Gveniver\Kernel\Module;
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
- *
+ * 
  * TODO: Types of arguments.
  * @method fatalError($message, $data = null, $code = null) Log for fatal error.
  * @method error($message, $data = null, $code = null)      Log for error.

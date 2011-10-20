@@ -44,7 +44,7 @@ class InitTest extends PHPUnit_Framework_TestCase
      */
     public function testWrongProfile()
     {
-        new Gveniver\Kernel\Application('WronProfileNameHere');
+        new Gveniver\Kernel\Application('WrongProfileNameHere');
 
     } // End function
     //-----------------------------------------------------------------------------
