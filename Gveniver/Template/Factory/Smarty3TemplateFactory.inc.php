@@ -117,7 +117,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
                 return false;
         }
 
-        return mkdir($sPath, 0666, true);
+        return mkdir($sPath, 0777, true);
         
     } // End function
     //-----------------------------------------------------------------------------

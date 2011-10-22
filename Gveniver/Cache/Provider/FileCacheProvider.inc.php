@@ -26,7 +26,7 @@ class FileCacheProvider extends BaseCacheProvider
 {
     /**
      * Path to directory for cache.
-     * 
+     *
      * @var string
      */
     private $_sBaseCacheDirectory;

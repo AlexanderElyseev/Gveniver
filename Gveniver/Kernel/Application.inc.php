@@ -73,9 +73,10 @@ final class Application
      * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @param string $sApplicationConfigFile Path to XML configuration file for application.
+     * @param string|Profile\BaseProfile $mProfile               Path to profile directory or name of profile, or profile instance.
+     * @param string                     $sApplicationConfigFile Path to XML configuration file for application.
      */
-    public function __construct($sApplicationConfigFile = null)
+    public function __construct($mProfile, $sApplicationConfigFile = null)
     {
         // Initialize and load base configuration.
         $this->_cConfig = new \Gveniver\Config();
@@ -84,6 +85,15 @@ final class Application
         // Append additional application configuration, if specified.
         if ($sApplicationConfigFile)
             $this->_cConfig->mergeXmlFile($sApplicationConfigFile);
+
+        // Initialize profile of application.
+        if ($mProfile instanceof Profile\BaseProfile)
+            $this->_cProfile = $mProfile;
+        else {
+            $this->_cProfile = $this->_loadProfile($mProfile);
+            if (!$this->_cProfile)
+                throw new \Gveniver\Exception\ArgumentException();
+        }
 
         // Initialization of environment.
         $this->_initEnvironment();
@@ -226,7 +236,7 @@ final class Application
         }
 
         // Check profile directory.
-        if (is_dir($sProfileName)) {
+        if (is_dir($sProfileName) && \Gveniver\isAbsolutePath($sProfileName)) {
             $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfileName);
             $sProfileDir = $sProfileName;
             $sProfileName = basename($sProfileName);
@@ -240,7 +250,7 @@ final class Application
         }
 
         // Load class name of profile.
-        $sProfileClass = $this->_getProfileClassName($sProfileDir, $sProfileName);
+        $sProfileClass = $this->_getProfileClassName($sProfileName);
         if (!$sProfileClass) {
             $this->trace->addLine('[%s] Profile class ("%s") is not loaded.', __CLASS__, $sProfileClass);
             return null;
@@ -285,8 +295,15 @@ final class Application
                 $sProfileName,
                 $sProfileXmlFile
             );
+        } else {
+            $this->trace->addLine(
+                '[%s] Configuration parameters of profile ("%s") not found in "%s".',
+                __CLASS__,
+                $sProfileName,
+                $sProfileXmlFile
+            );
         }
-
+    
         return $cProfile;
 
     } // End function
@@ -313,57 +330,34 @@ final class Application
      * Load class name of profile for creating new instance.
      * If profile class is not defined or is not loaded, use base {@see Profile} class.
      *
-     * @param string $sProfileDir  Directory with profiles.
      * @param string $sProfileName Name of profile for loading.
      *
      * @return string|null Returns class name of profile or null, if loaded wrong profile class.
      */
-    private function _getProfileClassName($sProfileDir, $sProfileName)
+    private function _getProfileClassName($sProfileName)
     {
-        // Check profile module file.
-        $sProfilePhpFile = $sProfileDir.$sProfileName.'.inc.php';
-        if (!is_file($sProfilePhpFile)) {
+        // Include profile file with class, if target class is not exists.
+        $sProfileClass = '\\Gveniver\\Kernel\\Profile\\'.$sProfileName.'Profile';
+        if (!class_exists($sProfileClass, true)) {
             $this->trace->addLine(
-                '[%s] Profile class file ("%s") is not exists. Loading base profile.',
+                '[%s] Profile class ("%s") is not exists. Loading base profile.',
                 __CLASS__,
-                $sProfilePhpFile
+                $sProfileClass
             );
             return '\\Gveniver\\Kernel\\Profile\\BaseProfile';
-        } else {
-            // Include profile file with class, if target class is not exists.
-            $sProfileClass = '\\Gveniver\\Kernel\\Profile\\'.$sProfileName.'Profile';
-            if (!class_exists($sProfileClass)) {
-                $this->trace->addLine(
-                    '[%s] Profile class ("%s") is not exists. Start of including file: "%s".',
-                    __CLASS__,
-                    $sProfileClass,
-                    $sProfilePhpFile
-                );
+        }
 
-                if (!class_exists($sProfileClass)) {
-                    $this->trace->addLine(
-                        '[%s] Profile class ("%s") is not exists after including file ("%s"). Loading base profile.',
-                        __CLASS__,
-                        $sProfileClass,
-                        $sProfilePhpFile
-                    );
-                    return null;
-                }
-            }
+        // Profile class must extend base profile class.
+        if (!in_array('Gveniver\\Kernel\\Profile\\BaseProfile', class_parents($sProfileClass))) {
+            $this->trace->addLine(
+                '[%s] Profile class ("%s") must extends base profile class. Loading base profile.',
+                __CLASS__,
+                $sProfileClass
+            );
+            return null;
+        }
 
-            // Profile class must extend base profile class.
-            if (!in_array('Gveniver\\Kernel\\Profile\\BaseProfile', class_parents($sProfileClass))) {
-                $this->trace->addLine(
-                    '[%s] Profile class ("%s") must extends base profile class. Loading base profile.',
-                    __CLASS__,
-                    $sProfileClass
-                );
-                return null;
-            }
-
-            return $sProfileClass;
-
-        } // End else
+        return $sProfileClass;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -416,27 +410,7 @@ final class Application
 
     } // End function
     //-----------------------------------------------------------------------------
-
-    /**
-     * Start profile of application.
-     *
-     * @param string $sProfile Path to profile directory or name of profile.
-     *
-     * @throws \Gveniver\Exception\BaseException
-     * @return string
-     */
-    public function startProfile($sProfile)
-    {
-        // Load profile.
-        $this->_cProfile = $this->_loadProfile($sProfile);
-        if (!$this->_cProfile)
-            throw new \Gveniver\Exception\BaseException(sprintf('Profile with name "%s" not found.', $sProfile));
-
-        return $this->_cProfile->start();
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
+    
     /**
      * Returns current application profile.
      *

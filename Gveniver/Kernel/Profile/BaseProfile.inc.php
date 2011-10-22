@@ -65,14 +65,13 @@ class BaseProfile
      * Constructor of {@see Profile} class.
      * Initialize new instance of application profile.
      *
-     * @param \Gveniver\Kernel\Application $cApplication   Current application.
+     * @param \Gveniver\Kernel\Application $cApplication   Application, which start profile.
      * @param string                       $sProfileDir    Path to directory with profile.
      * @param BaseProfile                  $cParentProfile Parent profile for current.
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication, $sProfileDir, BaseProfile $cParentProfile = null)
     {
         $this->_cConfig = new \Gveniver\Config();
-        
         $this->_cApplication = $cApplication;
         $this->_sProfilePath = $sProfileDir;
         $this->_cParentProfile = $cParentProfile;
@@ -81,7 +80,7 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
-     * Getter for configuration of profile..
+     * Getter for configuration of profile.
      *
      * @return \Gveniver\Config
      */
@@ -93,7 +92,7 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
-     * Getter for current application.
+     * Getter for current appliction of profile.
      *
      * @return \Gveniver\Kernel\Application
      */
@@ -154,24 +153,24 @@ class BaseProfile
      */
     public function start()
     {
-        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
+        $this->_cApplication->trace->addLine('[%s] Start.', __CLASS__);
 
         $sContentType = $this->getContentType(
             $this->getCurrentSectionName(),
             $this->getCurrentAction()
         );
         if ($sContentType) {
-            $this->getApplication()->trace->addLine('[%s] Using "%s" as content-type.', __CLASS__, $sContentType);
+            $this->_cApplication->trace->addLine('[%s] Using "%s" as content-type.', __CLASS__, $sContentType);
             header('Content-type: '.$sContentType);
         }
         
-        $sResult = $this->getApplication()->template->parseTemplate(
+        $sResult = $this->_cApplication->template->parseTemplate(
             $this->getMainTemplate(
                 $this->getCurrentSectionName(),
                 $this->getCurrentAction()
             )
         );
-        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
+        $this->_cApplication->trace->addLine('[%s] End.', __CLASS__);
         return $sResult;
 
     } // End function
@@ -210,7 +209,7 @@ class BaseProfile
      *
      * @param string $sSectionName Name of section. Or default section, if not set.
      * @param string $sAct         Action value. If not set, Default action.
-     * 
+     *
      * @return string Content type of page or null on error.
      */
     public function getContentType($sSectionName = null, $sAct = null)
@@ -225,7 +224,7 @@ class BaseProfile
                             foreach ($aSection['ActList'] as $aAction)
                                 if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['ContentType']))
                                     return $aAction['Section']['ContentType'];
-        
+
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
@@ -379,7 +378,7 @@ class BaseProfile
     public function getKeywords($sSectionName = null, $sAct = null)
     {
         $sResult = '';
-        
+
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
@@ -586,7 +585,7 @@ class BaseProfile
                             foreach ($aSection['ActList'] as $aAction)
                                 if (isset($aAction['Value']) && $aAction['Value'] == $sAct && isset($aAction['Section']['MainTemplate']))
                                     return $aAction['Section']['MainTemplate'];
-        
+
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
