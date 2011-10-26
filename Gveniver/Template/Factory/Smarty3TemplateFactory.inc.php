@@ -65,6 +65,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      */
     private function _reinstallSmarty()
     {
+        // Directories.
         $sDirTemplate = $this->getApplication()->getConfig()->get('Module/TemplateModule/SmartyDirTemplate');
         if (!$this->_createDir($sDirTemplate) || !is_readable($sDirTemplate))
             return false;
@@ -85,13 +86,24 @@ class Smarty3TemplateFactory extends FileTemplateFactory
             return false;
         $this->_cSmarty->config_dir = $sDirConfig;
 
-        $this->_cSmarty->left_delimiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterBegin');
-        $this->_cSmarty->right_delimiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterEnd');
+        // Smarty template delemiters.
+        $sConfigBeginDelemiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterBegin');
+        $this->_cSmarty->left_delimiter = $sConfigBeginDelemiter ? $sConfigBeginDelemiter : '{';
+
+        $sConfigEndDelemiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterEnd');
+        $this->_cSmarty->right_delimiter = $sConfigEndDelemiter ? $sConfigEndDelemiter : '}';
+
+        // Modifiers and functions.
         $this->_cSmarty->registerPlugin('function', 'gv', array($this, 'extension'));
+        $this->_cSmarty->registerPlugin('function', 'gv_ext', array($this, 'extension'));
+        $this->_cSmarty->registerPlugin('modifier', 'gv_output_html', '\\Gveniver\\output_html');
+        $this->_cSmarty->registerPlugin('modifier', 'gv_output_text', '\\Gveniver\\output_text');
+
         $this->_cSmarty->registerPlugin('modifier', 'upper', '\\Gveniver\\strtoupper_ex');
         $this->_cSmarty->registerPlugin('modifier', 'lower', '\\Gveniver\\strtolower_ex');
         $this->_cSmarty->registerPlugin('modifier', 'cdata', '\\Gveniver\\cdata');
         $this->_cSmarty->registerPlugin('modifier', 'substr', 'mb_substr');
+        
         $this->_cSmarty->error_reporting = ini_get('error_reporting');
         return true;
         

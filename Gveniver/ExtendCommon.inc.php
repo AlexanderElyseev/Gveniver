@@ -107,23 +107,26 @@ function explode_ex($delimiter, $string)
  * @param string $string          Строка для форматирования.
  * @param string $allowtags       Строка разрешенных тегов.
  * @param string $allowattributes Строка разрешенных аттрибутов (через запятую).
+ * @param int    $nMaxLength      Максимальная длина текста.
+ * @param string $sCropStr        Текст, обозначающий обрезанную часть. Добавляется при превышении максимальной длины.
  * 
  * @return string
  */
 // @codingStandardsIgnoreStart
-function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
+function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMaxLength = null, $sCropStr = '...')
 // @codingStandardsIgnoreEnd
 {
-    $tidy_config = array(
-         'clean'          => true,
-         'output-xml'     => true,
-         'show-body-only' => true,
-         'wrap' => 0,
-
-    );
-
     $cTidy = new \Tidy();
-    $cTidy ->parseString($string, $tidy_config, 'UTF8');
+    $cTidy->parseString(
+        $string,
+        array(
+             'clean'          => true,
+             'output-xml'     => true,
+             'show-body-only' => true,
+             'wrap' => 0,
+        ),
+        'UTF8'
+    );
     $cTidy->cleanRepair();
 
     $string = $cTidy->repairString(
@@ -157,25 +160,32 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
     $string = str_replace('&laquo;', '&#171;', $string);
     $string = str_replace('&raquo;', '&#187;', $string);
 
-    //if (substr($string, 0, 1) != "<")
-        $string = "<xml_main>".$string."</xml_main>";
-
-    $cDom->loadXML($string);
-
+    // Build array of allowed attributes.
+    $aAllowedAttriburtes = array();
     if ($allowattributes) {
-        if (!is_array($allowattributes))
-            $allowattributes = explode(",", $allowattributes);
+        if (is_string($allowattributes))
+            $aAllowedAttriburtes = explode(',', $allowattributes);
+        elseif (is_array($allowattributes))
+            $aAllowedAttriburtes = $allowattributes;
     }
 
-    if ($allowtags) {
-        $allowtags = explode(" ", $allowtags);
-        for ($i = 0; $i < count($allowtags); $i++) {
-            $allowtags[$i] = trim(str_replace(">", "", str_replace("<", "", $allowtags[$i])));
-        }
+    // Build array of allowed tags.
+    $aAllowedTags = $allowtags ? explode(' ', $allowtags) : array();
+    for ($i = 0; $i < count($aAllowedTags); $i++) {
+        $aAllowedTags[$i] = str_replace('>', '', $aAllowedTags[$i]);
+        $aAllowedTags[$i] = str_replace('<', '', $aAllowedTags[$i]);
+        $aAllowedTags[$i] = trim($aAllowedTags[$i]);
     }
 
+    //if (substr($string, 0, 1) != "<")
+        $string = "<xml_main>$string</xml_main>";
+    $cDom->loadXML($string);
     $cXml = $cDom->getElementsByTagName('xml_main')->item(0);
-    $strip_tag = function(\DOMNode &$cElement, $allowattributes, $allowtags, $strip_tag) {
+
+    // Function recursive walking over DOM tree and removing not allowed tags and attributes.
+    $checkTree = function(\DOMNode &$cElement) use (&$aAllowedAttriburtes, &$aAllowedTags, &$checkTree) {
+
+        $aNodesForDelete = array();
         foreach ($cElement->childNodes as $cNode) {
 
             /** @var $cNode \DOMElement */
@@ -183,28 +193,71 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null)
             if ($cNode->nodeType != XML_ELEMENT_NODE)
                 continue;
 
-            if ($allowtags) {
-                if (!in_array($cNode->tagName, $allowtags))
-                    $cElement->removeChild($cNode);
+            // Remove not allowed tags.
+            if (!in_array($cNode->tagName, $aAllowedTags)) {
+                $aNodesForDelete[] = $cNode;
+                continue;
             }
 
-            if ($allowattributes) {
-                foreach ($cNode->attributes as $cAttribute) {
+            // Remove not allowed attributes.
+            foreach ($cNode->attributes as $cAttribute) {
 
-                    /** @var $cAttribute \DOMAttr */
+                /** @var $cAttribute \DOMAttr */
 
-                    if (!in_array($cAttribute->name, $allowattributes))
-                        $cNode->removeAttribute($cAttribute->name);
-                }
+                if (!in_array($cAttribute->name, $aAllowedAttriburtes))
+                    $cNode->removeAttribute($cAttribute->name);
             }
 
-            $strip_tag($cNode, $allowattributes, $allowtags, $strip_tag);
+            // Parse childs.
+            $checkTree($cNode);
         }
+
+        // Lazy deleting of marked nodes.
+        foreach ($aNodesForDelete as $cNode)
+            $cElement->removeChild($cNode);
     };
-    $strip_tag($cXml, $allowattributes, $allowtags, $strip_tag);
+    $checkTree($cXml);
+
+    // Check maximla length of text.
+    if ($nMaxLength) {
+        $nLength = 0;
+        $bStop = false;
+        $fCropText = function(\DOMNode &$cElement) use (&$nLength, &$fCropText, &$bStop, $sCropStr, $nMaxLength) {
+
+            // Recursive walking over DOM tree, while length of text less then specified.
+            // After exceeding the limit of length, deleting all other nodes.
+            $aNodesForDelete = array();
+            foreach ($cElement->childNodes as $cNode) {
+
+                /** @var $cNode \DOMElement */
+
+                if ($bStop) {
+                    $aNodesForDelete[] = $cNode;
+                    continue;
+                }
+
+                if ($cNode->nodeType == XML_TEXT_NODE) {
+                    $nLength += mb_strlen($cNode->textContent);
+                    if ($nLength > $nMaxLength) {
+                        $bStop = true;
+                        $cNode->nodeValue = $sCropStr;
+                    }
+                }
+
+                if ($cNode->nodeType == XML_ELEMENT_NODE)
+                    $fCropText($cNode);
+            }
+
+            // Lazy deleting of marked nodes.
+            foreach ($aNodesForDelete as $cNode)
+                $cElement->removeChild($cNode);
+        };
+        $fCropText($cXml);
+
+    } // End if
+    
     $string = $cDom->saveXML($cXml);
     $string = substr($string, 10, $string - 11);
-
     return $string;
 
 } // End function
@@ -302,56 +355,53 @@ function str_break_text($string, $max_length)
         $string = mb_substr($string, 0, $max_length); 
         $pos = mb_strrpos($string, ' '); 
         if ($pos === false) 
-            return mb_substr($string, 0, $max_length)."..."; 
+            return mb_substr($string, 0, $max_length).'...';
             
-        return mb_substr($string, 0, $pos).'...'; 
+        return mb_substr($string, 0, $pos).'...';
         
     } // End if
-    else
-        return $string; 
+    
+    return $string;
     
 } // End function
 //-------------------------------------------------------------------------------
 
 /**
- * Function cuts string with the HTML tags by the specified number of chars and strips 
- * empty HTML tags from the output.
+ * Format text for outputting.
  *
- * @param string $txt   text to cut
- * @param int    $len   number of chars to keep in the resulting string
- * @param string $delim optional string of the stop-chars, used to split the text when 
- * limit reached in the middle of the current word
- * 
+ * @param string $sText              Text to output.
+ * @param int    $nMaxLength         Maximal length.
+ *
  * @return string
- * @author Ilya Lebedev
  */
 // @codingStandardsIgnoreStart
-function str_break_html($txt, $len, $delim = '\s;,.!?:#')
+function output_text($sText, $nMaxLength = null)
 // @codingStandardsIgnoreEnd
 {
-    $txt = preg_replace_callback(
-        "#(</?[a-z]+(?:>|\s[^>]*>)|[^<]+)#mi",    // TODO mb_
-        create_function(
-            '$a',
-            'static $len = '.$len.';'
-            .'$len1 = $len-1;'
-            .'$delim = \''.str_replace("#", "\\#", $delim).'\';'
-            .'if ("<" == $a[0]{0}) return $a[0];'
-            .'if ($len<=0) return "";'
-            .'$res = preg_split("#(.{0,$len1}+(?=[$delim]))|(.{0,$len}[^$delim]*)#ms",$a[0],2,PREG_SPLIT_DELIM_CAPTURE);'
-            .'if ($res[1]) { $len -= strlen($res[1])+1; $res = $res[1];}'
-            .'else         { $len -= strlen($res[2]); $res = $res[2];}'
-            .'$res = rtrim($res);/*preg_replace("#[$delim]+$#m","",$res);*/'
-            .'return $res;'
-        ),
-        $txt
-    );
-                                  
-     while (preg_match("#<([a-z]+)[^>]*>\s*</\\1>#mi", $txt))
-         $txt = preg_replace("#<([a-z]+)[^>]*>\s*</\\1>#mi", "", $txt);
-     
-     return $txt;
-     
+    if ($nMaxLength)
+        $sText = str_break_text($sText, $nMaxLength);
+
+    return strip_tags_ex($sText);
+
+} // End function
+//-------------------------------------------------------------------------------
+
+/**
+ * Format HTML content for outputting.
+ *
+ * @param string $sText              Text to output.
+ * @param int    $nMaxLength         Maximal length.
+ * @param string $sAllowedTags       List of allowed HTML tags.
+ * @param string $sAllowedAttributes List of allowed HTML attributes.
+ *
+ * @return string
+ */
+// @codingStandardsIgnoreStart
+function output_html($sText, $nMaxLength = null, $sAllowedTags = null, $sAllowedAttributes = null)
+// @codingStandardsIgnoreEnd
+{
+    return strip_tags_ex($sText, $sAllowedTags, $sAllowedAttributes, $nMaxLength);
+
 } // End function
 //-------------------------------------------------------------------------------
 
