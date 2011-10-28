@@ -104,11 +104,11 @@ function explode_ex($delimiter, $string)
  * <?php strip_tags_ex($string,'<strong><em><a>','href,rel'); ?>
  * </code>
  * 
- * @param string $string          Строка для форматирования.
- * @param string $allowtags       Строка разрешенных тегов.
- * @param string $allowattributes Строка разрешенных аттрибутов (через запятую).
- * @param int    $nMaxLength      Максимальная длина текста.
- * @param string $sCropStr        Текст, обозначающий обрезанную часть. Добавляется при превышении максимальной длины.
+ * @param string $string          String to format.
+ * @param string $allowtags       Accepatable HTML tags.
+ * @param string $allowattributes Accepatable HTML attributes.
+ * @param int    $nMaxLength      Maximal length of text.
+ * @param string $sCropStr        Crop text (for mark crop point).
  * 
  * @return string
  */
@@ -240,7 +240,7 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
                     $nLength += mb_strlen($cNode->textContent);
                     if ($nLength > $nMaxLength) {
                         $bStop = true;
-                        $cNode->nodeValue = $sCropStr;
+                        $cNode->nodeValue = str_break_text($cNode->nodeValue, $nLength - $nMaxLength, $sCropStr);
                     }
                 }
 
@@ -282,10 +282,10 @@ function array_shift_ex(&$arr)
 //-----------------------------------------------------------------------------
 
 /**
- * Альтернативный метод перевода строки в верхний регистр при проблеме
- * с русским языком в строке.
- * 
- * @param string $str Строка для преобразования.
+ * Alternative function for standard strtolower.
+ * Check errors with locales etc.
+ *
+ * @param string $str String to convert to lower.
  * 
  * @return string
  */
@@ -311,10 +311,10 @@ function strtolower_ex($str)
 //-------------------------------------------------------------------------------
 
 /**
- * Альтернативный метод перевода строки в нижний регистр при проблеме
- * с русским языком в строке.
+ * Alternative function for standard strtoupper.
+ * Check errors with locales etc.
  * 
- * @param string $str Строка для преобразования.
+ * @param string $str String to convert to upper.
  * 
  * @return string
  */
@@ -343,21 +343,22 @@ function strtoupper_ex($str)
  * Function cuts string with simple text by the specified number of chars.
  *
  * @param string $string     Text to cut.
- * @param int    $max_length Cutting length.
- * 
+ * @param int    $nMaxLength Cutting length.
+ * @param string $sCropStr   Text for appending (for mark crop point).
+ *
  * @return string
  */
 // @codingStandardsIgnoreStart
-function str_break_text($string, $max_length)
+function str_break_text($string, $nMaxLength, $sCropStr = '...')
 // @codingStandardsIgnoreEnd
 { 
-    if (mb_strlen($string) > $max_length) { 
-        $string = mb_substr($string, 0, $max_length); 
+    if (mb_strlen($string) > $nMaxLength) {
+        $string = mb_substr($string, 0, $nMaxLength);
         $pos = mb_strrpos($string, ' '); 
         if ($pos === false) 
-            return mb_substr($string, 0, $max_length).'...';
+            return mb_substr($string, 0, $nMaxLength).$sCropStr;
             
-        return mb_substr($string, 0, $pos).'...';
+        return mb_substr($string, 0, $pos).$sCropStr;
         
     } // End if
     
