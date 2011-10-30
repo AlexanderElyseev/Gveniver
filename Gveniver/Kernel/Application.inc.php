@@ -318,7 +318,8 @@ final class Application
      */
     private function _getProfileNameByClassName($sFullProfileClassName)
     {
-        $sClassNameWithoutNamespaces = array_pop(explode('\\', $sFullProfileClassName));
+        $aClassNameParts = explode('\\', $sFullProfileClassName);
+        $sClassNameWithoutNamespaces = array_pop($aClassNameParts);
 
         preg_match('/(\w+)Profile/', $sClassNameWithoutNamespaces, $aMatches);
         return isset($aMatches[1]) ? $aMatches[1] : null;
