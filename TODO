@@ -4,25 +4,19 @@ Todo list for project.
 
 0. Kernel.                                                                                          [**]
     0.1. Restore environment after running profile.                                                 [--]
-    0.2. Parameters for error reporting on loading module: exception or dummy class.                [--]
-        0.2.1. DummyModule class with overloaded __call, __get, __set etc. methods.                 [--]
     0.5. Fatal errors handling. Clear caches.                                                       [--]
     0.7. PHAR archives support.                                                                     [--]
     0.8. New system for connecting modules with external dirs and aliases.                          [--]
     0.9. New system of relative paths at profile.                                                   [--]
 
 1. Data.                                                                                            [**]
-    1.1. Base architecture.                                                                         [ok]
-    1.2. Data providers for mysql and mongodb.                                                      [ok]
-    1.3. Multiple providers / connections.                                                          [ok]
     1.4. Reorganize structure of provider data in confiuration (like CAPTCHA).                      [--] !
+    1.5. Errors in loading of providers (if exist only one)                                         [--] !
 
 2. Cache.                                                                                           [**]
     2.1. Check permissions to root cache directory.                                                 [--] !
     
 3. Log.                                                                                             [**]
-    3.1. Base architecture.                                                                         [ok]
-    3.2. Log providers for files and emails.                                                        [ok]
 
 4. Extensions.                                                                                      [**]
     4.1. ProfileExt - extension for getting various profile data.                                   [--]
