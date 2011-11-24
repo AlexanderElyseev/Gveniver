@@ -92,7 +92,7 @@ final class Application
         else {
             $this->_cProfile = $this->_loadProfile($mProfile);
             if (!$this->_cProfile)
-                throw new \Gveniver\Exception\ArgumentException();
+                throw new \Gveniver\Exception\ArgumentException('Profile "'.$mProfile.'" is not loaded.');
         }
 
         // Initialization of environment.
@@ -248,7 +248,7 @@ final class Application
                 return null;
             }
         }
-
+        
         // Load class name of profile.
         $sProfileClass = $this->_getProfileClassName($sProfileName);
         if (!$sProfileClass) {
