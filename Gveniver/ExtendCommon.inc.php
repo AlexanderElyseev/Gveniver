@@ -123,7 +123,7 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
              'clean'          => true,
              'output-xml'     => true,
              'show-body-only' => true,
-             'wrap' => 0,
+             'wrap' => 0
         ),
         'UTF8'
     );
@@ -142,12 +142,12 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
             'join-classes'    => true,
             'quote-ampersand' => true,
             'quote-marks'     => true,
-            'break-before-br' => true,
-            'indent'          => 'auto',
+            'indent-spaces'   => 0,
             'newline'         => 'LF',
             'quote-nbsp'      => true,
             'quote-marks'     => true,
-            'quote-ampersand' => true
+            'quote-ampersand' => true,
+            'wrap'            => 0
         ),
         'UTF8'
     );
