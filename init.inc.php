@@ -21,7 +21,7 @@ spl_autoload_register(
         $sAbsoluteFilePath = GV_PATH_BASE.$sRelativeFilePath;
         if (!file_exists($sAbsoluteFilePath)) {
 
-            // Load files from .
+            // Load files from base application directory.
             if (GV_APPLICATION_PATH_BASE) {
                 $sAbsoluteFilePath = GV_APPLICATION_PATH_BASE.$sRelativeFilePath;
                 if (!file_exists($sAbsoluteFilePath))

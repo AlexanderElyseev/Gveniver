@@ -92,7 +92,7 @@ final class Application
         else {
             $this->_cProfile = $this->_loadProfile($mProfile);
             if (!$this->_cProfile)
-                throw new \Gveniver\Exception\ArgumentException();
+                throw new \Gveniver\Exception\ArgumentException('Profile "'.$mProfile.'" is not loaded.');
         }
 
         // Initialization of environment.
@@ -158,21 +158,33 @@ final class Application
             $this->trace->addLine('[%s] Session started.', __CLASS__);
         }
 
-        // Used locale.
+        // Locale.
         $sLocale = $this->getConfig()->get('Kernel/Locale');
-        setlocale(LC_ALL, $sLocale);
-        $this->trace->addLine('[%s] Locale: %s.', __CLASS__, $sLocale);
+        if ($sLocale) {
+            setlocale(LC_ALL, $sLocale);
+            $this->trace->addLine('[%s] Locale: %s.', __CLASS__, $sLocale);
+        } else {
+            $this->trace->addLine('[%s] Locale is not loaded from configuration.', __CLASS__);
+        }
 
-        // Used timezone.
+        // Timezone.
         $sTimezone = $this->getConfig()->get('Kernel/Timezone');
-        date_default_timezone_set($sTimezone);
-        $this->trace->addLine('[%s] Timezone: %s.', __CLASS__, $sTimezone);
+        if ($sTimezone) {
+            date_default_timezone_set($sTimezone);
+            $this->trace->addLine('[%s] Timezone: %s.', __CLASS__, $sTimezone);
+        } else {
+            $this->trace->addLine('[%s] Timezone is not loaded from configuration.', __CLASS__);
+        }
 
         // Multibyte encoding.
         $sEncoding = $this->getConfig()->get('Kernel/Encoding');
-        mb_internal_encoding($sEncoding);
-        mb_regex_encoding($sEncoding);
-        $this->trace->addLine('[%s] Encoding: %s.', __CLASS__, $sEncoding);
+        if ($sEncoding) {
+            mb_internal_encoding($sEncoding);
+            mb_regex_encoding($sEncoding);
+            $this->trace->addLine('[%s] Multibyte encoding: %s.', __CLASS__, $sEncoding);
+        } else {
+            $this->trace->addLine('[%s] Multibyte encoding is not loaded from configuration.', __CLASS__);
+        }
 
         // Use output buffering.
         $bUseBuffering = self::toBoolean($this->getConfig()->get('Kernel/UseOutputBuffering'));
@@ -248,7 +260,7 @@ final class Application
                 return null;
             }
         }
-
+        
         // Load class name of profile.
         $sProfileClass = $this->_getProfileClassName($sProfileName);
         if (!$sProfileClass) {
@@ -318,7 +330,8 @@ final class Application
      */
     private function _getProfileNameByClassName($sFullProfileClassName)
     {
-        $sClassNameWithoutNamespaces = array_pop(explode('\\', $sFullProfileClassName));
+        $aClassNameParts = explode('\\', $sFullProfileClassName);
+        $sClassNameWithoutNamespaces = array_pop($aClassNameParts);
 
         preg_match('/(\w+)Profile/', $sClassNameWithoutNamespaces, $aMatches);
         return isset($aMatches[1]) ? $aMatches[1] : null;
