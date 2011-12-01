@@ -61,7 +61,7 @@ class FileSplitter
         $sOutputFileName = \Gveniver\correctPath($sOutputFileName);
         $sOutputDir = dirname($sOutputFileName);
         if (!file_exists($sOutputDir))
-            if (!mkdir($sOutputDir, null, true))
+            if (!mkdir($sOutputDir, 0777, true))
                 throw new \Gveniver\Exception\ArgumentException(
                     sprintf('[%s] Error in creating file directory!', __CLASS__)
                 );
