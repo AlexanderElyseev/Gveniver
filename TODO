@@ -14,7 +14,8 @@ Todo list for project.
     1.5. Errors in loading of providers (if exist only one)                                         [--] !
 
 2. Cache.                                                                                           [**]
-
+    2.1. Check permissions to root cache directory.                                                 [--] !
+    
 3. Log.                                                                                             [**]
 
 4. Extensions.                                                                                      [**]

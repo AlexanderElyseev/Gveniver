@@ -37,6 +37,15 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
+     * Custom configuration parameters for current profile.
+     * Overload or extend parameters from config.
+     *
+     * @var array
+     */
+    private $_aCustomConfig = array();
+    //-----------------------------------------------------------------------------
+
+    /**
      * Path to directory with profile.
      *
      * @var string
@@ -425,38 +434,6 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
-     * Add title for section.
-     *
-     * @param string $sTitle       Title to add.
-     * @param string $sSectionName Name of section. Or Default section, if not set.
-     * @param string $sAct         Action value. If not set, Default action.
-     *
-     * @return void
-     */
-    public function addTitle($sTitle, $sSectionName = null, $sAct = null)
-    {
-        throw new \Gveniver\Exception\NotImplementedException();
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Add subtitle for section.
-     *
-     * @param string $sSubTitle    Подзаголовок раздела.
-     * @param string $sSectionName Name of section. Or Default section, if not set.
-     * @param string $sAct         Action value. If not set, Default action.
-     *
-     * @return void
-     */
-    public function addSubTitle($sSubTitle, $sSectionName = null, $sAct = null)
-    {
-        throw new \Gveniver\Exception\NotImplementedException();
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
      * Add main template for section.
      *
      * @param string $sTemplate    Template to add.
@@ -696,6 +673,16 @@ class BaseProfile
      */
     public function getTitle($sSectionName = null, $sAct = null)
     {
+        // Load from overloaded configuration.
+        // Structure of array related with addTitle method.
+        if ($sSectionName && $sAct && isset($this->_aCustomConfig['Title']['List'][$sSectionName]['List'][$sAct]))
+            return $this->_aCustomConfig['Title']['List'][$sSectionName]['List'][$sAct];
+        elseif ($sSectionName && isset($this->_aCustomConfig['Title']['List'][$sSectionName]['Default']))
+            return $this->_aCustomConfig['Title']['List'][$sSectionName]['Default'];
+        elseif (isset($this->_aCustomConfig['Title']['Default']))
+            return $this->_aCustomConfig['Title']['Default'];
+
+        // Load from main configuration.
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
@@ -724,6 +711,45 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
+     * Add title for section.
+     *
+     * @param string $sTitle       Title to add.
+     * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
+     *
+     * @return void
+     */
+    public function addTitle($sTitle, $sSectionName = null, $sAct = null)
+    {
+        if ($sSectionName && $sAct)
+            $this->_aCustomConfig['Title']['List'][$sSectionName]['List'][$sAct] = $sTitle;
+        elseif ($sSectionName)
+            $this->_aCustomConfig['Title']['List'][$sSectionName]['Default'] = $sTitle;
+        else
+            $this->_aCustomConfig['Title']['Default'] = $sTitle;
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Set current page title.
+     *
+     * @param string $sTitle Title to set.
+     *
+     * @return void
+     */
+    public function setTitle($sTitle)
+    {
+        $this->addTitle(
+            $sTitle,
+            $this->getCurrentSectionName(),
+            $this->getCurrentAction()
+        );
+        
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Getter for page subtitle.
      *
      * @param string $sSectionName Name of section. Or Default section, if not set.
@@ -733,6 +759,16 @@ class BaseProfile
      */
     public function getSubTitle($sSectionName = null, $sAct = null)
     {
+        // Load from overloaded configuration.
+        // Structure of array related with addSubTitle method.
+        if ($sSectionName && $sAct && isset($this->_aCustomConfig['SubTitle']['List'][$sSectionName]['List'][$sAct]))
+            return $this->_aCustomConfig['SubTitle']['List'][$sSectionName]['List'][$sAct];
+        elseif ($sSectionName && isset($this->_aCustomConfig['SubTitle']['List'][$sSectionName]['Default']))
+            return $this->_aCustomConfig['SubTitle']['List'][$sSectionName]['Default'];
+        elseif (isset($this->_aCustomConfig['SubTitle']['Default']))
+            return $this->_aCustomConfig['SubTitle']['Default'];
+
+        // Load from main configuration.
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
@@ -757,6 +793,45 @@ class BaseProfile
 
         return null;
 
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Add page subtitle for section.
+     *
+     * @param string $sSubTitle    Subtitle to add.
+     * @param string $sSectionName Name of section. Or Default section, if not set.
+     * @param string $sAct         Action value. If not set, Default action.
+     *
+     * @return void
+     */
+    public function addSubTitle($sSubTitle, $sSectionName = null, $sAct = null)
+    {
+        if ($sSectionName && $sAct)
+            $this->_aCustomConfig['SubTitle']['List'][$sSectionName]['List'][$sAct] = $sSubTitle;
+        elseif ($sSectionName)
+            $this->_aCustomConfig['SubTitle']['List'][$sSectionName]['Default'] = $sSubTitle;
+        else
+            $this->_aCustomConfig['SubTitle']['Default'] = $sSubTitle;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Set current page subtitle.
+     *
+     * @param string $sSubTitle Subtitle to set.
+     * 
+     * @return void
+     */
+    public function setSubTitle($sSubTitle)
+    {
+        $this->addSubTitle(
+            $sSubTitle,
+            $this->getCurrentSectionName(),
+            $this->getCurrentAction()
+        );
+        
     } // End function
     //-----------------------------------------------------------------------------
 

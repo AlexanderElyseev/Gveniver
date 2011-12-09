@@ -30,23 +30,27 @@ function array_merge_recursive_distinct()
         if (!is_array($append))
             $append = array($append);
         foreach ($append as $key => $value) {
-            if (!array_key_exists($key, $base) and !is_numeric($key)) {
+            if (!array_key_exists($key, $base) && !is_numeric($key)) {
                 $base[$key] = $append[$key];
                 continue;
-            } // End if
+            }
             if (is_array($value) || is_array($base[$key])) {
                 if (is_numeric($key))
                     $base[] = array_merge_recursive_distinct(array(), $append[$key]);
                 else
                     $base[$key] = array_merge_recursive_distinct($base[$key], $append[$key]);
             } else if (is_numeric($key)) {
-                if (!in_array($value, $base)) $base[] = $value;
+                if (!in_array($value, $base))
+                    $base[] = $value;
+                else
+                    $base[$key] = $value;
             } else {
                 $base[$key] = $value;
-            } // End else
-        } // End foreach
-    } // End foreach
+            }
+        }
+    }
     return $base;
+    
 } // End function
 //-----------------------------------------------------------------------------
 
@@ -123,7 +127,7 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
              'clean'          => true,
              'output-xml'     => true,
              'show-body-only' => true,
-             'wrap' => 0,
+             'wrap' => 0
         ),
         'UTF8'
     );
@@ -142,12 +146,12 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
             'join-classes'    => true,
             'quote-ampersand' => true,
             'quote-marks'     => true,
-            'break-before-br' => true,
-            'indent'          => 'auto',
+            'indent-spaces'   => 0,
             'newline'         => 'LF',
             'quote-nbsp'      => true,
             'quote-marks'     => true,
-            'quote-ampersand' => true
+            'quote-ampersand' => true,
+            'wrap'            => 0
         ),
         'UTF8'
     );

@@ -240,44 +240,5 @@ class Config
     } // End function
     //-----------------------------------------------------------------------------
 
-    /**
-     * Set configuration parameter.
-     *
-     * @param string $sPath  Path of parameter in configuration tree.
-     * @param mixed  $mValue Value to set.
-     *
-     * @return void
-     */
-    private function _set($sPath, $mValue)
-    {
-        // Remove cached value.
-        unset($this->_aCache[$sPath]);
-
-        $aKeyList = explode('/', $sPath);    // List of keys in path.
-        $aResult = array();                  // Result array for merging.
-        $aTarget = &$aResult;                // Target array for building path.
-        $nCount = count($aKeyList);
-        for ($i = 0; $i < $nCount; $i++) {
-            $sKey = $aKeyList[$i];
-
-            // Set value direct, if this is last key.
-            if ($i + 1 == $nCount) {
-                $aTarget[$sKey] = $mValue;
-                break;
-
-            } // End if
-
-            // Create path and move next(key).
-            $aTarget[$sKey] = array();
-            $aTarget = &$aTarget[$sKey];
-
-        } // End foreach
-
-        // Append to configuration.
-        $this->_merge($aResult);
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
 } // End class
 //-----------------------------------------------------------------------------

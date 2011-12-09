@@ -184,17 +184,17 @@ class FileCacheProvider extends BaseCacheProvider
      */
     private function _writeFile($sCacheId, $sCacheGroupId, $nTtl, $sData)
     {
-
         // Build path to cache directory. Create, if not exists.
         $sCacheDirectory = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS;
         if (!file_exists($sCacheDirectory)) {
             $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not found. Creating.', __CLASS__, $sCacheDirectory);
-            if (!!mkdir($sCacheDirectory, 0777, true)) {
-                 $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not created.', __CLASS__, $sCacheDirectory);
+            if (!mkdir($sCacheDirectory, 0777, true)) {
+                // TODO: Check permissions to base cache directory.
+                $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not created.', __CLASS__, $sCacheDirectory);
                 return false;
             }
         }
-
+        
         // Build path to cache file.
         $sFileName = $sCacheDirectory.$sCacheId;
 

@@ -44,6 +44,14 @@ class TemplateModule extends BaseModule
         
         // Load factory for template subsystem.
         $sFactoryClassName = $this->getApplication()->getConfig()->get('Module/TemplateModule/FactoryClass');
+        if (!$sFactoryClassName) {
+             $this->getApplication()->trace->addLine(
+                 '[%s] Factory class name is not loaded from condifuration.',
+                 __CLASS__
+             );
+            return false;
+        }
+        
         $sFactoryClassName = '\\Gveniver\\Template\\Factory\\'.$sFactoryClassName;
         $this->_cFactory = new $sFactoryClassName($this->getApplication());
         if (!$this->_cFactory) {
