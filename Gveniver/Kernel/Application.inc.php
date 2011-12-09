@@ -24,15 +24,15 @@ namespace Gveniver\Kernel;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  * 
- * @property  \Gveniver\Kernel\Module\CacheModule     $cache
- * @property  \Gveniver\Kernel\Module\CaptchaModule   $captcha
- * @property  \Gveniver\Kernel\Module\DataModule      $data
- * @property  \Gveniver\Kernel\Module\ExtensionModule $extension
- * @property  \Gveniver\Kernel\Module\InvarModule     $invar
- * @property  \Gveniver\Kernel\Module\LogModule       $log
- * @property  \Gveniver\Kernel\Module\RedirectModule  $redirect
- * @property  \Gveniver\Kernel\Module\TemplateModule  $template
- * @property  \Gveniver\Kernel\Module\TraceModule     $trace
+ * @property \Gveniver\Kernel\Module\CacheModule     $cache
+ * @property \Gveniver\Kernel\Module\CaptchaModule   $captcha
+ * @property \Gveniver\Kernel\Module\DataModule      $data
+ * @property \Gveniver\Kernel\Module\ExtensionModule $extension
+ * @property \Gveniver\Kernel\Module\InvarModule     $invar
+ * @property \Gveniver\Kernel\Module\LogModule       $log
+ * @property \Gveniver\Kernel\Module\RedirectModule  $redirect
+ * @property \Gveniver\Kernel\Module\TemplateModule  $template
+ * @property \Gveniver\Kernel\Module\TraceModule     $trace
  */
 final class Application
 {
