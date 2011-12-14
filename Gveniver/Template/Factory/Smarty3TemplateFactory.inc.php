@@ -99,11 +99,11 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         $this->_cSmarty->registerPlugin('modifier', 'gv_output_html', '\\Gveniver\\output_html');
         $this->_cSmarty->registerPlugin('modifier', 'gv_output_text', '\\Gveniver\\output_text');
 
-        $this->_cSmarty->registerPlugin('modifier', 'upper', '\\Gveniver\\strtoupper_ex');
-        $this->_cSmarty->registerPlugin('modifier', 'lower', '\\Gveniver\\strtolower_ex');
+        $this->_cSmarty->registerPlugin('modifier', 'upper', 'mb_strtoupper');
+        $this->_cSmarty->registerPlugin('modifier', 'lower', 'mb_strtolower');
         $this->_cSmarty->registerPlugin('modifier', 'cdata', '\\Gveniver\\cdata');
         $this->_cSmarty->registerPlugin('modifier', 'substr', 'mb_substr');
-        
+
         $this->_cSmarty->error_reporting = ini_get('error_reporting');
         return true;
         

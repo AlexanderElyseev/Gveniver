@@ -287,64 +287,6 @@ function array_shift_ex(&$arr)
 //-----------------------------------------------------------------------------
 
 /**
- * Alternative function for standard strtolower.
- * Check errors with locales etc.
- *
- * @param string $str String to convert to lower.
- * 
- * @return string
- */
-// @codingStandardsIgnoreStart
-function strtolower_ex($str)
-// @codingStandardsIgnoreEnd
-{
-    $aAlphaLower = array(
-        'ё', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 
-        'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'я', 'ч',
-        'с', 'м', 'и', 'т', 'ь', 'б', 'ю'
-    );
-
-    $aAlphaUpper = array(
-        'Ё', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ',
-        'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', 'Я', 'Ч',
-        'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю'
-    );
-    
-    return str_replace($aAlphaUpper, $aAlphaLower, strtolower($str));
-    
-} // End function
-//-------------------------------------------------------------------------------
-
-/**
- * Alternative function for standard strtoupper.
- * Check errors with locales etc.
- * 
- * @param string $str String to convert to upper.
- * 
- * @return string
- */
-// @codingStandardsIgnoreStart
-function strtoupper_ex($str)
-// @codingStandardsIgnoreEnd
-{
-    $aAlphaLower = array(
-        'ё', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 
-        'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'я', 'ч',
-        'с', 'м', 'и', 'т', 'ь', 'б', 'ю'
-    );
-
-    $aAlphaUpper = array(
-        'Ё', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ',
-        'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', 'Я', 'Ч',
-        'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю'
-    );
-    
-    return str_replace($aAlphaLower, $aAlphaUpper, strtoupper($str));
-    
-} // End function
-//-------------------------------------------------------------------------------
-
-/**
  * Function cuts string with simple text by the specified number of chars.
  *
  * @param string $string     Text to cut.
