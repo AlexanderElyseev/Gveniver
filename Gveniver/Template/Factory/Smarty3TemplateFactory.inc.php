@@ -49,7 +49,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         // Check, is SMarty is exists on system.
         if (!class_exists('\Smarty'))
             throw new \Gveniver\Exception\BaseException('Smarty is not installed.');
-        
+
         // Initialize smarty.
         $this->_cSmarty = new \Smarty();
         if (!$this->_reinstallSmarty())
