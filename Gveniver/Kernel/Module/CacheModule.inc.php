@@ -71,9 +71,7 @@ class CacheModule extends BaseModule
         // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
-
-        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+            throw new \Gveniver\Exception\BaseException('Default cache provider is not loaded.');
 
         return $cProvider->generateId($sDataName);
 
@@ -86,7 +84,7 @@ class CacheModule extends BaseModule
      * @param string $sProviderName Name of cache provider.
      * If it is not specified, returns default cache provider.
      *
-     * @return CacheProvider
+     * @return \Gveniver\Cache\Provider\BaseCacheProvider
      */
     public function getProvider($sProviderName = null)
     {

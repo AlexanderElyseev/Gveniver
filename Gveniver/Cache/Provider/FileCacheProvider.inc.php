@@ -25,6 +25,22 @@ namespace Gveniver\Cache\Provider;
 class FileCacheProvider extends BaseCacheProvider
 {
     /**
+     * Access mask for cacke files.
+     *
+     * @var int
+     */
+    private $_nFileMode = 0777;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Access mask for cache directories.
+     *
+     * @var int
+     */
+    private $_nDirMode = 0777;
+    //-----------------------------------------------------------------------------
+
+    /**
      * Path to directory for cache.
      *
      * @var string
@@ -46,8 +62,13 @@ class FileCacheProvider extends BaseCacheProvider
 
         // Load cache folder.
         $this->_sBaseCacheDirectory = (string)$this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
-        if (!$this->_sBaseCacheDirectory || !file_exists($this->_sBaseCacheDirectory) || !is_dir($this->_sBaseCacheDirectory))
-            throw new \Gveniver\Exception\BaseException('Wrong cache directory.');
+        if (!$this->_sBaseCacheDirectory || !file_exists($this->_sBaseCacheDirectory) || !is_dir($this->_sBaseCacheDirectory)) {
+            if (!mkdir($this->_sBaseCacheDirectory, $this->_nDirMode, true))
+                throw new \Gveniver\Exception\BaseException('Wrong cache directory.');
+            
+            // Permissions.
+            chmod($this->_sBaseCacheDirectory, $this->_nDirMode);
+        }
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -188,11 +209,13 @@ class FileCacheProvider extends BaseCacheProvider
         $sCacheDirectory = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS;
         if (!file_exists($sCacheDirectory)) {
             $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not found. Creating.', __CLASS__, $sCacheDirectory);
-            if (!mkdir($sCacheDirectory, 0777, true)) {
-                // TODO: Check permissions to base cache directory.
+            if (!mkdir($sCacheDirectory, $this->_nDirMode, true)) {
                 $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not created.', __CLASS__, $sCacheDirectory);
                 return false;
             }
+
+            // Permissions.
+            chmod($sCacheDirectory, $this->_nDirMode);
         }
         
         // Build path to cache file.
@@ -200,15 +223,27 @@ class FileCacheProvider extends BaseCacheProvider
 
         // Write cache data with exclusive lock.
         $fp = fopen($sFileName, 'wb');
-        flock($fp, LOCK_EX);
+        if (!$fp) {
+            $this->getApplication()->trace->addLine('[%s] Error in opening file "%s" for writing.', __CLASS__, $sFileName);
+            return false;
+        }
 
+        if (!flock($fp, LOCK_EX)) {
+            $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of file "%s".', __CLASS__, $sFileName);
+            return false;
+        }
+
+        // Writing data.
         fwrite($fp, pack('L', $nTtl));              // TTL.
         fwrite($fp, pack('L', strlen($sData)));     // Length.
         fwrite($fp, pack('a*', $sData));            // Data.
 
-        // Unlock and close file.
+        // Permissions.
+        chmod($sFileName, $this->_nFileMode);
+
         flock($fp, LOCK_UN);
         fclose($fp);
+
         return true;
 
     } // End function
