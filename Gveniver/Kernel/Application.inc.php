@@ -120,7 +120,7 @@ final class Application
      *
      * @param string $sName Parameter name for reading.
      *
-     * @return Module Null on error.
+     * @return \Gveniver\Kernel\Module\BaseModule|null Returns null on error.
      */
     public function __get($sName)
     {
@@ -249,10 +249,13 @@ final class Application
         }
 
         // Check profile directory.
-        if (is_dir($sProfileName) && \Gveniver\isAbsolutePath($sProfileName)) {
-            $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfileName);
-            $sProfileDir = $sProfileName;
-            $sProfileName = basename($sProfileName);
+        if (\Gveniver\isAbsolutePath($sProfileName)) {
+            $sCorrectedProfileName = \Gveniver\correctPath($sProfileName, true);
+            if (is_dir($sCorrectedProfileName)) {
+                $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sCorrectedProfileName);
+                $sProfileDir = $sCorrectedProfileName;
+                $sProfileName = basename($sCorrectedProfileName);
+            }
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfileName);
             $sProfileDir = \Gveniver\correctPath($this->getConfig()->get('Kernel/ProfilePath'), true).$sProfileName.GV_DS;
@@ -381,7 +384,7 @@ final class Application
      *
      * @param string $sModuleName Name of module. May be short (ex. trace -> TraceModule).
      *
-     * @return Module|null
+     * @return \Gveniver\Kernel\Module\BaseModule|null Returns null on error.
      */
     public function getModule($sModuleName)
     {

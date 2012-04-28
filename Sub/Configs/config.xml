@@ -29,12 +29,14 @@
                 <Provider>
                     <ProviderClass>MemcachedCacheProvider</ProviderClass>
                     <ProviderName>third</ProviderName>
-                    <Servers>
-                        <Server>
-                            <Name>localhost</Name>
-                            <Host>127.0.0.1</Host>
-                        </Server>
-                    </Servers>
+                    <Args>
+                        <Servers>
+                            <Server>
+                                <Name>localhost</Name>
+                                <Host>127.0.0.1</Host>
+                            </Server>
+                        </Servers>
+                    </Args>
                 </Provider>
             </Providers>
         </CacheModule>

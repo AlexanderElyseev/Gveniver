@@ -41,11 +41,27 @@ class FileCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Path to directory for cache.
+     * Path to base cache directory.
      *
      * @var string
      */
     private $_sBaseCacheDirectory;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Path to directory with cached data.
+     *
+     * @var string
+     */
+    private $_sBaseCacheDataDirectory;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Path to dirrectory with tags.
+     *
+     * @var string
+     */
+    private $_sBaseCacheTagsDirectory;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
@@ -54,119 +70,132 @@ class FileCacheProvider extends BaseCacheProvider
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      * @param array                        $aOptions     Options for cache provider.
+     *
+     * @throws \Gveniver\Exception\BaseException
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
         // Use parent constructor.
         parent::__construct($cApplication, $aOptions);
 
-        // Load cache folder.
+        // File and diretory access rights.
+        if (isset($aOptions['FileMode']) && $aOptions['FileMode']) {
+            $this->_nFileMode = octdec($aOptions['FileMode']);
+        }
+        if (isset($aOptions['DirMode']) && $aOptions['DirMode']) {
+            $sDirMode = $aOptions['DirMode'];
+            $this->_nDirMode = octdec($sDirMode);
+        }
+        $this->getApplication()->trace->addLine('[%s] Using file_mode: %d, dir_mode: %d.', __CLASS__, $this->_nFileMode, $this->_nDirMode);
+
+        // Build cache directory.
         $this->_sBaseCacheDirectory = (string)$this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
-        if (!$this->_sBaseCacheDirectory || !file_exists($this->_sBaseCacheDirectory) || !is_dir($this->_sBaseCacheDirectory)) {
-            if (!mkdir($this->_sBaseCacheDirectory, $this->_nDirMode, true))
-                throw new \Gveniver\Exception\BaseException('Wrong cache directory.');
-            
-            // Permissions.
-            chmod($this->_sBaseCacheDirectory, $this->_nDirMode);
+        if (!$this->_sBaseCacheDirectory) {
+            $sMessage = sprintf('[%s] The name of cache directory is not found in configuration.', __CLASS__);
+            $this->getApplication()->trace->addLine($sMessage);
+            throw new \Gveniver\Exception\BaseException($sMessage);
+        }
+
+        $this->_sBaseCacheDirectory = \Gveniver\correctPath($this->_sBaseCacheDirectory, true);
+        if (!file_exists($this->_sBaseCacheDirectory) || !is_writeable($this->_sBaseCacheDirectory)) {
+            $this->getApplication()->trace->addLine('[%s] Start creating base cache directory ("%s") is not exist.', __CLASS__, $this->_sBaseCacheDirectory);
+            $this->_createDirectory($this->_sBaseCacheDataDirectory);
+        }
+
+        // Build directory for cache data.
+        $this->_sBaseCacheDataDirectory = $this->_sBaseCacheDirectory.'data'.GV_DS;
+        if (!file_exists($this->_sBaseCacheDataDirectory) || !is_writeable($this->_sBaseCacheDataDirectory)) {
+            $this->getApplication()->trace->addLine('[%s] Start creating cache directory for data ("%s") is not exist.', __CLASS__, $this->_sBaseCacheDataDirectory);
+            $this->_createDirectory($this->_sBaseCacheDataDirectory);
+        }
+
+        // Build directory for cache tags.
+        $this->_sBaseCacheTagsDirectory = $this->_sBaseCacheDirectory.'tags'.GV_DS;
+        if (!file_exists($this->_sBaseCacheTagsDirectory) || !is_writeable($this->_sBaseCacheTagsDirectory)) {
+            $this->getApplication()->trace->addLine('[%s] Start creating cache directory for tags ("%s") is not exist.', __CLASS__, $this->_sBaseCacheTagsDirectory);
+            $this->_createDirectory($this->_sBaseCacheTagsDirectory);
         }
 
     } // End function
     //-----------------------------------------------------------------------------
-    
+
+    /**
+     * Method creates directory if it does not exists.
+     *
+     * @param string $sDirName Directory name for creating.
+     *
+     * @throws \Gveniver\Exception\BaseException
+     * @return void
+     */
+    private function _createDirectory($sDirName)
+    {
+        $sDirName = \Gveniver\correctPath($sDirName, true);
+        if (!file_exists($sDirName)) {
+            $this->getApplication()->trace->addLine('[%s] The directory ("%s") is not exist. Creating.', __CLASS__, $sDirName);
+            $nOldUmask = umask(0);
+            if (!mkdir($sDirName, $this->_nDirMode, true)) {
+                umask($nOldUmask);
+                $sMessage = sprintf('[%s] Error in creating directory ("%s").', __CLASS__, $sDirName);
+                $this->getApplication()->trace->addLine($sMessage);
+                throw new \Gveniver\Exception\BaseException($sMessage);
+            }
+            chmod($sDirName, $this->_nDirMode);
+            umask($nOldUmask);
+        } else if (!is_dir($sDirName)) {
+            $sMessage = sprintf('[%s] Specified directory ("%s") is not a directory.', __CLASS__, $sDirName);
+            $this->getApplication()->trace->addLine($sMessage);
+            throw new \Gveniver\Exception\BaseException($sMessage);
+        }
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method creates directory tree by hash of file name.
+     *
+     * @param string  $sBaseName Base root directory of tree.
+     * @param string  $sFileName File name for building tree.
+     * @param boolean $bCreate   The flag determines whether to create directories.
+     *
+     * @return string Full path in tree to file with name as hash of specified name.
+     */
+    private function _createDirectoryTree($sBaseName, $sFileName, $bCreate = true)
+    {
+        $sCacheFileName = md5($sFileName);
+        $sBuildedPath = \Gveniver\correctPath($sBaseName, true);
+        for ($i = 0; $i < 2; $i++) {
+            $sBuildedPath .= $sCacheFileName[$i].GV_DS;
+            if ($bCreate)
+                $this->_createDirectory($sBuildedPath);
+        }
+
+        return $sBuildedPath.$sCacheFileName;
+
+    } // End function
+    //--------------------------------------------------------------------------------
+
     /**
      * Load data form cache.
      *
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param mixed  &$cRef         Reference variable for loading cached data.
+     * @param string $sCacheId   Identifier of cache.
+     * @param string $sNamespace Namespace of cache.
+     * @param mixed  &$cRef      Reference variable for loading cached data.
      *
      * @return boolean True on success loading
      */
-    public function get($sCacheId, $sCacheGroupId, &$cRef)
+    public function get($sCacheId, $sNamespace, &$cRef)
     {
-        // Try to load data from cache file.
-        $mData = null;
-        $nTime = 0;
-        if (!$this->_readFile($sCacheId, $sCacheGroupId, $nTime, $mData))
-            return false;
+        // Build cache file name with namespace.
+        $sNamespaceDir = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sNamespace, false);
+        $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId, false);
 
-        // Check TTL.
-        if ($nTime < GV_DATE_NOW)
-            return false;
-
-        // Restore data and returns result.
-        $cRef = unserialize($mData);
-        return true;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Save data to cache.
-     *
-     * @param mixed  $mData         Data to save.
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param int    $nTtl          Time to live for cache.
-     *
-     * @return boolean True on success.
-     */
-    public function set($mData, $sCacheId, $sCacheGroupId, $nTtl)
-    {
-        // Save data to cache file.
-        return $this->_writeFile(
-            $sCacheId,
-            $sCacheGroupId,
-            GV_TIME_NOW + $nTtl,
-            serialize($mData)
-        );
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Flush cache data.
-     *
-     * @param string $sCacheGroupId Identifier of cache group.
-     *
-     * @return boolean True on success.
-     */
-    public function flush($sCacheGroupId)
-    {
-        $sCacheDirectory = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS;
-        if (!is_dir($sCacheDirectory))
-            return false;
-
-        // Remove all files form cache directory.
-        foreach(array_diff(scandir($sCacheDirectory), array('.', '..')) as $sCacheFile)
-            unlink($sCacheDirectory.GV_DS.$sCacheFile);
-
-        return true;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Read cache file.
-     * 
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param int    &$nTtl         Time to live for cache.
-     * @param string &$mData        Cache data.
-     *
-     * @return boolean True on success.
-     */
-    private function _readFile($sCacheId, $sCacheGroupId, &$nTtl, &$mData)
-    {
-        // Build cache file name. Check ixistence and correctness of cache file.
-        $sFileName = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS.$sCacheId;
-        $bFileExist = file_exists($sFileName);
-        $bFileIsDir = is_dir($sFileName);
+        $bFileExist = file_exists($sDataFileName);
+        $bFileIsDir = is_dir($sDataFileName);
         if (!$bFileExist || $bFileIsDir)
             return false;
 
         // Open and block cache file for reading.
-        $file = fopen($sFileName, 'r');
+        $file = fopen($sDataFileName, 'r');
         flock($file, LOCK_SH);
 
         // TTL.
@@ -188,61 +217,191 @@ class FileCacheProvider extends BaseCacheProvider
         // Unlock and close file.
         flock($file, LOCK_UN);
         fclose($file);
+
+        if ($nTtl < GV_TIME_NOW)
+            return false;
+
+        $cRef = unserialize($mData);
         return true;
 
     } // End function
-    //------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /**
-     * Write cache file.
+     * Save data to cache.
      *
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param int    $nTtl          Time to live for cache.
-     * @param string $sData         Cache data.
+     * @param mixed  $mData      Data to save.
+     * @param string $sCacheId   Identifier of cache.
+     * @param string $sNamespace Namespace of cache.
+     * @param array  $aTags      List of tags for this cache record.
+     * @param int    $nTtl       Time to live for cache.
      *
      * @return boolean True on success.
      */
-    private function _writeFile($sCacheId, $sCacheGroupId, $nTtl, $sData)
+    public function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl)
     {
-        // Build path to cache directory. Create, if not exists.
-        $sCacheDirectory = $this->_sBaseCacheDirectory.$sCacheGroupId.GV_DS;
-        if (!file_exists($sCacheDirectory)) {
-            $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not found. Creating.', __CLASS__, $sCacheDirectory);
-            if (!mkdir($sCacheDirectory, $this->_nDirMode, true)) {
-                $this->getApplication()->trace->addLine('[%s] Cache directory "%s" not created.', __CLASS__, $sCacheDirectory);
-                return false;
-            }
+        // Building path to cache data file and cache tag file with subdirectories.
+        $sNamespaceDir = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sNamespace);
+        $this->_createDirectory($sNamespaceDir);
+        $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId);
 
-            // Permissions.
-            chmod($sCacheDirectory, $this->_nDirMode);
-        }
-        
-        // Build path to cache file.
-        $sFileName = $sCacheDirectory.$sCacheId;
-
-        // Write cache data with exclusive lock.
-        $fp = fopen($sFileName, 'wb');
-        if (!$fp) {
-            $this->getApplication()->trace->addLine('[%s] Error in opening file "%s" for writing.', __CLASS__, $sFileName);
+        // Opening data file for writing with exclusive lock.
+        $nOldUmask = umask(0);
+        $fData = fopen($sDataFileName, 'wb');
+        if (!$fData) {
+            $this->getApplication()->trace->addLine('[%s] Error in opening data file "%s" for writing.', __CLASS__, $sDataFileName);
             return false;
         }
-
-        if (!flock($fp, LOCK_EX)) {
-            $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of file "%s".', __CLASS__, $sFileName);
+        if (!flock($fData, LOCK_EX)) {
+            $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of data file "%s".', __CLASS__, $sDataFileName);
             return false;
         }
 
         // Writing data.
-        fwrite($fp, pack('L', $nTtl));              // TTL.
-        fwrite($fp, pack('L', strlen($sData)));     // Length.
-        fwrite($fp, pack('a*', $sData));            // Data.
+        $sData = serialize($mData);
+        fwrite($fData, pack('L',  GV_TIME_NOW + $nTtl));    // TTL.
+        fwrite($fData, pack('L', strlen($sData)));          // Length.
+        fwrite($fData, pack('a*', $sData));                 // Data.
 
-        // Permissions.
-        chmod($sFileName, $this->_nFileMode);
+        // Changing permissions and ulocking
+        chmod($sDataFileName, $this->_nFileMode);
+        flock($fData, LOCK_UN);
+        fclose($fData);
+        umask($nOldUmask);
 
-        flock($fp, LOCK_UN);
-        fclose($fp);
+        // Updating tags.
+        foreach ($aTags as $sTag)
+            $this->_appendTag($sTag, $sDataFileName);
+
+        return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method cleans cache data by specified parameters.
+     *
+     * @param string $sNamespace Namespace of cache.
+     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
+     * Otherwise, clean all namespace.
+     *
+     * @return boolean True on success.
+     */
+    public function clean($sNamespace, $sCacheId = null)
+    {
+        $sNamespaceDir = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sNamespace, false);
+        if ($sCacheId) {
+            $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId, false);
+            if (file_exists($sDataFileName))
+                unlink($sDataFileName);
+        } else {
+            \Gveniver\rrmdir($sNamespaceDir);
+        }
+
+        return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method cleans cache data by specified tags.
+     *
+     * Removes related cache data files and content of cache tag file.
+     * Atomic operation with locking tag file for reading.
+     *
+     * @param array $aTags List of tags for cleaning.
+     *
+     * @throws \Gveniver\Exception\BaseException Throws on wrong content of cache tag file.
+     * @return boolean True on success.
+     */
+    public function cleanByTags(array $aTags)
+    {
+        foreach ($aTags as $sTag) {
+            $sTagFileName = $this->_createDirectoryTree($this->_sBaseCacheTagsDirectory, $sTag, false);
+            if (!file_exists($sTagFileName))
+                return array();
+
+            $hTagFile = fopen($sTagFileName, 'w+');
+            if (!$hTagFile) {
+                $this->getApplication()->trace->addLine('[%s] Error in opening tag file "%s" for reading.', __CLASS__, $sTagFileName);
+                return false;
+            }
+            if (!flock($hTagFile, LOCK_SH)) {
+                $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of tag file "%s".', __CLASS__, $sTagFileName);
+                return false;
+            }
+            $nFileSize = filesize($sTagFileName);
+            if ($nFileSize > 0) {
+                $aKeys = unserialize(fread($hTagFile, $nFileSize));
+                if (!is_array($aKeys)) {
+                    $sMessage = sprintf('[%s] Wrong tag content.', __CLASS__);
+                    $this->getApplication()->trace->addLine($sMessage);
+                    throw new \Gveniver\Exception\BaseException($sMessage);
+                }
+            } else
+                $aKeys = array();
+
+            ftruncate($hTagFile, 0);
+            flock($hTagFile, LOCK_UN);
+            fclose($hTagFile);
+
+            foreach ($aKeys as $sDataFileName)
+                if (file_exists($sDataFileName))
+                    unlink($sDataFileName);
+        }
+
+        return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method adds the name of data file to specified tag.
+     * Atomic operation with locking tag file for writing.
+     *
+     * @param string $sTag          The name of tag for adding data file.
+     * @param string $sDataFileName The name of data file for adding to tag.
+     *
+     * @throws \Gveniver\Exception\BaseException Throws if data of tag file is wrong.
+     *
+     * @return bool
+     */
+    private function _appendTag($sTag, $sDataFileName)
+    {
+        $oldUmask = umask(0);
+        $sTagFileName = $this->_createDirectoryTree($this->_sBaseCacheTagsDirectory, $sTag);
+        $hTagFile = fopen($sTagFileName, 'a+');
+        if (!$hTagFile) {
+            $this->getApplication()->trace->addLine('[%s] Error in opening tag file "%s" for writing.', __CLASS__, $sTagFileName);
+            return false;
+        }
+        if (!flock($hTagFile, LOCK_EX)) {
+            $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of tag file "%s".', __CLASS__, $sTagFileName);
+            return false;
+        }
+
+        $nFileSize = filesize($sTagFileName);
+        if ($nFileSize > 0) {
+            $aKeys = unserialize(fread($hTagFile, $nFileSize));
+            if (!is_array($aKeys)) {
+                $sMessage = sprintf('[%s] Wrong tag content.', __CLASS__);
+                $this->getApplication()->trace->addLine($sMessage);
+                throw new \Gveniver\Exception\BaseException($sMessage);
+            }
+
+            if (!in_array($sDataFileName, $aKeys))
+                $aKeys[] = $sDataFileName;
+        } else
+            $aKeys = array($sDataFileName);
+
+
+        // Writing data, changing permissions and ulocking.
+        fseek($hTagFile, 0);
+        fwrite($hTagFile, serialize($aKeys));
+        chmod($sTagFileName, $this->_nFileMode);
+        flock($hTagFile, LOCK_UN);
+        fclose($hTagFile);
+        umask($oldUmask);
 
         return true;
 
