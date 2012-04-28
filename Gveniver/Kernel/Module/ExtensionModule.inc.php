@@ -34,6 +34,20 @@ class ExtensionModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
+     * Magic method for quick access to extensions by name.
+     *
+     * @param string $name Name of extension for loading.
+     *
+     * @return \Gveniver\Extension\BaseExtension
+     */
+    public function __get($name)
+    {
+        return $this->getExtension($name);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Full initialization of module.
      *
      * @return bool True on success.
@@ -65,7 +79,7 @@ class ExtensionModule extends BaseModule
      * If specified, then the extension loads to variable by refernce and returns
      * result of operation (boolean). Otherwise, returns template.
      *
-     * @return ExtensionModule|bool
+     * @return \Gveniver\Extension\BaseExtension|bool
      */
     public function getExtension($sExtensionName, &$cRef = null)
     {

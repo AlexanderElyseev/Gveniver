@@ -149,8 +149,6 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
             'indent-spaces'   => 0,
             'newline'         => 'LF',
             'quote-nbsp'      => true,
-            'quote-marks'     => true,
-            'quote-ampersand' => true,
             'wrap'            => 0
         ),
         'UTF8'
@@ -685,10 +683,10 @@ function cdata($sContent)
 /**
  * Send the mail.
  *
- * @param $sFrom    Author of message.
- * @param $sTo      Recipient of message.
- * @param $sSubject Subject of message.
- * @param $sText    Text of message.
+ * @param string $sFrom    Author of message.
+ * @param string $sTo      Recipient of message.
+ * @param string $sSubject Subject of message.
+ * @param string $sText    Text of message.
  *
  * @return bool True on success
  */
@@ -778,6 +776,26 @@ function correctPath($sFileName, $bAddDirSeparator = false)
         $sFileName = $sFileName.GV_DS;
 
     return $sFileName;
+
+} // End function
+//-----------------------------------------------------------------------------
+
+/**
+ * Method deletes specified dirrectory with all subdurrectories and files.
+ *
+ * @param string $sDirectoryPath Path to directory for removing.
+ *
+ * @return void
+ */
+function rrmdir($sDirectoryPath)
+{
+    foreach (glob($sDirectoryPath . '/*') as $sFileName) {
+        if (is_dir($sFileName))
+            rrmdir($sFileName);
+        else
+            unlink($sFileName);
+    }
+    rmdir($sDirectoryPath);
 
 } // End function
 //-----------------------------------------------------------------------------

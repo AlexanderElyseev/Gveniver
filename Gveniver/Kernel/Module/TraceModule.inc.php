@@ -78,8 +78,8 @@ class TraceModule extends BaseModule
 
     /**
      * Adding trace string.
-     * Using sprintf syntax is available.
-     * Add data to container only if debug enabled.
+     * Sprintf syntax is available.
+     * Adds data to container only if debug enabled.
      *
      * @param string $sMessage String to add.
      *

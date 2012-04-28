@@ -71,44 +71,58 @@ abstract class BaseCacheProvider
     
     /**
      * Load data form cache.
-     * 
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param mixed  &$cRef         Reference variable for loading cached data.
+     *
+     * @param string $sCacheId   Identifier of cache.
+     * @param string $sNamespace Namespace of cache.
+     * @param mixed  &$cRef      Reference variable for loading cached data.
      *
      * @return boolean True on success loading
      * @abstract
      */
-    public abstract function get($sCacheId, $sCacheGroupId, &$cRef);
+    public abstract function get($sCacheId, $sNamespace, &$cRef);
     //-----------------------------------------------------------------------------
 
     /**
      * Save data to cache.
      *
-     * @param mixed  $mData         Data to save.
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param int    $nTtl          Time to live for cache.
+     * @param mixed  $mData      Data to save.
+     * @param string $sCacheId   Identifier of cache.
+     * @param string $sNamespace Namespace of cache.
+     * @param array  $aTags      List of tags for this cache record.
+     * @param int    $nTtl       Time to live for cache.
      * 
      * @return boolean True on success.
      * @abstract
      */
-    public abstract function set($mData, $sCacheId, $sCacheGroupId, $nTtl);
+    public abstract function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl);
     //-----------------------------------------------------------------------------
 
     /**
-     * Flush cache data.
+     * Method cleans cache data by specified parameters.
      *
-     * @param string $sCacheGroupId Identifier of cache group.
+     * @param string $sNamespace Namespace of cache.
+     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
+     * Otherwise, clean all namespace.
      *
      * @return boolean True on success.
      * @abstract
      */
-    public abstract function flush($sCacheGroupId);
+    public abstract function clean($sNamespace, $sCacheId = null);
     //-----------------------------------------------------------------------------
-    
+
     /**
-     * Generator for correct unique cache identifiers by names.
+     * Method cleans cache data by specified tags.
+     *
+     * @param array $aTags List of tags for cleaning.
+     *
+     * @return boolean True on success.
+     * @abstract
+     */
+    public abstract function cleanByTags(array $aTags);
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Generated correct unique cache identifiers by name.
      *
      * @param string $sDataName Unique name of cached data.
      * 

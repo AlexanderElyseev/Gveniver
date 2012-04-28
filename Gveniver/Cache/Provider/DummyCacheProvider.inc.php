@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains cache provider class with files and memory.
+ * File contains dummy cache provider class.
  *
  * @category  Gveniver
  * @package   Cache
@@ -13,7 +13,7 @@
 namespace Gveniver\Cache\Provider;
 
 /**
- * Cache provider class with files and memory.
+ * Dummy cache provider class.
  *
  * @category  Gveniver
  * @package   Cache
@@ -22,25 +22,8 @@ namespace Gveniver\Cache\Provider;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class FileMemoryCacheProvider extends FileCacheProvider
+class DummyCacheProvider extends BaseCacheProvider
 {
-    /**
-     * Cache of data in memory.
-     * 
-     * @var array
-     */
-    private $_aMemoryData = array();
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Meta information about tags.
-     *
-     * @var array
-     */
-    private $_aMemoryTags = array();
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
-
     /**
      * Load data form cache.
      *
@@ -52,27 +35,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
      */
     public function get($sCacheId, $sNamespace, &$cRef)
     {
-        // Try to load from memory.
-        if (array_key_exists($sNamespace, $this->_aMemoryData) && is_array($this->_aMemoryData[$sNamespace])) {
-            if (array_key_exists($sCacheId, $this->_aMemoryData[$sNamespace])) {
-                $cRef = $this->_aMemoryData[$sNamespace][$sCacheId];
-                return true;
-            }
-        }
-
-        // Load data from file cache.
-        $mData = null;
-        $bResult = parent::get($sCacheId, $sNamespace, $mData);
-
-        // Save to memory on success loading.
-        if ($bResult)
-            $this->_aMemoryData[$sNamespace][$sCacheId] = is_object($mData) ? clone $mData : $mData;
-
-        // Return result.
-        if ($bResult)
-            $cRef = $mData;
-
-        return $bResult;
+        return false;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -90,19 +53,8 @@ class FileMemoryCacheProvider extends FileCacheProvider
      */
     public function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl)
     {
-        // Save data to memory.
-        $this->_aMemoryData[$sNamespace][$sCacheId] = is_object($mData) ? clone $mData : $mData;
+        return false;
 
-        // Save tag meta information.
-        foreach ($aTags as $sTag) {
-            if (!isset($this->_aMemoryTags[$sTag]) || !is_array($this->_aMemoryTags[$sTag]))
-                $this->_aMemoryTags[$sTag] = array();
-            $this->_aMemoryTags[$sTag][] = array($sNamespace, $sCacheId);
-        }
-
-        // Save to file.
-        return parent::set($mData, $sCacheId, $sNamespace, $aTags, $nTtl);
-        
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -117,11 +69,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
      */
     public function clean($sNamespace, $sCacheId = null)
     {
-        // Cleaning memory cache.
-        $this->_aMemoryData[$sNamespace] = array();
-
-        // Cleaning file cache.
-        return parent::clean($sNamespace, $sCacheId);
+        return false;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -131,18 +79,11 @@ class FileMemoryCacheProvider extends FileCacheProvider
      *
      * @param array $aTags List of tags for cleaning.
      *
-     * @throws \Gveniver\Exception\NotImplementedException
      * @return boolean True on success.
      */
     public function cleanByTags(array $aTags)
     {
-        $bRet = true;
-        foreach ($aTags as $sTag)
-            if (array_key_exists($sTag, $this->_aMemoryTags))
-                foreach ($this->_aMemoryTags as $aTagItem)
-                    $bRet = $bRet && $this->clean($aTagItem[0], $aTagItem[1]);
-
-        return $bRet;
+        return false;
 
     } // End function
     //-----------------------------------------------------------------------------
