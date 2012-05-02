@@ -789,6 +789,9 @@ function correctPath($sFileName, $bAddDirSeparator = false)
  */
 function rrmdir($sDirectoryPath)
 {
+    if (!file_exists($sDirectoryPath) || !is_dir($sDirectoryPath))
+        return;
+
     foreach (glob($sDirectoryPath . '/*') as $sFileName) {
         if (is_dir($sFileName))
             rrmdir($sFileName);
