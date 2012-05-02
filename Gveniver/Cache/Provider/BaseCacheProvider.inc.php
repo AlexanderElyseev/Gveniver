@@ -122,6 +122,15 @@ abstract class BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
+     * Method cleans all cache data.
+     *
+     * @return boolean True on success.
+     * @abstract
+     */
+    public abstract function cleanAll();
+    //-----------------------------------------------------------------------------
+
+    /**
      * Generated correct unique cache identifiers by name.
      *
      * @param string $sDataName Unique name of cached data.

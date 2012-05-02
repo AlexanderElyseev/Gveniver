@@ -71,7 +71,7 @@ class FileCacheProvider extends BaseCacheProvider
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      * @param array                        $aOptions     Options for cache provider.
      *
-     * @throws \Gveniver\Exception\BaseException
+     * @throws \Gveniver\Exception\BaseException Throws on errors in directory structure.
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
@@ -88,7 +88,7 @@ class FileCacheProvider extends BaseCacheProvider
         }
         $this->getApplication()->trace->addLine('[%s] Using file_mode: %d, dir_mode: %d.', __CLASS__, $this->_nFileMode, $this->_nDirMode);
 
-        // Build cache directory.
+        // Loading the name of cache directory.
         $this->_sBaseCacheDirectory = (string)$this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
         if (!$this->_sBaseCacheDirectory) {
             $sMessage = sprintf('[%s] The name of cache directory is not found in configuration.', __CLASS__);
@@ -96,6 +96,19 @@ class FileCacheProvider extends BaseCacheProvider
             throw new \Gveniver\Exception\BaseException($sMessage);
         }
 
+        // Building cache directories.
+        $this->_initDirectories();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method initializes directories for cache.
+     *
+     * @return void
+     */
+    private function _initDirectories()
+    {
         $this->_sBaseCacheDirectory = \Gveniver\correctPath($this->_sBaseCacheDirectory, true);
         if (!file_exists($this->_sBaseCacheDirectory) || !is_writeable($this->_sBaseCacheDirectory)) {
             $this->getApplication()->trace->addLine('[%s] Start creating base cache directory ("%s") is not exist.', __CLASS__, $this->_sBaseCacheDirectory);
@@ -299,6 +312,23 @@ class FileCacheProvider extends BaseCacheProvider
         }
 
         return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method cleans all cache data.
+     *
+     * @return boolean True on success.
+     */
+    public function cleanAll()
+    {
+        // Removing directories with data and tags.
+        \Gveniver\rrmdir($this->_sBaseCacheDataDirectory);
+        \Gveniver\rrmdir($this->_sBaseCacheTagsDirectory);
+
+        // Rebbuilding directory structure.
+        $this->_initDirectories();
 
     } // End function
     //-----------------------------------------------------------------------------

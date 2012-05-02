@@ -75,6 +75,18 @@ class DummyCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
+     * Method cleans all cache data.
+     *
+     * @return boolean True on success.
+     */
+    public function cleanAll()
+    {
+        return false;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Method cleans cache data by specified tags.
      *
      * @param array $aTags List of tags for cleaning.
