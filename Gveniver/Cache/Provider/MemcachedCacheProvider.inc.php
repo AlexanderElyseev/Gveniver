@@ -46,14 +46,14 @@ class MemcachedCacheProvider extends BaseCacheProvider
         parent::__construct($cApplication, $aOptions);
 
         // Checking for Mecached PHP extension.
-        if (!class_exists('Memcache'))
-            throw new \Gveniver\Exception\BaseException('Memcache PHP extension not loaded.');
+        if (!class_exists('\\Memcache'))
+            throw new \Gveniver\Exception\BaseException('Memcache PHP extension is not loaded.');
 
         $this->_cMemcache = new \Memcache();
 
         // Adding  servers.
         if (!isset($this->aOptions['Servers']))
-            throw new \Gveniver\Exception\BaseException('Memcache servers not loaded.');
+            throw new \Gveniver\Exception\BaseException('Memcache servers are not loaded.');
 
         foreach ($this->aOptions['Servers'] as $aServerData) {
             $sServerHost = isset($aServerData['Host']) ? $aServerData['Host'] : null;
