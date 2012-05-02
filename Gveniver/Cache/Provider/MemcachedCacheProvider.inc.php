@@ -67,6 +67,19 @@ class MemcachedCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
+     * Class destructor.
+     *
+     * Closing Memcached connection.
+     */
+    public function __destruct()
+    {
+        if ($this->_cMemcache)
+            $this->_cMemcache->close();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Method cleans cache data by specified parameters.
      *
      * @param string $sNamespace Namespace of cache.
