@@ -16,8 +16,10 @@ Todo list for project.
 2. Cache.                                                                                           [**]
     2.1. Synthetic tests of performance.                                                            [--]
     2.2. Unit tests (for various providers.                                                         [--]
+    2.3. Wrapper for file operations (with locking).                                                [--]
     
 3. Log.                                                                                             [**]
+    3.1. 2.3                                                                                        [--]
 
 4. Extensions.                                                                                      [**]
     4.1. ProfileExt - extension for getting various profile data.                                   [--]
