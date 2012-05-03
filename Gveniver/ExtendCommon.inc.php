@@ -785,20 +785,24 @@ function correctPath($sFileName, $bAddDirSeparator = false)
  *
  * @param string $sDirectoryPath Path to directory for removing.
  *
- * @return void
+ * @return boolean
  */
 function rrmdir($sDirectoryPath)
 {
     if (!file_exists($sDirectoryPath) || !is_dir($sDirectoryPath))
-        return;
+        return false;
 
+    $bResult = true;
     foreach (glob($sDirectoryPath . '/*') as $sFileName) {
         if (is_dir($sFileName))
-            rrmdir($sFileName);
+            $bResult = $bResult && rrmdir($sFileName);
         else
-            unlink($sFileName);
+            $bResult = $bResult && unlink($sFileName);
+
+        if (!$bResult)
+            break;
     }
-    rmdir($sDirectoryPath);
+    return $bResult && rmdir($sDirectoryPath);
 
 } // End function
 //-----------------------------------------------------------------------------

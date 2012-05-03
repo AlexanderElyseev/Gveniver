@@ -46,14 +46,14 @@ class MemcachedCacheProvider extends BaseCacheProvider
         parent::__construct($cApplication, $aOptions);
 
         // Checking for Mecached PHP extension.
-        if (!class_exists('Memcache'))
-            throw new \Gveniver\Exception\BaseException('Memcache PHP extension not loaded.');
+        if (!class_exists('\\Memcache'))
+            throw new \Gveniver\Exception\BaseException('Memcache PHP extension is not loaded.');
 
         $this->_cMemcache = new \Memcache();
 
         // Adding  servers.
         if (!isset($this->aOptions['Servers']))
-            throw new \Gveniver\Exception\BaseException('Memcache servers not loaded.');
+            throw new \Gveniver\Exception\BaseException('Memcache servers are not loaded.');
 
         foreach ($this->aOptions['Servers'] as $aServerData) {
             $sServerHost = isset($aServerData['Host']) ? $aServerData['Host'] : null;
@@ -62,6 +62,19 @@ class MemcachedCacheProvider extends BaseCacheProvider
 
             $this->_cMemcache->addServer($sServerHost);
         }
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Class destructor.
+     *
+     * Closing Memcached connection.
+     */
+    public function __destruct()
+    {
+        if ($this->_cMemcache)
+            $this->_cMemcache->close();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -80,15 +93,28 @@ class MemcachedCacheProvider extends BaseCacheProvider
         if ($sCacheId)
             return $this->_cMemcache->delete($this->_getDataCacheId($sCacheId, $sNamespace));
 
-        $aMeta = $this->_cMemcache->get($this->_getNamespaceMetaCacheId($sNamespace));
+        $sNamespaceCacheId = $this->_getNamespaceMetaCacheId($sNamespace);
+        $aMeta = $this->_cMemcache->get($sNamespaceCacheId);
         if (!is_array($aMeta))
             return true;
 
-        $bResult = true;
+        $bResult = $this->_cMemcache->delete($sNamespaceCacheId);
         foreach ($aMeta as $sDataCacheId)
             $bResult = $bResult && $this->_cMemcache->delete($sDataCacheId);
 
         return $bResult;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method cleans all cache data.
+     *
+     * @return boolean True on success.
+     */
+    public function cleanAll()
+    {
+        return $this->_cMemcache->flush();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -105,10 +131,12 @@ class MemcachedCacheProvider extends BaseCacheProvider
     {
         $bResult = true;
         foreach ($aTags as $sTag) {
-            $aMeta = $this->_cMemcache->get($this->_getTagMetaCacheId($sTag));
+            $sTagCacheId = $this->_getTagMetaCacheId($sTag);
+            $aMeta = $this->_cMemcache->get($sTagCacheId);
             if (!is_array($aMeta))
                 continue;
 
+            $bResult = $bResult && $this->_cMemcache->delete($sTagCacheId);
             foreach ($aMeta as $sDataCacheId)
                 $bResult = $bResult && $this->_cMemcache->delete($sDataCacheId);
         }
@@ -162,7 +190,7 @@ class MemcachedCacheProvider extends BaseCacheProvider
             $this->_cMemcache->set($sMetaCacheId, $aMeta);
         } elseif (!in_array($sDataCacheId, $aMeta)) {
             $aMeta[] = $sDataCacheId;
-            $this->_cMemcache->set($sMetaCacheId, $aMeta);
+            $this->_cMemcache->replace($sMetaCacheId, $aMeta);
         }
         
         // Update tag content.
@@ -174,12 +202,16 @@ class MemcachedCacheProvider extends BaseCacheProvider
                 $this->_cMemcache->set($sTagCacheId, $aTag);
             } elseif (!in_array($sDataCacheId, $aTag)) {
                 $aTag[] = $sDataCacheId;
-                $this->_cMemcache->set($sTagCacheId, $aTag);
+                $this->_cMemcache->replace($sTagCacheId, $aTag);
             }
         }
         
         // Save data with memcache.
-        return $this->_cMemcache->set($sDataCacheId, $mData, 0, $nTtl);
+        $bResult = $this->_cMemcache->replace($sDataCacheId, $mData, 0, $nTtl);
+        if (!$bResult)
+            $bResult = $this->_cMemcache->set($sDataCacheId, $mData, 0, $nTtl);
+
+        return $bResult;
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -194,7 +226,7 @@ class MemcachedCacheProvider extends BaseCacheProvider
      */
     private function _getDataCacheId($sCacheId, $sNamespace)
     {
-        return 'data_'.md5($sCacheId).'_'.md5($sNamespace);
+        return 'data_'.md5($sNamespace).'_'.md5($sCacheId);
 
     } // End function
     //-----------------------------------------------------------------------------

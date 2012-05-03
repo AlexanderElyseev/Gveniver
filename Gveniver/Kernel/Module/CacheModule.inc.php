@@ -366,5 +366,22 @@ class CacheModule extends BaseModule
     } // End function
     //-----------------------------------------------------------------------------
 
+    /**
+     * Method cleans all cache data.
+     *
+     * @throws \Gveniver\Exception\BaseException Throws exception if cache provider is not found.
+     * @return boolean True on success.
+     */
+    public function cleanAll()
+    {
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
+
+        return $cProvider->cleanAll();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
 } // End class
 //-----------------------------------------------------------------------------

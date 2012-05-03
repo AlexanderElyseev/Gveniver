@@ -127,6 +127,22 @@ class FileMemoryCacheProvider extends FileCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
+     * Method cleans all cache data.
+     *
+     * @return boolean True on success.
+     */
+    public function cleanAll()
+    {
+        // Cleaning memory cache.
+        $this->_aMemoryData = array();
+
+        // Cleaning file cache.
+        return parent::cleanAll();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Method cleans cache data by specified tags.
      *
      * @param array $aTags List of tags for cleaning.
