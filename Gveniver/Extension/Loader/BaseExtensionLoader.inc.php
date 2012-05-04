@@ -76,7 +76,7 @@ abstract class BaseExtensionLoader
      *
      * @param string $sExtensionName Name of extension for loading.
      * 
-     * @return Extension|boolean
+     * @return \Gveniver\Extension\BaseExtension
      */
     public function get($sExtensionName)
     {
@@ -114,7 +114,7 @@ abstract class BaseExtensionLoader
      * 
      * @param string $sExtensionName Name of extension for loading.
      *
-     * @return Extension Returns null on error.
+     * @return \Gveniver\Extension\BaseExtension Returns null on error.
      * @abstract
      */
     protected abstract function load($sExtensionName);
