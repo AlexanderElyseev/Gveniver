@@ -231,7 +231,8 @@ class FileCacheProvider extends BaseCacheProvider
         flock($file, LOCK_UN);
         fclose($file);
 
-        if ($nTtl < GV_TIME_NOW)
+        // Undefined (or zero) TTL means that cache should live forever.
+        if ($nTtl && $nTtl < GV_TIME_NOW)
             return false;
 
         $cRef = unserialize($mData);
