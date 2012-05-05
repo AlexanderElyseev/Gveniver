@@ -259,6 +259,13 @@ class FileCacheProvider extends BaseCacheProvider
         $this->_createDirectory($sNamespaceDir);
         $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId);
 
+        // Try to serialize data for saving.
+        try {
+            $sData = serialize($mData);
+        } catch (\Exception $cEx) {
+            return false;
+        }
+
         // Opening data file for writing with exclusive lock.
         $nOldUmask = umask(0);
         $fData = fopen($sDataFileName, 'wb');
@@ -272,7 +279,6 @@ class FileCacheProvider extends BaseCacheProvider
         }
 
         // Writing data.
-        $sData = serialize($mData);
         fwrite($fData, pack('L',  GV_TIME_NOW + $nTtl));    // TTL.
         fwrite($fData, pack('L', strlen($sData)));          // Length.
         fwrite($fData, pack('a*', $sData));                 // Data.
