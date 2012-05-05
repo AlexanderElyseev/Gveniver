@@ -140,7 +140,7 @@ class Smarty3TemplateFactory extends FileTemplateFactory
      *
      * @param string $sTemplateName Name of template for building.
      *
-     * @return Template|null
+     * @return \Gveniver\Template\BaseTemplate|null
      */
     protected function build($sTemplateName)
     {

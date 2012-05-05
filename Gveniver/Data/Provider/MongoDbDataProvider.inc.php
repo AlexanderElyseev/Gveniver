@@ -27,7 +27,7 @@ class MongoDbDataProvider extends BaseDataProvider
     /**
      * MongoDB object.
      * 
-     * @var Mongo
+     * @var \Mongo
      */
     private $_cMongo;
     //-----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class MongoDbDataProvider extends BaseDataProvider
     protected function connect()
     {
         // Check for existing MongoDb PHP extension.
-        if (!class_exists('Mongo')) {
+        if (!class_exists('\\Mongo')) {
             $this->getApplication()->trace->addLine('[%s] MongoDb PHP extension is not installed.', __CLASS__);
             return false;
         }

@@ -10,8 +10,6 @@
  * @link      http://prof-club.ru
  */
 
-require_once '../gveniver/init.inc.php';
-
 /**
  * Unit test case class for testing initialization of kernel.
  *

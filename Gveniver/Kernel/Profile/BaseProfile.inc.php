@@ -669,7 +669,7 @@ class BaseProfile
      * @param string $sSectionName Name of section. Or Default section, if not set.
      * @param string $sAct         Action value. If not set, Default action.
      *
-     * @return Title for section or null, if not found.
+     * @return string|null Title for section or null, if not found.
      */
     public function getTitle($sSectionName = null, $sAct = null)
     {
