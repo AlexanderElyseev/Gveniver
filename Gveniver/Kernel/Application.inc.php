@@ -120,13 +120,14 @@ final class Application
      *
      * @param string $sName Parameter name for reading.
      *
+     * @throws \Gveniver\Exception\BaseException
      * @return \Gveniver\Kernel\Module\BaseModule|null Returns null on error.
      */
     public function __get($sName)
     {
         $cModule = $this->getModule($sName);
         if (!$cModule)
-            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") not loaded.', $sName));
+            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") has not been loaded.', $sName));
 
         return $cModule;
 

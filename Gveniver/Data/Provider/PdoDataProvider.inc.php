@@ -52,11 +52,11 @@ class PdoDataProvider extends BaseDataProvider
         $sPassword = isset($this->aOptions['Password']) ? $this->aOptions['Password'] : null;
         $aOptions = isset($this->aOptions['Options']) ? $this->aOptions['Options'] : array();
         $sInitCommand = isset($this->aOptions['InitCommand']) ? $this->aOptions['InitCommand'] : null;
-        
+
         // Try to connect.
         try {
             $this->_cPdo = new \PDO($sDsn, $sUser, $sPassword, $aOptions);
-        } catch (\Gveniver\Exception\BaseException $cEx) {
+        } catch (\PDOException $cEx) {
             return false;
         }
 

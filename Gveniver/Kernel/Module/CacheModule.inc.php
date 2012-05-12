@@ -86,11 +86,10 @@ class CacheModule extends BaseModule
 
         // Load configuration of cache providers.
         $this->_aModuleConfiguration = $this->getApplication()->getConfig()->get('Module/CacheModule');
-        if (!is_array($this->_aModuleConfiguration)) {
+        if (!is_array($this->_aModuleConfiguration))
             $this->getApplication()->trace->addLine('[%s] Configuration of cache module is not loaded.', __CLASS__);
-            return false;
-        }
-        $this->getApplication()->trace->addLine('[%s] Configuration of cache module is successfully loaded.', __CLASS__);
+        else
+            $this->getApplication()->trace->addLine('[%s] Configuration of cache module is successfully loaded.', __CLASS__);
 
         if (!isset($this->_aModuleConfiguration['Providers']))
             $this->getApplication()->trace->addLine('[%s] Configuration of providers is not loaded.', __CLASS__);
@@ -199,7 +198,7 @@ class CacheModule extends BaseModule
      */
     private function _loadDummyProvider()
     {
-        $cProvider = $this->_loadProviderInstance('\\Gveniver\\Cache\\Provider\\DummyCacheProvider', array());
+        $cProvider = $this->_loadProviderInstance('DummyCacheProvider', array());
         if ($cProvider) {
             $this->getApplication()->trace->addLine('[%s] Dummy cache provider is successfully loaded.', __CLASS__);
             return $cProvider;
