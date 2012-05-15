@@ -1,0 +1,9 @@
+<phpunit backupGlobals="false"
+                  bootstrap="bootstrap.php"
+                  backupStaticAttributes="true"
+                  colors="false"
+                  convertErrorsToExceptions="true"
+                  convertNoticesToExceptions="true"
+                  convertWarningsToExceptions="true"
+                  processIsolation="false"
+                  syntaxCheck="true" />

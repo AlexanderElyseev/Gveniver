@@ -97,7 +97,7 @@ class TraceModule extends BaseModule
             $sMessage = call_user_func_array('sprintf', $aArgs);
         }
 
-        //echo $sMessage."<br/>\n";
+        //echo $sMessage.GV_EOL;
 
         $dMemory = memory_get_usage();
         $dTime = microtime(true);

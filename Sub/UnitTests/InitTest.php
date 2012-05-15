@@ -29,7 +29,7 @@ class InitTest extends PHPUnit_Framework_TestCase
      */
     public function testInit()
     {
-        new Gveniver\Kernel\Application('Dummy');
+        $this->assertNotNull(getApplication());
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class InitTest extends PHPUnit_Framework_TestCase
     /**
      * Test initialization of kernel with not existed profile.
      *
-     * @expectedException Exception
+     * @expectedException Gveniver\Exception\ArgumentException
      * @return void
      */
     public function testWrongProfile()

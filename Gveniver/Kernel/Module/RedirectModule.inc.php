@@ -113,16 +113,14 @@ class RedirectModule extends BaseModule
      */
     private function _loadSessionData()
     {
-        if (!isset($_SESSION['Gveniver'][__CLASS__]['Data'])) {
+        if (!$this->getApplication()->session->contains(array('Gveniver', __CLASS__, 'Data'))) {
             $this->getApplication()->trace->addLine('[%s] Session data is not set.', __CLASS__);
             return;
         }
 
-        // Load.
-        $aData = $_SESSION['Gveniver'][__CLASS__]['Data'];
-
-        // Clean.
-        unset($_SESSION['Gveniver'][__CLASS__]['Data']);
+        // Loading and cleaning.
+        $aData = $this->getApplication()->session->get(array('Gveniver', __CLASS__, 'Data'));
+        $this->getApplication()->session->clean(array('Gveniver', __CLASS__, 'Data'));
 
         // Do not save wrong data.
         if (!is_array($aData)) {
@@ -147,8 +145,7 @@ class RedirectModule extends BaseModule
         if (!count($this->_aNewSessionData))
             return;
 
-        $_SESSION['Gveniver'][__CLASS__]['Data'] = $this->_aNewSessionData;
-        return;
+        $this->getApplication()->session->set(array('Gveniver', __CLASS__, 'Data'), $this->_aNewSessionData);
         
     } // End function
     //-----------------------------------------------------------------------------

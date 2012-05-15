@@ -32,6 +32,7 @@ namespace Gveniver\Kernel;
  * @property  \Gveniver\Kernel\Module\LogModule       $log
  * @property  \Gveniver\Kernel\Module\RedirectModule  $redirect
  * @property  \Gveniver\Kernel\Module\SecurityModule  $security
+ * @property  \Gveniver\Kernel\Module\SessionModule   $session
  * @property  \Gveniver\Kernel\Module\TemplateModule  $template
  * @property  \Gveniver\Kernel\Module\TraceModule     $trace
  */
