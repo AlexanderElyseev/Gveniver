@@ -157,7 +157,7 @@ final class Application
         // Start session.
         $bStartSession = self::toBoolean($this->getConfig()->get('Kernel/StartSession'));
         if ($bStartSession) {
-            session_start();
+            $this->session->start();
             $this->trace->addLine('[%s] Session started.', __CLASS__);
         }
 

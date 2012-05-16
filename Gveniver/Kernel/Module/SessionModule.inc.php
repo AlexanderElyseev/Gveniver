@@ -1,7 +1,27 @@
 <?php
+/**
+ * File contains session module class.
+ *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
 namespace Gveniver\Kernel\Module;
 
+/**
+ * Session module class.
+ *
+ * @category  Gveniver
+ * @package   Kernel
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 class SessionModule extends BaseModule
 {
     /**
@@ -31,10 +51,45 @@ class SessionModule extends BaseModule
     {
         $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
-        $this->_cStorage = new \Gveniver\Session\Storage\NativeSessionStorage();
+        // Load configuration.
+        $aConfig = $this->getApplication()->getConfig()->get('Module/SessionModule');
+        if ($aConfig && isset($aConfig['StorageClass'])) {
+
+            $this->getApplication()->trace->addLine('[%s] Initialization using configuration.', __CLASS__);
+
+            $aArgs = isset($aConfig['Args']) && is_array($aConfig['Args']) ? $aConfig['Args'] : array();
+            $sClassName = '\\Gveniver\Session\\Storage\\'.$aConfig['StorageClass'];
+            if (!class_exists($sClassName) || !is_subclass_of($sClassName, '\\Gveniver\\Session\\Storage\\BaseSessionStorage')) {
+                $this->getApplication()->trace->addLine('[%s] Session storage class ("%s") is not exist or it do not extend base storage class.', __CLASS__, $sClassName);
+                $this->_initializeNativeStorage();
+            }
+
+            try {
+                $this->_cStorage = new $sClassName($this->getApplication(), $aArgs);
+            } catch (\Gveniver\Exception\BaseException $cEx) {
+                $this->getApplication()->trace->addLine('[%s] Exception in create session storage instance ("%s"): "%s".', __CLASS__, $sClassName, $cEx->getMessage());
+                $this->_initializeNativeStorage();
+            }
+
+        } else
+            $this->_initializeNativeStorage();
 
         $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Initializes module by native session storage.
+     *
+     * @return void
+     */
+    private function _initializeNativeStorage()
+    {
+        $this->getApplication()->trace->addLine('[%s] Initialization using native session storage.', __CLASS__);
+
+        $this->_cStorage = new \Gveniver\Session\Storage\NativeSessionStorage($this->getApplication());
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -47,6 +102,30 @@ class SessionModule extends BaseModule
     public function start()
     {
         $this->_cStorage->start();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Migrates the current session to a new session id while maintaining all session attributes.
+     *
+     * @return void
+     */
+    public function migrate()
+    {
+        $this->_cStorage->migrate();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Invalidates the current session. Clears all session attributes. Migrates to new session.
+     *
+     * @return void
+     */
+    public function invalidate()
+    {
+        $this->_cStorage->invalidate();
 
     } // End function
     //-----------------------------------------------------------------------------

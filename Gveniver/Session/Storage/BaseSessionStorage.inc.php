@@ -22,7 +22,7 @@ namespace Gveniver\Session\Storage;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-abstract class BaseSessionStorage
+abstract class BaseSessionStorage extends \Gveniver\BaseObject
 {
     /**
      * Identifier of the session.
@@ -40,6 +40,24 @@ abstract class BaseSessionStorage
      * @abstract
      */
     public abstract function start();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Migrates the current session to a new session id while maintaining all session attributes.
+     *
+     * @return void
+     * @abstract
+     */
+    public abstract function migrate();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Invalidates the current session. Clears all session attributes. Migrates to new session.
+     *
+     * @return void
+     * @abstract
+     */
+    public abstract function invalidate();
     //-----------------------------------------------------------------------------
 
     /**
@@ -143,7 +161,7 @@ abstract class BaseSessionStorage
      */
     protected function getPath($sName)
     {
-        return explode('/', $sName);
+        return explode(\Gveniver\Kernel\Module\SessionModule::PATH_SEPARATOR, $sName);
 
     } // End function
     //-----------------------------------------------------------------------------

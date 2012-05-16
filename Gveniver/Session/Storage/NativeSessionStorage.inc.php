@@ -26,6 +26,29 @@ namespace Gveniver\Session\Storage;
 class NativeSessionStorage extends BaseSessionStorage
 {
     /**
+     * Constructs new instance of {@see \Gveniver\Session\Storage\NativeSessionStorage}.
+     *
+     * @param \Gveniver\Kernel\Application $cApp    Current application.
+     * @param array                        $aConfig Configuration parameters.
+     */
+    public function __construct(\Gveniver\Kernel\Application $cApp, array $aConfig = array())
+    {
+        parent::__construct($cApp);
+
+        if ($aConfig) {
+            if (isset($aConfig['CookieHttpOnly']))
+                $cApp->trace->addLine('[%s] Using HttpOnly cookies.', __CLASS__);
+                ini_set('session.cookie_httponly', \Gveniver\Kernel\Application::toBoolean($aConfig['CookieHttpOnly']));
+
+            if (isset($aConfig['CookieDomain']))
+                $cApp->trace->addLine('[%s] Using "%s" as cookie domain.', __CLASS__, $aConfig['CookieDomain']);
+                ini_set('session.cookie_domain', $aConfig['CookieDomain']);
+        }
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Starts the session.
      *
      * @return void
@@ -35,7 +58,35 @@ class NativeSessionStorage extends BaseSessionStorage
         $sId = $this->getId();
         if ($sId)
             session_id($sId);
+        else
+            $this->setId(session_id());
 
+        session_start();
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Migrates the current session to a new session id while maintaining all session attributes.
+     *
+     * @return void
+     */
+    public function migrate()
+    {
+        session_regenerate_id();
+        $this->setId(session_id());
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Invalidates the current session. Clears all session attributes. Migrates to new session.
+     *
+     * @return void
+     */
+    public function invalidate()
+    {
+        session_destroy();
         session_start();
 
     } // End function
