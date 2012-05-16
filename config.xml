@@ -36,6 +36,7 @@
             <Level>255</Level>
             <Providers></Providers>
         </LogModule>
+        <SessionModule></SessionModule>
         <TemplateModule></TemplateModule>
         <RedirectModule>
             <WaitTime>300</WaitTime>

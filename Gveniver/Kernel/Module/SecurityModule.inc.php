@@ -25,6 +25,15 @@ namespace Gveniver\Kernel\Module;
 class SecurityModule extends BaseModule
 {
     /**
+     * Arry with the names of path to stored data in session.
+     *
+     * @var array
+     */
+    private $_aSessionAttributeName;
+    //-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
+
+    /**
      * Full initialization of module.
      *
      * @return bool True on success.
@@ -32,6 +41,8 @@ class SecurityModule extends BaseModule
     protected function init()
     {
         $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
+
+        $this->_aSessionAttributeName = array('Gveniver', __CLASS__, 'CheckPoint');
 
         $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
@@ -68,7 +79,7 @@ class SecurityModule extends BaseModule
         $nNewTtl = \microtime(true) + $nTtl;
         $sNewToken = \md5(rand());
 
-        $aData = &$_SESSION['Gveniver'][__CLASS__]['CheckPoint'];
+        $aData = $this->getApplication()->session->get($this->_aSessionAttributeName, array());
         if ($sName) {
             if (isset($aData['Named'][$sName])) {
                 $this->getApplication()->log->warning(
@@ -87,6 +98,7 @@ class SecurityModule extends BaseModule
             );
         }
 
+        $this->getApplication()->session->set($this->_aSessionAttributeName, $aData);
         return $sNewToken;
 
     } // End function
@@ -103,27 +115,21 @@ class SecurityModule extends BaseModule
      */
     public function releaseCheckPoint($sToken, $sName = null)
     {
-        $aData = &$_SESSION['Gveniver'][__CLASS__]['CheckPoint'];
+        $aData = $this->getApplication()->session->get($this->_aSessionAttributeName, array());
         if ($sName) {
             if (!isset($aData['Named'][$sName]))
                 return false;
 
             $aToken = &$aData['Named'][$sName];
-            if ($this->_checkCheckPoint($aToken, $sToken)) {
+            if ($this->_checkCheckPoint($aToken, $sToken))
                 unset($aToken);
-                return true;
-            }
-
-        } else {
-            foreach ($aData['Unnamed'] as $nTokenIndex => $aToken) {
-                if ($this->_checkCheckPoint($aToken, $sToken)) {
+        } else
+            foreach ($aData['Unnamed'] as $nTokenIndex => $aToken)
+                if ($this->_checkCheckPoint($aToken, $sToken))
                     unset($aData['Unnamed'][$nTokenIndex]);
-                    return true;
-                }
-            }
-        }
 
-        return false;
+        $this->getApplication()->session->set($this->_aSessionAttributeName, $aData);
+        return true;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -158,18 +164,21 @@ class SecurityModule extends BaseModule
      */
     private function _unsetOldCheckPoints()
     {
-        if (isset($_SESSION['Gveniver'][__CLASS__]['CheckPoint'])) {
-            $aData = &$_SESSION['Gveniver'][__CLASS__]['CheckPoint'];
-            if (isset($aData['Named']))
-                foreach ($aData['Named'] as $sName => $aToken)
-                    if ($aToken['Ttl'] && microtime(true) > $aToken['Ttl'])
-                        unset($aData[$sName]);
+        if (!$this->getApplication()->session->contains($this->_aSessionAttributeName))
+            return;
 
-            if (isset($aData['Unnamed']))
-                foreach ($aData['Unnamed'] as $nKey => $aToken)
-                    if ($aToken['Ttl'] && microtime(true) > $aToken['Ttl'])
-                        unset($aData[$nKey]);
-        } // End if
+        $aData = $this->getApplication()->session->get($this->_aSessionAttributeName, array());
+        if (isset($aData['Named']))
+            foreach ($aData['Named'] as $sName => $aToken)
+                if ($aToken['Ttl'] && microtime(true) > $aToken['Ttl'])
+                    unset($aData[$sName]);
+
+        if (isset($aData['Unnamed']))
+            foreach ($aData['Unnamed'] as $nKey => $aToken)
+                if ($aToken['Ttl'] && microtime(true) > $aToken['Ttl'])
+                    unset($aData[$nKey]);
+
+        $this->getApplication()->session->set($this->_aSessionAttributeName, $aData);
 
     } // End function
     //-----------------------------------------------------------------------------

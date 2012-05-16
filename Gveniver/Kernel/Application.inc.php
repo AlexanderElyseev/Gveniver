@@ -32,6 +32,7 @@ namespace Gveniver\Kernel;
  * @property  \Gveniver\Kernel\Module\LogModule       $log
  * @property  \Gveniver\Kernel\Module\RedirectModule  $redirect
  * @property  \Gveniver\Kernel\Module\SecurityModule  $security
+ * @property  \Gveniver\Kernel\Module\SessionModule   $session
  * @property  \Gveniver\Kernel\Module\TemplateModule  $template
  * @property  \Gveniver\Kernel\Module\TraceModule     $trace
  */
@@ -120,13 +121,14 @@ final class Application
      *
      * @param string $sName Parameter name for reading.
      *
+     * @throws \Gveniver\Exception\BaseException
      * @return \Gveniver\Kernel\Module\BaseModule|null Returns null on error.
      */
     public function __get($sName)
     {
         $cModule = $this->getModule($sName);
         if (!$cModule)
-            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") not loaded.', $sName));
+            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") has not been loaded.', $sName));
 
         return $cModule;
 
@@ -155,7 +157,7 @@ final class Application
         // Start session.
         $bStartSession = self::toBoolean($this->getConfig()->get('Kernel/StartSession'));
         if ($bStartSession) {
-            session_start();
+            $this->session->start();
             $this->trace->addLine('[%s] Session started.', __CLASS__);
         }
 
