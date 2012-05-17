@@ -40,6 +40,8 @@ class DummySessionStorage extends BaseSessionStorage
      */
     public function start()
     {
+        $this->_aSession = array();
+
     } // End function
     //-----------------------------------------------------------------------------
 
