@@ -75,18 +75,24 @@ final class Application
      * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @param string|Profile\BaseProfile $mProfile               Path to profile directory or name of profile, or profile instance.
-     * @param string                     $sApplicationConfigFile Path to XML configuration file for application.
+     * @param string|Profile\BaseProfile $mProfile Path to profile directory or name of profile, or profile instance.
+     * @param string|array               $mConfig  Path to XML configuration file for application or array with configuration parameters.
+     *
+     * @throws \Gveniver\Exception\ArgumentException
      */
-    public function __construct($mProfile, $sApplicationConfigFile = null)
+    public function __construct($mProfile, $mConfig = null)
     {
         // Initialize and load base configuration.
         $this->_cConfig = new \Gveniver\Config();
         $this->_cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
 
         // Append additional application configuration, if specified.
-        if ($sApplicationConfigFile)
-            $this->_cConfig->mergeXmlFile($sApplicationConfigFile);
+        if ($mConfig) {
+            if (is_string($mConfig))
+                $this->_cConfig->mergeXmlFile($mConfig);
+            elseif (is_array($mConfig))
+                $this->_cConfig->merge($mConfig);
+        }
 
         // Initialize profile of application.
         if ($mProfile instanceof Profile\BaseProfile)

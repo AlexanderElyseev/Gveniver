@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains session storage class for native PHP session functionality.
+ * File contains dummy session storage class for tests.
  *
  * @category  Gveniver
  * @package   Session
@@ -13,7 +13,7 @@
 namespace Gveniver\Session\Storage;
 
 /**
- * Session storage class for native PHP session functionality.
+ * Dummy session storage class for tests.
  *
  * @category  Gveniver
  * @package   Session
@@ -22,44 +22,25 @@ namespace Gveniver\Session\Storage;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class NativeSessionStorage extends BaseSessionStorage
+class DummySessionStorage extends BaseSessionStorage
 {
     /**
-     * Template method for initialization of provider. Is called from constructor.
-     * Overriden for configuring of PHP native session system.
+     * Dummy session storage array.
      *
-     * @return void
+     * @var array
      */
-    public function init()
-    {
-        $aConfig = $this->getConfig();
-        if ($aConfig) {
-            if (isset($aConfig['CookieHttpOnly']))
-                $this->getApplication()->trace->addLine('[%s] Using HttpOnly cookies.', __CLASS__);
-                ini_set('session.cookie_httponly', \Gveniver\Kernel\Application::toBoolean($aConfig['CookieHttpOnly']));
-
-            if (isset($aConfig['CookieDomain']))
-                $this->getApplication()->trace->addLine('[%s] Using "%s" as cookie domain.', __CLASS__, $aConfig['CookieDomain']);
-                ini_set('session.cookie_domain', $aConfig['CookieDomain']);
-        }
-
-    } // End function
+    private $_aSession = array();
+    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
-     * Starts the session.
+     * Starts the session with specified identifier.
      *
      * @return void
      */
     public function start()
     {
-        $sId = $this->getId();
-        if ($sId)
-            session_id($sId);
-        else
-            $this->setId(session_id());
-
-        session_start();
+        $this->_aSession = array();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -71,8 +52,7 @@ class NativeSessionStorage extends BaseSessionStorage
      */
     public function migrate()
     {
-        session_regenerate_id();
-        $this->setId(session_id());
+        $this->setId(md5(uniqid(rand(), true)));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -84,7 +64,7 @@ class NativeSessionStorage extends BaseSessionStorage
      */
     public function invalidate()
     {
-        session_destroy();
+        unset($this->_aSession);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -96,7 +76,7 @@ class NativeSessionStorage extends BaseSessionStorage
      */
     public function get()
     {
-        return $_SESSION;
+        return $this->_aSession;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -110,7 +90,7 @@ class NativeSessionStorage extends BaseSessionStorage
      */
     public function set(array $aSession)
     {
-        $_SESSION = $aSession;
+        $this->_aSession = $aSession;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -122,7 +102,7 @@ class NativeSessionStorage extends BaseSessionStorage
      */
     public function clean()
     {
-        $_SESSION = array();
+        $this->_aSession = array();
 
     } // End function
     //-----------------------------------------------------------------------------

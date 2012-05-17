@@ -31,37 +31,48 @@ abstract class BaseSessionStorage extends \Gveniver\BaseObject
      */
     private $_sId;
     //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
-     * Starts the session.
+     * Configuration parameters of storage.
      *
-     * @return void
-     * @abstract
+     * @var array
      */
-    public abstract function start();
+    private $_aConfig = array();
     //-----------------------------------------------------------------------------
 
     /**
-     * Migrates the current session to a new session id while maintaining all session attributes.
+     * Creates new instance of {@see \Gveniver\Session\Storage\BaseSessionStorage}.
      *
-     * @return void
-     * @abstract
+     * @param \Gveniver\Kernel\Application $cApp    Current application.
+     * @param string                       $sId     Identifier of session.
+     * @param array                        $aConfig Configuration of storage.
      */
-    public abstract function migrate();
+    public final function __construct(\Gveniver\Kernel\Application $cApp, $sId = null, array $aConfig = array())
+    {
+        parent::__construct($cApp);
+
+        $this->_sId = $sId;
+        $this->_aConfig = $aConfig;
+
+        $this->init();
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Invalidates the current session. Clears all session attributes. Migrates to new session.
+     * Getter for array with configuration parameters of storage.
      *
-     * @return void
-     * @abstract
+     * @return array
      */
-    public abstract function invalidate();
+    protected function getConfig()
+    {
+        return $this->_aConfig;
+
+    } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Gets the identifier of the session.
+     * Getter for the identifier of the session.
      *
      * @return string
      */
@@ -73,7 +84,7 @@ abstract class BaseSessionStorage extends \Gveniver\BaseObject
     //-----------------------------------------------------------------------------
 
     /**
-     * Sets the identifier of the session.
+     * Setter for the identifier of the session.
      *
      * @param string $sId Identifier of session to set.
      *
@@ -87,83 +98,69 @@ abstract class BaseSessionStorage extends \Gveniver\BaseObject
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns value of attribute with specified name.
-     * If attribute is not exist, returns default value.
-     *
-     * @param string $sName    The name of attribute for saving.
-     * @param mixed  $mDefault The default value if not found.
-     *
-     * @return mixed Value of attribute.
-     * @abstract
-     */
-    public abstract function get($sName, $mDefault = null);
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Returns all data in session.
-     *
-     * @return array
-     * @abstract
-     */
-    public abstract function getAll();
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Sets value of attribute with specified name.
-     *
-     * @param string $sName  The name of attribute for saving.
-     * @param mixed  $mValue The value of attribute for saving.
+     * Template method for initialization of provider. Is called from constructor.
+     * Should be overriden for storage configuration.
+     * By default do nothing.
      *
      * @return void
-     * @abstract
      */
-    public abstract function set($sName, $mValue);
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Checks if attribute with specified name is exists on session.
-     *
-     * @param string $sName The name of attribute.
-     *
-     * @return boolean
-     * @abstract
-     */
-    public abstract function contains($sName);
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Cleans value of attribute with specified name.
-     *
-     * @param string $sName The name of attribute for cleaning.
-     *
-     * @return mixed The cleaned value of attribute.
-     * @abstract
-     */
-    public abstract function clean($sName);
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Cleans all data in session.
-     *
-     * @return void
-     * @abstract
-     */
-    public abstract function cleanAll();
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Build path to attribute by specified name.
-     * Used for access to multydimensional data.
-     *
-     * @param string $sName Attribute name for converting to path.
-     *
-     * @return array
-     */
-    protected function getPath($sName)
+    protected function init()
     {
-        return explode(\Gveniver\Kernel\Module\SessionModule::PATH_SEPARATOR, $sName);
-
     } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Starts the session with specified identifier.
+     *
+     * @return void
+     * @abstract
+     */
+    public abstract function start();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Migrates the current session to a new session id while maintaining all session attributes.
+     *
+     * @return void
+     */
+    public abstract function migrate();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Invalidates the current session. Clears all session attributes.
+     *
+     * @return void
+     */
+    public abstract function invalidate();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Gets session data from the persistence.
+     *
+     * @return array
+     * @abstract
+     */
+    public abstract function get();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Sets session data at the persistence.
+     *
+     * @param array $aSession Data for saving.
+     *
+     * @return void
+     * @abstract
+     */
+    public abstract function set(array $aSession);
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Cleans all session data at the persistence.
+     *
+     * @return void
+     * @abstract
+     */
+    public abstract function clean();
     //-----------------------------------------------------------------------------
 
 } // End class
