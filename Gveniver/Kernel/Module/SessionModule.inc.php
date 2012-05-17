@@ -36,9 +36,9 @@ class SessionModule extends BaseModule
     /**
      * Current session storage.
      *
-     * @var \Gveniver\Session\Storage\BaseSessionStorage
+     * @var \Gveniver\Session\Session
      */
-    private $_cStorage;
+    private $_cSession;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
@@ -55,22 +55,23 @@ class SessionModule extends BaseModule
         $aConfig = $this->getApplication()->getConfig()->get('Module/SessionModule');
         if ($aConfig && isset($aConfig['StorageClass'])) {
 
-            $this->getApplication()->trace->addLine('[%s] Initialization using configuration.', __CLASS__);
-
             $aArgs = isset($aConfig['Args']) && is_array($aConfig['Args']) ? $aConfig['Args'] : array();
             $sClassName = '\\Gveniver\Session\\Storage\\'.$aConfig['StorageClass'];
+
+            $this->getApplication()->trace->addLine('[%s] Initialization using configuration (with "%s" as storage).', __CLASS__, $sClassName);
+
             if (!class_exists($sClassName) || !is_subclass_of($sClassName, '\\Gveniver\\Session\\Storage\\BaseSessionStorage')) {
                 $this->getApplication()->trace->addLine('[%s] Session storage class ("%s") is not exist or it do not extend base storage class.', __CLASS__, $sClassName);
                 $this->_initializeNativeStorage();
+            } else {
+                try {
+                    $cStorage = new $sClassName($this->getApplication(), null, $aArgs);
+                    $this->_cSession = new \Gveniver\Session\Session($cStorage);
+                } catch (\Gveniver\Exception\BaseException $cEx) {
+                    $this->getApplication()->trace->addLine('[%s] Exception in create session storage instance ("%s"): "%s".', __CLASS__, $sClassName, $cEx->getMessage());
+                    $this->_initializeNativeStorage();
+                }
             }
-
-            try {
-                $this->_cStorage = new $sClassName($this->getApplication(), $aArgs);
-            } catch (\Gveniver\Exception\BaseException $cEx) {
-                $this->getApplication()->trace->addLine('[%s] Exception in create session storage instance ("%s"): "%s".', __CLASS__, $sClassName, $cEx->getMessage());
-                $this->_initializeNativeStorage();
-            }
-
         } else
             $this->_initializeNativeStorage();
 
@@ -89,7 +90,8 @@ class SessionModule extends BaseModule
     {
         $this->getApplication()->trace->addLine('[%s] Initialization using native session storage.', __CLASS__);
 
-        $this->_cStorage = new \Gveniver\Session\Storage\NativeSessionStorage($this->getApplication());
+        $cStorage = new \Gveniver\Session\Storage\NativeSessionStorage($this->getApplication());
+        $this->_cSession = new \Gveniver\Session\Session($cStorage);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -101,7 +103,7 @@ class SessionModule extends BaseModule
      */
     public function start()
     {
-        $this->_cStorage->start();
+        $this->_cSession->start();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -113,7 +115,7 @@ class SessionModule extends BaseModule
      */
     public function migrate()
     {
-        $this->_cStorage->migrate();
+        $this->_cSession->migrate();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -125,7 +127,7 @@ class SessionModule extends BaseModule
      */
     public function invalidate()
     {
-        $this->_cStorage->invalidate();
+        $this->_cSession->invalidate();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -137,7 +139,7 @@ class SessionModule extends BaseModule
      */
     public function getId()
     {
-        $this->_cStorage->getId();
+        $this->_cSession->getId();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -151,7 +153,7 @@ class SessionModule extends BaseModule
      */
     public function setId($sId)
     {
-        $this->_cStorage->setId($sId);
+        $this->_cSession->setId($sId);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -167,7 +169,7 @@ class SessionModule extends BaseModule
      */
     public function get($mName, $mDefault = null)
     {
-        return $this->_cStorage->get($this->_buildName($mName), $mDefault);
+        return $this->_cSession->get($this->_buildName($mName), $mDefault);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -179,7 +181,7 @@ class SessionModule extends BaseModule
      */
     public function getAll()
     {
-        return $this->_cStorage->getAll();
+        return $this->_cSession->getAll();
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -194,7 +196,7 @@ class SessionModule extends BaseModule
      */
     public function set($mName, $mValue)
     {
-        $this->_cStorage->set($this->_buildName($mName), $mValue);
+        $this->_cSession->set($this->_buildName($mName), $mValue);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -208,7 +210,7 @@ class SessionModule extends BaseModule
      */
     public function contains($mName)
     {
-        return $this->_cStorage->contains($this->_buildName($mName));
+        return $this->_cSession->contains($this->_buildName($mName));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -222,7 +224,7 @@ class SessionModule extends BaseModule
      */
     public function clean($mName)
     {
-        return $this->_cStorage->clean($this->_buildName($mName));
+        return $this->_cSession->clean($this->_buildName($mName));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -234,7 +236,7 @@ class SessionModule extends BaseModule
      */
     public function cleanAll()
     {
-        $this->_cStorage->cleanAll();
+        $this->_cSession->cleanAll();
 
     } // End function
     //-----------------------------------------------------------------------------
