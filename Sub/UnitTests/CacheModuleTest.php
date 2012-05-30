@@ -142,8 +142,8 @@ class CacheModuleTest extends PHPUnit_Framework_TestCase
 
             // Checking saving of data.
             $this->assertTrue($cApp->cache->set('value1', 'defined_key1', array('tag1', 'tag2')), $sDescription);
-            $this->assertTrue($cApp->cache->set('value2', 'defined_key2', array('tag1')), $sDescription);
-            $this->assertTrue($cApp->cache->set('value3', 'defined_key3', array('tag2')), $sDescription);
+            $this->assertTrue($cApp->cache->set('value2', 'defined_key2', 'tag1'), $sDescription);
+            $this->assertTrue($cApp->cache->set('value3', 'defined_key3', 'tag2'), $sDescription);
             $this->assertTrue($cApp->cache->set('value4', 'defined_key4', array('tag3'), 1), $sDescription);
 
             // Checking loading of data.
@@ -160,7 +160,7 @@ class CacheModuleTest extends PHPUnit_Framework_TestCase
             $this->assertNull($cApp->cache->get('defined_key2'), $sDescription);
             $this->assertNotNull($cApp->cache->get('defined_key3'), $sDescription);
 
-            $this->assertTrue($cApp->cache->cleanByTags(array('tag2')), $sDescription);
+            $this->assertTrue($cApp->cache->cleanByTags('tag2'), $sDescription);
             $this->assertNull($cApp->cache->get('defined_key2'), $sDescription);
             $this->assertNull($cApp->cache->get('defined_key3'), $sDescription);
 

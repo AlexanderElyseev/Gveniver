@@ -296,21 +296,27 @@ class CacheModule extends BaseModule
     /**
      * Method saves data to the cache.
      *
-     * @param mixed  $mData    Data to save.
-     * @param string $sCacheId Identifier of cache.
-     * @param array  $aTags    List of tags for this cache.
-     * @param int    $nTtl     Time to live for cache.
+     * @param mixed        $mData    Data to save.
+     * @param string       $sCacheId Identifier of cache.
+     * @param array|string $mTags    List of tags for this cache.
+     * @param int          $nTtl     Time to live for cache.
      *
-     * @throws \Gveniver\Exception\BaseException Throws exception if cache provider is not found.
+     * @throws \Gveniver\Exception\BaseException     Throws if cache provider is not found.
+     * @throws \Gveniver\Exception\ArgumentException Throws if tag parameter has wrong type.
      * @return boolean True on success.
      */
-    public function set($mData, $sCacheId, array $aTags = array(), $nTtl = self::DEFAULT_TTL)
+    public function set($mData, $sCacheId, $mTags, $nTtl = self::DEFAULT_TTL)
     {
         $cProvider = $this->getProvider();
         if (!$cProvider)
             throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
 
-        return $cProvider->set($mData, $sCacheId, $aTags, $nTtl);
+        if (is_string($mTags))
+            $mTags = array($mTags);
+        elseif (!is_array($mTags))
+            throw new \Gveniver\Exception\ArgumentException('Tags can be string or array of strings only.');
+
+        return $cProvider->set($mData, $sCacheId, $mTags, $nTtl);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -320,7 +326,7 @@ class CacheModule extends BaseModule
      *
      * @param string $sCacheId Identifier of cache for cleaning.
      *
-     * @throws \Gveniver\Exception\BaseException Throws exception if cache provider is not found.
+     * @throws \Gveniver\Exception\BaseException Throws if cache provider is not found.
      * @return boolean True on success.
      */
     public function clean($sCacheId)
@@ -337,18 +343,24 @@ class CacheModule extends BaseModule
     /**
      * Method cleans cached data by specified tags.
      *
-     * @param array $aTags List of tags for cleaning cache.
+     * @param array|string $mTags List of tags for cleaning cache.
      *
-     * @throws \Gveniver\Exception\BaseException Throws exception if cache provider is not found.
+     * @throws \Gveniver\Exception\BaseException     Throws if cache provider is not found.
+     * @throws \Gveniver\Exception\ArgumentException Throws if tag parameter has wrong type.
      * @return boolean True on success.
      */
-    public function cleanByTags(array $aTags)
+    public function cleanByTags($mTags)
     {
         $cProvider = $this->getProvider();
         if (!$cProvider)
             throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
 
-        return $cProvider->cleanByTags($aTags);
+        if (is_string($mTags))
+            $mTags = array($mTags);
+        elseif (!is_array($mTags))
+            throw new \Gveniver\Exception\ArgumentException('Tags can be string or array of strings only.');
+
+        return $cProvider->cleanByTags($mTags);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -356,7 +368,7 @@ class CacheModule extends BaseModule
     /**
      * Method cleans all cache data.
      *
-     * @throws \Gveniver\Exception\BaseException Throws exception if cache provider is not found.
+     * @throws \Gveniver\Exception\BaseException Throws if cache provider is not found.
      * @return boolean True on success.
      */
     public function cleanAll()
