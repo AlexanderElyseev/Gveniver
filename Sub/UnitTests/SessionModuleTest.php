@@ -42,7 +42,7 @@ class SessionModuleTest extends PHPUnit_Framework_TestCase
     //-----------------------------------------------------------------------------
 
     /**
-     * Initializes instance.
+     * Initializes class instance.
      * Creates specific applications for tests.
      */
     public function __construct()
@@ -74,8 +74,10 @@ class SessionModuleTest extends PHPUnit_Framework_TestCase
      */
     public function testInit()
     {
-        foreach ($this->_getApplicationList() as $sDescription => $cApp)
+        foreach ($this->_getApplicationList() as $sDescription => $cApp) {
+            $this->assertNotNull($cApp, $sDescription);
             $this->assertNotNull($cApp->session, $sDescription);
+        }
 
     } // End function
     //-----------------------------------------------------------------------------

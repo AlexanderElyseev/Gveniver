@@ -27,12 +27,12 @@ class MemcachedCacheProvider extends BaseCacheProvider
     /**
      * Memcached instance.
      * 
-     * @var \Memcached
+     * @var \Memcache|\Memcached
      */
     private $_cMemcache;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
-    
+
     /**
      * Class constructor.
      *
@@ -46,22 +46,31 @@ class MemcachedCacheProvider extends BaseCacheProvider
         parent::__construct($cApplication, $aOptions);
 
         // Checking for Mecached PHP extension.
-        if (!class_exists('\\Memcache'))
-            throw new \Gveniver\Exception\BaseException('Memcache PHP extension is not loaded.');
-
-        $this->_cMemcache = new \Memcache();
+        if (class_exists('\\Memcached'))
+            $this->_cMemcache = new \Memcached();
+        elseif (class_exists('\\Memcache'))
+            $this->_cMemcache = new \Memcache();
+        else
+            throw new \Gveniver\Exception\BaseException('Memcache(d) PHP extension is not loaded.');
 
         // Adding  servers.
-        if (!isset($this->aOptions['Servers']))
-            throw new \Gveniver\Exception\BaseException('Memcache servers are not loaded.');
+        if (!isset($aOptions['Servers']) || !is_array($aOptions['Servers'])) {
+            $this->getApplication()->trace->addLine('[%s] Using local memcached server.', __CLASS__);
+            $this->_cMemcache->addServer('localhost');
+        } else {
+            foreach ($aOptions['Servers'] as $aServerData) {
+                $sServerHost = isset($aServerData['Host']) ? $aServerData['Host'] : null;
+                if (!$sServerHost)
+                    continue;
 
-        foreach ($this->aOptions['Servers'] as $aServerData) {
-            $sServerHost = isset($aServerData['Host']) ? $aServerData['Host'] : null;
-            if (!$sServerHost)
-                continue;
+                if (isset($aServerData['Port']) && $aServerData['Port'])
+                    $this->_cMemcache->addServer($sServerHost, $aServerData['Port']);
+                else
+                    $this->_cMemcache->addServer($sServerHost);
 
-            $this->_cMemcache->addServer($sServerHost);
-        }
+            } // End foreach
+
+        } // End else
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -69,7 +78,7 @@ class MemcachedCacheProvider extends BaseCacheProvider
     /**
      * Class destructor.
      *
-     * Closing Memcached connection.
+     * Closes connection with memcached.
      */
     public function __destruct()
     {
@@ -80,29 +89,15 @@ class MemcachedCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified parameters.
+     * Method cleans cached data by identifier.
      *
-     * @param string $sNamespace Namespace of cache.
-     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
-     * Otherwise, clean all namespace.
+     * @param string $sCacheId The identifier of cached data.
      *
      * @return boolean True on success.
      */
-    public function clean($sNamespace, $sCacheId = null)
+    public function clean($sCacheId)
     {
-        if ($sCacheId)
-            return $this->_cMemcache->delete($this->_getDataCacheId($sCacheId, $sNamespace));
-
-        $sNamespaceCacheId = $this->_getNamespaceMetaCacheId($sNamespace);
-        $aMeta = $this->_cMemcache->get($sNamespaceCacheId);
-        if (!is_array($aMeta))
-            return true;
-
-        $bResult = $this->_cMemcache->delete($sNamespaceCacheId);
-        foreach ($aMeta as $sDataCacheId)
-            $bResult = $bResult && $this->_cMemcache->delete($sDataCacheId);
-
-        return $bResult;
+        return $this->_cMemcache->delete($this->_getDataCacheId($sCacheId));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -120,127 +115,95 @@ class MemcachedCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified tags.
+     * Method cleans cached data by specified tags.
      *
      * @param array $aTags List of tags for cleaning.
      *
-     * @throws \Gveniver\Exception\NotImplementedException
      * @return boolean True on success.
      */
     public function cleanByTags(array $aTags)
     {
-        $bResult = true;
-        foreach ($aTags as $sTag) {
-            $sTagCacheId = $this->_getTagMetaCacheId($sTag);
-            $aMeta = $this->_cMemcache->get($sTagCacheId);
-            if (!is_array($aMeta))
-                continue;
+       foreach ($aTags as $sTag)
+           $this->_invalidateTag($this->_getTagCacheId($sTag));
 
-            $bResult = $bResult && $this->_cMemcache->delete($sTagCacheId);
-            foreach ($aMeta as $sDataCacheId)
-                $bResult = $bResult && $this->_cMemcache->delete($sDataCacheId);
-        }
-
-        return $bResult;
+        return true;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Load data form cache.
+     * Method loads cached data by identifier.
      *
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param mixed  &$cRef      Reference variable for loading cached data.
+     * @param string $sCacheId The identifier of cached data.
+     * @param mixed  &$cRef    Reference variable for loading cached data.
      *
-     * @return boolean True on success loading
+     * @return boolean True on success loading.
      */
-    public function get($sCacheId, $sNamespace, &$cRef)
+    public function get($sCacheId, &$cRef)
     {
-        $mData = $this->_cMemcache->get($this->_getDataCacheId($sCacheId, $sNamespace));
-        $bResult = $mData !== false;
-        if ($bResult)
-            $cRef = $mData;
+        // Loading cached data and checking structure.
+        $aCacheData = $this->_cMemcache->get($this->_getDataCacheId($sCacheId));
+        if (!is_array($aCacheData)
+            || !isset($aCacheData['value'])
+            || !isset($aCacheData['tags'])
+            || !isset($aCacheData['ttl'])
+        )
+            return false;
 
-        return $bResult;
+        // Checking if cached data is alive.
+        if (GV_TIME_NOW > $aCacheData['ttl'])
+            return false;
+
+        // Checking if all tags of cached data is alive.
+        foreach ($aCacheData['tags'] as $sTag => $fVersion)
+            if ($this->_getTagVersion($this->_getTagCacheId($sTag)) > $fVersion)
+                return false;
+
+        $cRef = $aCacheData['value'];
+        return true;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Save data to cache.
+     * Method saves data to the cache.
      *
-     * @param mixed  $mData      Data to save.
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param array  $aTags      List of tags for this cache record.
-     * @param int    $nTtl       Time to live for cache.
+     * @param mixed  $mData    Data for caching.
+     * @param string $sCacheId The identifier of cached data.
+     * @param array  $aTags    List of tags for this cache record.
+     * @param int    $nTtl     Time to live for cache in seconds.
      *
      * @return boolean True on success.
      */
-    public function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl)
+    public function set($mData, $sCacheId, array $aTags, $nTtl)
     {
-        $sDataCacheId = $this->_getDataCacheId($sCacheId, $sNamespace);
+        // Building data of tags.
+        $aTagData = array();
+        foreach ($aTags as $sTag)
+            $aTagData[$sTag] = $this->_getTagVersion($this->_getTagCacheId($sTag));
 
-        // Update group content.
-        $sMetaCacheId = $this->_getNamespaceMetaCacheId($sNamespace);
-        $aMeta = $this->_cMemcache->get($sMetaCacheId);
-        if (!is_array($aMeta)) {
-            $aMeta = array($sDataCacheId);
-            $this->_cMemcache->set($sMetaCacheId, $aMeta);
-        } elseif (!in_array($sDataCacheId, $aMeta)) {
-            $aMeta[] = $sDataCacheId;
-            $this->_cMemcache->replace($sMetaCacheId, $aMeta);
-        }
-        
-        // Update tag content.
-        foreach ($aTags as $sTag) {
-            $sTagCacheId = $this->_getTagMetaCacheId($sTag);
-            $aTag = $this->_cMemcache->get($sTagCacheId);
-            if (!is_array($aTag)) {
-                $aTag = array($sDataCacheId);
-                $this->_cMemcache->set($sTagCacheId, $aTag);
-            } elseif (!in_array($sDataCacheId, $aTag)) {
-                $aTag[] = $sDataCacheId;
-                $this->_cMemcache->replace($sTagCacheId, $aTag);
-            }
-        }
-        
-        // Save data with memcache.
-        $bResult = $this->_cMemcache->replace($sDataCacheId, $mData, 0, $nTtl);
-        if (!$bResult)
-            $bResult = $this->_cMemcache->set($sDataCacheId, $mData, 0, $nTtl);
+        // Building data for caching.
+        $aCacheData = array(
+            'value' => $mData,
+            'tags'  => $aTagData,
+            'ttl'   => time() + $nTtl
+        );
 
-        return $bResult;
-        
+        return $this->_cMemcache->set($this->_getDataCacheId($sCacheId), $aCacheData, 0, $nTtl);
+
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
      * Build data cache identifier.
      *
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
+     * @param string $sCacheId The identifier of cached data.
      *
      * @return string
      */
-    private function _getDataCacheId($sCacheId, $sNamespace)
+    private function _getDataCacheId($sCacheId)
     {
-        return 'data_'.md5($sNamespace).'_'.md5($sCacheId);
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Method builds identifier of record with metadata of specified cache namespace.
-     *
-     * @param string $sNamespace Identifier of cache group.
-     *
-     * @return string
-     */
-    private function _getNamespaceMetaCacheId($sNamespace)
-    {
-        return 'ns_'.md5($sNamespace);
+        return 'data_'.md5($sCacheId);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -248,13 +211,47 @@ class MemcachedCacheProvider extends BaseCacheProvider
     /**
      * Method builds identifier of record with metadata of specified cache tag.
      *
-     * @param string $sTag Identifier of cache group.
+     * @param string $sTag Name of tag.
      *
      * @return string
      */
-    private function _getTagMetaCacheId($sTag)
+    private function _getTagCacheId($sTag)
     {
         return 'tag_'.md5($sTag);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Returns version of specified tag. If tag is not exists in cache, it will be created.
+     *
+     * @param string $sTagCacheId Identifier of cache for tag metadata.
+     *
+     * @return float
+     */
+    private function _getTagVersion($sTagCacheId)
+    {
+        $mVersion = $this->_cMemcache->get($sTagCacheId);
+        if (!$mVersion)
+            return $this->_invalidateTag($sTagCacheId);
+
+        return floatval($mVersion);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Increase version of tag. This operation automatically invalidates all data that are related to the tag.
+     *
+     * @param string $sTagCacheId Identifier of cache for tag metadata.
+     *
+     * @return float New version of tag.
+     */
+    private function _invalidateTag($sTagCacheId)
+    {
+        $fVersion = round(microtime(true), 3);
+        $this->_cMemcache->set($sTagCacheId, $fVersion);
+        return $fVersion;
 
     } // End function
     //-----------------------------------------------------------------------------

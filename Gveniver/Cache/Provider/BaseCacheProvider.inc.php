@@ -23,25 +23,8 @@ namespace Gveniver\Cache\Provider;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseCacheProvider
+abstract class BaseCacheProvider extends \Gveniver\BaseObject
 {
-    /**
-     * Current application.
-     *
-     * @var \Gveniver\Kernel\Application
-     */
-    private $_cApplication;
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Array of options for cache provider.
-     *
-     * @var array
-     */
-    protected $aOptions;
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
-
     /**
      * Base constructor.
      * Initialize member fields.
@@ -51,67 +34,50 @@ abstract class BaseCacheProvider
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {
-        $this->_cApplication = $cApplication;
-        $this->aOptions = $aOptions;
+        parent::__construct($cApplication);
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Getter for current application.
+     * Method loads cached data by identifier.
      *
-     * @return \Gveniver\Kernel\Application
-     */
-    public function getApplication()
-    {
-        return $this->_cApplication;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Load data form cache.
+     * @param string $sCacheId The identifier of cached data.
+     * @param mixed  &$cRef    Reference variable for loading cached data.
      *
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param mixed  &$cRef      Reference variable for loading cached data.
-     *
-     * @return boolean True on success loading
+     * @return boolean True on success loading.
      * @abstract
      */
-    public abstract function get($sCacheId, $sNamespace, &$cRef);
+    public abstract function get($sCacheId, &$cRef);
     //-----------------------------------------------------------------------------
 
     /**
-     * Save data to cache.
+     * Method saves data to the cache.
      *
-     * @param mixed  $mData      Data to save.
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param array  $aTags      List of tags for this cache record.
-     * @param int    $nTtl       Time to live for cache.
+     * @param mixed  $mData    Data for caching.
+     * @param string $sCacheId The identifier of cached data.
+     * @param array  $aTags    List of tags for this cache record.
+     * @param int    $nTtl     Time to live for cache in seconds.
      * 
      * @return boolean True on success.
      * @abstract
      */
-    public abstract function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl);
+    public abstract function set($mData, $sCacheId, array $aTags, $nTtl);
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified parameters.
+     * Method cleans cached data by identifier.
      *
-     * @param string $sNamespace Namespace of cache.
-     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
-     * Otherwise, clean all namespace.
+     * @param string $sCacheId Identifier of cache for cleaning.
      *
      * @return boolean True on success.
      * @abstract
      */
-    public abstract function clean($sNamespace, $sCacheId = null);
+    public abstract function clean($sCacheId);
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified tags.
+     * Method cleans cached data by specified tags.
      *
      * @param array $aTags List of tags for cleaning.
      *
@@ -122,7 +88,7 @@ abstract class BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans all cache data.
+     * Method cleans all cached data.
      *
      * @return boolean True on success.
      * @abstract
