@@ -144,14 +144,14 @@ class MemcachedCacheProvider extends BaseCacheProvider
         // Loading cached data and checking structure.
         $aCacheData = $this->_cMemcache->get($this->_getDataCacheId($sCacheId));
         if (!is_array($aCacheData)
-            || !isset($aCacheData['value'])
-            || !isset($aCacheData['tags'])
-            || !isset($aCacheData['ttl'])
+            || !array_key_exists('value', $aCacheData)
+            || !array_key_exists('tags', $aCacheData)
+            || !array_key_exists('ttl', $aCacheData)
         )
             return false;
 
         // Checking if cached data is alive.
-        if (GV_TIME_NOW > $aCacheData['ttl'])
+        if ($aCacheData['ttl'] && GV_TIME_NOW > $aCacheData['ttl'])
             return false;
 
         // Checking if all tags of cached data is alive.
@@ -186,7 +186,7 @@ class MemcachedCacheProvider extends BaseCacheProvider
         $aCacheData = array(
             'value' => $mData,
             'tags'  => $aTagData,
-            'ttl'   => time() + $nTtl
+            'ttl'   => $nTtl ? time() + $nTtl : null
         );
 
         return $this->_cMemcache->set($this->_getDataCacheId($sCacheId), $aCacheData, 0, $nTtl);

@@ -212,14 +212,14 @@ class FileCacheProvider extends BaseCacheProvider
         }
 
         if (!is_array($aCacheData)
-            || !isset($aCacheData['value'])
-            || !isset($aCacheData['tags'])
-            || !isset($aCacheData['alive'])
+            || !array_key_exists('value', $aCacheData)
+            || !array_key_exists('tags', $aCacheData)
+            || !array_key_exists('alive', $aCacheData)
         )
             return false;
 
         // Checking if cache is alive.
-        if (time() > $aCacheData['alive'])
+        if ($aCacheData['alive'] && time() > $aCacheData['alive'])
             return false;
 
         // Checking if tags is alive.
@@ -257,7 +257,7 @@ class FileCacheProvider extends BaseCacheProvider
         $aCacheData = array(
             'value' => $mData,
             'tags'  => $aTagData,
-            'alive' => time() + $nTtl
+            'alive' => $nTtl ? time() + $nTtl : null
         );
 
         // Try to serialize data for saving.

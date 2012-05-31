@@ -53,7 +53,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
     {
         // Try to load from memory.
         if (array_key_exists($sCacheId, $this->_aMemoryData)) {
-            if (time() <= $this->_aMemoryData[$sCacheId][1]) {
+            if ($this->_aMemoryData[$sCacheId][1] && time() <= $this->_aMemoryData[$sCacheId][1]) {
                 $cRef = $this->_aMemoryData[$sCacheId][0];
                 return true;
             }
@@ -65,7 +65,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
 
         // Save to memory on success loading.
         if ($bResult)
-            $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, time() + 10);
+            $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, null);
 
         // Return result.
         if ($bResult)
@@ -89,7 +89,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
     public function set($mData, $sCacheId, array $aTags, $nTtl)
     {
         // Save data to memory.
-        $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, time() + $nTtl);
+        $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, $nTtl ? time() + $nTtl : null);
 
         // Save tag meta information.
         foreach ($aTags as $sTag) {
