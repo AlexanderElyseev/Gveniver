@@ -65,7 +65,7 @@ class FileMemoryCacheProvider extends FileCacheProvider
 
         // Save to memory on success loading.
         if ($bResult)
-            $this->_aMemoryData[$sCacheId] = is_object($mData) ? clone $mData : $mData;
+            $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, time() + 10);
 
         // Return result.
         if ($bResult)

@@ -280,7 +280,7 @@ class CacheModule extends BaseModule
         $mData = null;
         $bResult = $cProvider->get($sCacheId, $mData);
 
-        $bByRef = func_num_args() == 3;
+        $bByRef = func_num_args() == 2;
         if ($bByRef) {
             if ($bResult)
                 $cRef = $mData;
