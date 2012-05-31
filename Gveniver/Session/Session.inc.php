@@ -1,7 +1,27 @@
 <?php
+/**
+ * File contains class of session.
+ *
+ * @category  Gveniver
+ * @package   Session
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
 namespace Gveniver\Session;
 
+/**
+ * Class of session.
+ *
+ * @category  Gveniver
+ * @package   Session
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 class Session extends \Gveniver\BaseObject
 {
     /**

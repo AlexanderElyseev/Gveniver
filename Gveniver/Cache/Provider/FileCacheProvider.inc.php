@@ -188,80 +188,81 @@ class FileCacheProvider extends BaseCacheProvider
     //--------------------------------------------------------------------------------
 
     /**
-     * Load data form cache.
+     * Method loads cached data by identifier.
      *
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param mixed  &$cRef      Reference variable for loading cached data.
+     * @param string $sCacheId The identifier of cached data.
+     * @param mixed  &$cRef    Reference variable for loading cached data.
      *
-     * @return boolean True on success loading
+     * @return boolean True on success loading.
      */
-    public function get($sCacheId, $sNamespace, &$cRef)
+    public function get($sCacheId, &$cRef)
     {
-        // Build cache file name with namespace.
-        $sNamespaceDir = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sNamespace, false);
-        $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId, false);
-
+        // Building cache file name and checking for existence.
+        $sDataFileName = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sCacheId, false);
         $bFileExist = file_exists($sDataFileName);
         $bFileIsDir = is_dir($sDataFileName);
         if (!$bFileExist || $bFileIsDir)
             return false;
 
-        // Open and block cache file for reading.
-        $file = fopen($sDataFileName, 'r');
-        flock($file, LOCK_SH);
-
-        // TTL.
-        $aTemp = unpack('L', fread($file, 4));
-        $nTtl = $aTemp[1];
-
-        // Length.
-        $aTemp = unpack('L', fread($file, 4));
-        $nSize = $aTemp[1];
-
-        // Data.
-        if ($nSize > 0) {
-            $aTemp = unpack('a*', fread($file, $nSize));
-            $mData = $aTemp[1];
-        } else {
+        // Loading cached data and checking structure.
+        try {
+            $aCacheData = unserialize(file_get_contents($sDataFileName));
+        } catch (\Exception $cEx) {
             return false;
         }
 
-        // Unlock and close file.
-        flock($file, LOCK_UN);
-        fclose($file);
-
-        // Undefined (or zero) TTL means that cache should live forever.
-        if ($nTtl && $nTtl < GV_TIME_NOW)
+        if (!is_array($aCacheData)
+            || !array_key_exists('value', $aCacheData)
+            || !array_key_exists('tags', $aCacheData)
+            || !array_key_exists('alive', $aCacheData)
+        )
             return false;
 
-        $cRef = unserialize($mData);
+        // Checking if cache is alive.
+        if ($aCacheData['alive'] && time() > $aCacheData['alive'])
+            return false;
+
+        // Checking if tags is alive.
+        foreach ($aCacheData['tags'] as $sTag => $fVersion)
+            if ($this->_getTagVersion($this->_getTagCacheId($sTag)) > $fVersion)
+                return false;
+
+        $cRef = $aCacheData['value'];
         return true;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Save data to cache.
+     * Method saves data to the cache.
      *
-     * @param mixed  $mData      Data to save.
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param array  $aTags      List of tags for this cache record.
-     * @param int    $nTtl       Time to live for cache.
+     * @param mixed  $mData    Data for caching.
+     * @param string $sCacheId The identifier of cached data.
+     * @param array  $aTags    List of tags for this cache record.
+     * @param int    $nTtl     Time to live for cache in seconds.
      *
      * @return boolean True on success.
      */
-    public function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl)
+    public function set($mData, $sCacheId, array $aTags, $nTtl)
     {
-        // Building path to cache data file and cache tag file with subdirectories.
-        $sNamespaceDir = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sNamespace);
-        $this->_createDirectory($sNamespaceDir);
-        $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId);
+        // Building path to cache data file.
+        $sDataFileName = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sCacheId, true);
+
+        // Building data of tags.
+        $aTagData = array();
+        foreach ($aTags as $sTag)
+            $aTagData[$sTag] = $this->_getTagVersion($this->_getTagCacheId($sTag));
+
+        // Building data for caching.
+        $aCacheData = array(
+            'value' => $mData,
+            'tags'  => $aTagData,
+            'alive' => $nTtl ? time() + $nTtl : null
+        );
 
         // Try to serialize data for saving.
         try {
-            $sData = serialize($mData);
+            $sData = serialize($aCacheData);
         } catch (\Exception $cEx) {
             return false;
         }
@@ -279,9 +280,7 @@ class FileCacheProvider extends BaseCacheProvider
         }
 
         // Writing data.
-        fwrite($fData, pack('L',  GV_TIME_NOW + $nTtl));    // TTL.
-        fwrite($fData, pack('L', strlen($sData)));          // Length.
-        fwrite($fData, pack('a*', $sData));                 // Data.
+        fwrite($fData, $sData);
 
         // Changing permissions and ulocking
         chmod($sDataFileName, $this->_nFileMode);
@@ -289,36 +288,25 @@ class FileCacheProvider extends BaseCacheProvider
         fclose($fData);
         umask($nOldUmask);
 
-        // Updating tags.
-        foreach ($aTags as $sTag)
-            $this->_appendTag($sTag, $sDataFileName);
-
         return true;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified parameters.
+     * Method cleans cached data by identifier.
      *
-     * @param string $sNamespace Namespace of cache.
-     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
-     * Otherwise, clean all namespace.
+     * @param string $sCacheId The identifier of cached data.
      *
      * @return boolean True on success.
      */
-    public function clean($sNamespace, $sCacheId = null)
+    public function clean($sCacheId)
     {
-        $sNamespaceDir = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sNamespace, false);
-        if ($sCacheId) {
-            $sDataFileName = $this->_createDirectoryTree($sNamespaceDir, $sCacheId, false);
-            if (file_exists($sDataFileName))
-                unlink($sDataFileName);
-        } else {
-            \Gveniver\rrmdir($sNamespaceDir);
-        }
+        $sDataFileName = $this->_createDirectoryTree($this->_sBaseCacheDataDirectory, $sCacheId, false);
+        if (!file_exists($sDataFileName))
+            return false;
 
-        return true;
+        return unlink($sDataFileName);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -336,12 +324,13 @@ class FileCacheProvider extends BaseCacheProvider
 
         // Rebbuilding directory structure.
         $this->_initDirectories();
+        return true;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified tags.
+     * Method cleans cached data by specified tags.
      *
      * Removes related cache data files and content of cache tag file.
      * Atomic operation with locking tag file for reading.
@@ -353,39 +342,8 @@ class FileCacheProvider extends BaseCacheProvider
      */
     public function cleanByTags(array $aTags)
     {
-        foreach ($aTags as $sTag) {
-            $sTagFileName = $this->_createDirectoryTree($this->_sBaseCacheTagsDirectory, $sTag, false);
-            if (!file_exists($sTagFileName))
-                return array();
-
-            $hTagFile = fopen($sTagFileName, 'w+');
-            if (!$hTagFile) {
-                $this->getApplication()->trace->addLine('[%s] Error in opening tag file "%s" for reading.', __CLASS__, $sTagFileName);
-                return false;
-            }
-            if (!flock($hTagFile, LOCK_SH)) {
-                $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of tag file "%s".', __CLASS__, $sTagFileName);
-                return false;
-            }
-            $nFileSize = filesize($sTagFileName);
-            if ($nFileSize > 0) {
-                $aKeys = unserialize(fread($hTagFile, $nFileSize));
-                if (!is_array($aKeys)) {
-                    $sMessage = sprintf('[%s] Wrong tag content.', __CLASS__);
-                    $this->getApplication()->trace->addLine($sMessage);
-                    throw new \Gveniver\Exception\BaseException($sMessage);
-                }
-            } else
-                $aKeys = array();
-
-            ftruncate($hTagFile, 0);
-            flock($hTagFile, LOCK_UN);
-            fclose($hTagFile);
-
-            foreach ($aKeys as $sDataFileName)
-                if (file_exists($sDataFileName))
-                    unlink($sDataFileName);
-        }
+       foreach ($aTags as $sTag)
+           $this->_invalidateTag($this->_getTagCacheId($sTag));
 
         return true;
 
@@ -393,57 +351,57 @@ class FileCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method adds the name of data file to specified tag.
-     * Atomic operation with locking tag file for writing.
+     * Method builds identifier of record with metadata of specified cache tag.
      *
-     * @param string $sTag          The name of tag for adding data file.
-     * @param string $sDataFileName The name of data file for adding to tag.
+     * @param string $sTag Name of tag.
      *
-     * @throws \Gveniver\Exception\BaseException Throws if data of tag file is wrong.
-     *
-     * @return bool
+     * @return string
      */
-    private function _appendTag($sTag, $sDataFileName)
+    private function _getTagCacheId($sTag)
     {
-        $oldUmask = umask(0);
-        $sTagFileName = $this->_createDirectoryTree($this->_sBaseCacheTagsDirectory, $sTag);
-        $hTagFile = fopen($sTagFileName, 'a+');
-        if (!$hTagFile) {
-            $this->getApplication()->trace->addLine('[%s] Error in opening tag file "%s" for writing.', __CLASS__, $sTagFileName);
-            return false;
-        }
-        if (!flock($hTagFile, LOCK_EX)) {
-            $this->getApplication()->trace->addLine('[%s] Error in exclusive locking of tag file "%s".', __CLASS__, $sTagFileName);
-            return false;
-        }
-
-        $nFileSize = filesize($sTagFileName);
-        if ($nFileSize > 0) {
-            $aKeys = unserialize(fread($hTagFile, $nFileSize));
-            if (!is_array($aKeys)) {
-                $sMessage = sprintf('[%s] Wrong tag content.', __CLASS__);
-                $this->getApplication()->trace->addLine($sMessage);
-                throw new \Gveniver\Exception\BaseException($sMessage);
-            }
-
-            if (!in_array($sDataFileName, $aKeys))
-                $aKeys[] = $sDataFileName;
-        } else
-            $aKeys = array($sDataFileName);
-
-
-        // Writing data, changing permissions and ulocking.
-        fseek($hTagFile, 0);
-        fwrite($hTagFile, serialize($aKeys));
-        chmod($sTagFileName, $this->_nFileMode);
-        flock($hTagFile, LOCK_UN);
-        fclose($hTagFile);
-        umask($oldUmask);
-
-        return true;
+        return 'tag_'.md5($sTag);
 
     } // End function
-    //--------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Returns version of specified tag. If tag is not exists in cache, it will be created.
+     *
+     * @param string $sTag The name of the tag.
+     *
+     * @return float
+     */
+    private function _getTagVersion($sTag)
+    {
+        $sTagFileName = $this->_createDirectoryTree($this->_sBaseCacheTagsDirectory, $sTag, false);
+        if (file_exists($sTagFileName)) {
+            $mVersion = file_get_contents($sTagFileName);
+            if ($mVersion && !is_double($mVersion))
+                return floatval($mVersion);
+        }
+
+        return $this->_invalidateTag($sTag);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Increase version of tag. This operation automatically invalidates all data that are related to the tag.
+     *
+     * @param string $sTag The name of the tag.
+     *
+     * @return float New version of tag.
+     */
+    private function _invalidateTag($sTag)
+    {
+        $fVersion = round(microtime(true), 3);
+        $sTagFileName = $this->_createDirectoryTree($this->_sBaseCacheTagsDirectory, $sTag, true);
+        file_put_contents($sTagFileName, $fVersion, LOCK_EX);
+        return $fVersion;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
 
 } // End class
 //-----------------------------------------------------------------------------

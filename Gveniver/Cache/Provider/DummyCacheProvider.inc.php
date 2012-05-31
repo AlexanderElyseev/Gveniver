@@ -25,15 +25,14 @@ namespace Gveniver\Cache\Provider;
 class DummyCacheProvider extends BaseCacheProvider
 {
     /**
-     * Load data form cache.
+     * Method loads data form cache.
      *
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param mixed  &$cRef      Reference variable for loading cached data.
+     * @param string $sCacheId The identifier of cached data.
+     * @param mixed  &$cRef    Reference variable for loading cached data.
      *
-     * @return boolean True on success loading
+     * @return boolean True on success loading.
      */
-    public function get($sCacheId, $sNamespace, &$cRef)
+    public function get($sCacheId, &$cRef)
     {
         return false;
 
@@ -41,17 +40,16 @@ class DummyCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Save data to cache.
+     * Method saves data to cache.
      *
-     * @param mixed  $mData      Data to save.
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param array  $aTags      List of tags for this cache record.
-     * @param int    $nTtl       Time to live for cache.
+     * @param mixed  $mData    Data for caching.
+     * @param string $sCacheId The identifier of cached data.
+     * @param array  $aTags    List of tags for this cache record.
+     * @param int    $nTtl     Time to live for cache.
      *
      * @return boolean True on success.
      */
-    public function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl)
+    public function set($mData, $sCacheId, array $aTags, $nTtl)
     {
         return false;
 
@@ -59,15 +57,13 @@ class DummyCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified parameters.
+     * Method cleans cached data by identifier.
      *
-     * @param string $sNamespace Namespace of cache.
-     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
-     *                           Otherwise, clean all namespace.
+     * @param string $sCacheId The identifier of cached data.
      *
      * @return boolean True on success.
      */
-    public function clean($sNamespace, $sCacheId = null)
+    public function clean($sCacheId)
     {
         return false;
 
@@ -75,7 +71,7 @@ class DummyCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans all cache data.
+     * Method cleans all cached data.
      *
      * @return boolean True on success.
      */
@@ -87,7 +83,7 @@ class DummyCacheProvider extends BaseCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified tags.
+     * Method cleans cached data by specified tags.
      *
      * @param array $aTags List of tags for cleaning.
      *
