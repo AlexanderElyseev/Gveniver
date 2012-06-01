@@ -42,31 +42,30 @@ class FileMemoryCacheProvider extends FileCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Load data form cache.
+     * Method loads cached data by identifier.
      *
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param mixed  &$cRef      Reference variable for loading cached data.
+     * @param string $sCacheId The identifier of cached data.
+     * @param mixed  &$cRef    Reference variable for loading cached data.
      *
-     * @return boolean True on success loading
+     * @return boolean True on success loading.
      */
-    public function get($sCacheId, $sNamespace, &$cRef)
+    public function get($sCacheId, &$cRef)
     {
         // Try to load from memory.
-        if (array_key_exists($sNamespace, $this->_aMemoryData) && is_array($this->_aMemoryData[$sNamespace])) {
-            if (array_key_exists($sCacheId, $this->_aMemoryData[$sNamespace])) {
-                $cRef = $this->_aMemoryData[$sNamespace][$sCacheId];
+        if (array_key_exists($sCacheId, $this->_aMemoryData)) {
+            if ($this->_aMemoryData[$sCacheId][1] && time() <= $this->_aMemoryData[$sCacheId][1]) {
+                $cRef = $this->_aMemoryData[$sCacheId][0];
                 return true;
             }
         }
 
         // Load data from file cache.
         $mData = null;
-        $bResult = parent::get($sCacheId, $sNamespace, $mData);
+        $bResult = parent::get($sCacheId, $mData);
 
         // Save to memory on success loading.
         if ($bResult)
-            $this->_aMemoryData[$sNamespace][$sCacheId] = is_object($mData) ? clone $mData : $mData;
+            $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, null);
 
         // Return result.
         if ($bResult)
@@ -78,50 +77,48 @@ class FileMemoryCacheProvider extends FileCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Save data to cache.
+     * Method saves data to the cache.
      *
-     * @param mixed  $mData      Data to save.
-     * @param string $sCacheId   Identifier of cache.
-     * @param string $sNamespace Namespace of cache.
-     * @param array  $aTags      List of tags for this cache record.
-     * @param int    $nTtl       Time to live for cache.
+     * @param mixed  $mData    Data for caching.
+     * @param string $sCacheId The identifier of cached data.
+     * @param array  $aTags    List of tags for this cache record.
+     * @param int    $nTtl     Time to live for cache in seconds.
      *
      * @return boolean True on success.
      */
-    public function set($mData, $sCacheId, $sNamespace, array $aTags, $nTtl)
+    public function set($mData, $sCacheId, array $aTags, $nTtl)
     {
         // Save data to memory.
-        $this->_aMemoryData[$sNamespace][$sCacheId] = is_object($mData) ? clone $mData : $mData;
+        $this->_aMemoryData[$sCacheId] = array(is_object($mData) ? clone $mData : $mData, $nTtl ? time() + $nTtl : null);
 
         // Save tag meta information.
         foreach ($aTags as $sTag) {
-            if (!isset($this->_aMemoryTags[$sTag]) || !is_array($this->_aMemoryTags[$sTag]))
+            if (!isset($this->_aMemoryTags[$sTag]))
                 $this->_aMemoryTags[$sTag] = array();
-            $this->_aMemoryTags[$sTag][] = array($sNamespace, $sCacheId);
+
+            $this->_aMemoryTags[$sTag][] = $sCacheId;
         }
 
         // Save to file.
-        return parent::set($mData, $sCacheId, $sNamespace, $aTags, $nTtl);
+        return parent::set($mData, $sCacheId, $aTags, $nTtl);
         
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified parameters.
+     * Method cleans cached data by identifier.
      *
-     * @param string $sNamespace Namespace of cache.
-     * @param string $sCacheId   Identifier of cache. If it is specified, clean only record with specified identifier.
-     *                           Otherwise, clean all namespace.
+     * @param string $sCacheId The identifier of cached data.
      *
      * @return boolean True on success.
      */
-    public function clean($sNamespace, $sCacheId = null)
+    public function clean($sCacheId)
     {
         // Cleaning memory cache.
-        $this->_aMemoryData[$sNamespace] = array();
+        unset($this->_aMemoryData[$sCacheId]);
 
         // Cleaning file cache.
-        return parent::clean($sNamespace, $sCacheId);
+        return parent::clean($sCacheId);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -143,22 +140,21 @@ class FileMemoryCacheProvider extends FileCacheProvider
     //-----------------------------------------------------------------------------
 
     /**
-     * Method cleans cache data by specified tags.
+     * Method cleans cached data by specified tags.
      *
      * @param array $aTags List of tags for cleaning.
      *
-     * @throws \Gveniver\Exception\NotImplementedException
      * @return boolean True on success.
      */
     public function cleanByTags(array $aTags)
     {
-        $bRet = true;
         foreach ($aTags as $sTag)
             if (array_key_exists($sTag, $this->_aMemoryTags))
-                foreach ($this->_aMemoryTags as $aTagItem)
-                    $bRet = $bRet && $this->clean($aTagItem[0], $aTagItem[1]);
+                foreach ($this->_aMemoryTags[$sTag] as $sTagItem)
+                    $this->clean($sTagItem);
 
-        return $bRet;
+        // Cleaning file cache.
+        return parent::cleanByTags($aTags);
 
     } // End function
     //-----------------------------------------------------------------------------
