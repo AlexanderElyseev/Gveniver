@@ -263,7 +263,8 @@ final class Application
                 $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sCorrectedProfileName);
                 $sProfileDir = $sCorrectedProfileName;
                 $sProfileName = basename($sCorrectedProfileName);
-            }
+            } else
+                return null;
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfileName);
             $sProfileDir = \Gveniver\correctPath($this->getConfig()->get('Kernel/ProfilePath'), true).$sProfileName.GV_DS;
