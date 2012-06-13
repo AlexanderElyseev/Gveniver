@@ -97,7 +97,7 @@ class RedirectModule extends BaseModule
 
     /**
      * Class destructor.
-     * Save session data.
+     * Saves session data.
      */
     public function __destruct()
     {
@@ -107,7 +107,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
     
     /**
-     * Load saved data from session.
+     * Loads saved data from session.
      *
      * @return void
      */
@@ -121,14 +121,14 @@ class RedirectModule extends BaseModule
         // Loading and cleaning.
         $aData = $this->getApplication()->session->get(array('Gveniver', __CLASS__, 'Data'));
         $this->getApplication()->session->clean(array('Gveniver', __CLASS__, 'Data'));
-
+        var_dump($aData);
         // Do not save wrong data.
         if (!is_array($aData)) {
             $this->getApplication()->trace->addLine('[%s] Wrong session datat.', __CLASS__);
             return;
         }
 
-        // Save.
+        // Saving.
         $this->_aLoadedSessionData = $aData;
         return;
         
@@ -136,7 +136,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Save post data to session.
+     * Saves post data to session.
      *
      * @return void
      */
@@ -151,13 +151,13 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Load variable from saved in session data.
+     * Loads variable from saved in session data.
      * 
      * @param string $sName Name of variable for loading.
      *
      * @return mixed Returns null if variable if nod specified.
      */
-    public function getSessionVariable($sName)
+    public function getSessionVariable($sName = null)
     {
         return isset($this->_aLoadedSessionData[$sName]) ? $this->_aLoadedSessionData[$sName] : null;
         
@@ -165,26 +165,22 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Set data for saving in session.
+     * Sets data for saving in session.
      *
-     * @param mixed  $mData Data for save.
-     * @param string $sName Name of variable for saving. If not specified,
-     * replace all session data by specified.
+     * @param mixed  $mData The data for saving.
+     * @param string $sName The name of variable for saving.
      *
      * @return void
      */
     public function setSessionVariable($mData, $sName = null)
     {
-        if (!$sName && is_array($mData))
-            $this->_aNewSessionData = $mData;
-        elseif ($sName)
-            $this->_aNewSessionData[$sName] = $mData;
+        $this->_aNewSessionData[$sName] = $mData;
         
     } // End function
     //-----------------------------------------------------------------------------
     
     /**
-     * Output redirection link as string.
+     * Outputs redirection link as string.
      *
      * @return string
      */
@@ -213,7 +209,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Set redirection link.
+     * Sets redirection link.
      *
      * @param string  $sUrl     Url to redirect.
      * @param boolean $bReWrite Rewrite current url.
@@ -275,7 +271,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Redirect right now.
+     * Redirects right now.
      *
      * @return void
      */

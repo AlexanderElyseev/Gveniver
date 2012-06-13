@@ -46,7 +46,7 @@ class Config
      *
      * First, trying to load configuration from cache file. If cache is incorrect, parse
      * XML configuration file and save to cache by serialization of loaded data.
-     * 
+     *
      * !!! It is important that first load data and then read cache parameters. !!!
      *
      * @param string $sConfigFile Path configuration XML file.
