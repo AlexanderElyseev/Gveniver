@@ -25,22 +25,6 @@ namespace Gveniver\Kernel\Module;
 class SessionModule extends BaseModule
 {
     /**
-     * Prefix for names of attributes for user data.
-     *
-     * @var string
-     */
-    const USER_PREFIX = 'user_';
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Prefix for names of attributes for system data.
-     *
-     * @var string
-     */
-    const SYSTEM_PREFIX = 'sys_';
-    //-----------------------------------------------------------------------------
-
-    /**
      * Path separator for multidimensional names of attributes.
      *
      * @var string
@@ -180,13 +164,12 @@ class SessionModule extends BaseModule
      *
      * @param string|array $mName    The name of attribute for saving.
      * @param mixed        $mDefault The default value if not found.
-     * @param boolean      $bUser    Using user section of session.
      *
      * @return mixed Value of attribute.
      */
-    public function get($mName, $mDefault = null, $bUser = true)
+    public function get($mName, $mDefault = null)
     {
-        return $this->_cSession->get($this->_buildName($mName, $bUser), $mDefault);
+        return $this->_cSession->get($this->_buildName($mName), $mDefault);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -208,13 +191,12 @@ class SessionModule extends BaseModule
      *
      * @param string|array $mName  The name of attribute for saving.
      * @param mixed        $mValue The value of attribute for saving.
-     * @param boolean      $bUser  Using user section of session.
      *
      * @return void
      */
-    public function set($mName, $mValue, $bUser = true)
+    public function set($mName, $mValue)
     {
-        $this->_cSession->set($this->_buildName($mName, $bUser), $mValue);
+        $this->_cSession->set($this->_buildName($mName), $mValue);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -223,13 +205,12 @@ class SessionModule extends BaseModule
      * Checks if attribute with specified name is exists on session.
      *
      * @param string|array $mName The name of attribute.
-     * @param boolean      $bUser Using user section of session.
      *
      * @return boolean
      */
-    public function contains($mName, $bUser = true)
+    public function contains($mName)
     {
-        return $this->_cSession->contains($this->_buildName($mName, $bUser));
+        return $this->_cSession->contains($this->_buildName($mName));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -238,13 +219,12 @@ class SessionModule extends BaseModule
      * Cleans value of attribute with specified name.
      *
      * @param string|array $mName The name of attribute for cleaning.
-     * @param boolean      $bUser Using user section of session.
      *
      * @return mixed The cleaned value of attribute.
      */
-    public function clean($mName, $bUser = true)
+    public function clean($mName)
     {
-        return $this->_cSession->clean($this->_buildName($mName, $bUser));
+        return $this->_cSession->clean($this->_buildName($mName));
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -264,21 +244,19 @@ class SessionModule extends BaseModule
     /**
      * Builds name for multidimensional attributes.
      *
-     * @param mixed  $mName The parts of name.
-     * @param string $bUser Using user section of session.
+     * @param mixed $mName The parts of name.
      *
      * @throws \Gveniver\Exception\ArgumentException Throws if name has incorrect type.
      * @return string
      */
-    private function _buildName($mName, $bUser)
+    private function _buildName($mName)
     {
-        $sPrefix = ($bUser ? self::USER_PREFIX : self::SYSTEM_PREFIX);
         if (is_array($mName))
-            return $sPrefix.implode(self::PATH_SEPARATOR, $mName);
+            return implode(self::PATH_SEPARATOR, $mName);
         elseif (is_string($mName))
-            return $sPrefix.$mName;
+            return $mName;
         else
-            throw new \Gveniver\Exception\ArgumentException('Name of attribute can onlyb be array or string.');
+            throw new \Gveniver\Exception\ArgumentException('The name of the attribute can only be an array or a string.');
 
     } // End function
     //-----------------------------------------------------------------------------
