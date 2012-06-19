@@ -217,7 +217,7 @@ class Session extends \Gveniver\BaseObject
                 $aArr = &$aArr[$aPathItems[$i]];
         }
 
-        $mValue = $aArr[$aPathItems[$i]];
+        $mValue = isset($aArr[$aPathItems[$i]]) ? $aArr[$aPathItems[$i]] : null;
         unset($aArr[$aPathItems[$i]]);
         $this->_cStorage->set($aData);
         return $mValue;
@@ -247,6 +247,10 @@ class Session extends \Gveniver\BaseObject
      */
     private function _getPath($sName)
     {
+        // Transform /a/b -> a/b
+        if (mb_strlen($sName) > 0 && mb_substr($sName, 0, 1) == \Gveniver\Kernel\Module\SessionModule::PATH_SEPARATOR)
+            $sName = mb_substr($sName, 1);
+
         return explode(\Gveniver\Kernel\Module\SessionModule::PATH_SEPARATOR, $sName);
 
     } // End function

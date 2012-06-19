@@ -62,7 +62,7 @@ class SessionModuleTest extends PHPUnit_Framework_TestCase
     {
         return array(
             'Dummy session storage' => $this->_cAppWithDummySession,
-            'Native sessionStorage' => $this->_cAppWithNativeSession
+            'Native session storage' => $this->_cAppWithNativeSession
         );
     } // End function
     //-----------------------------------------------------------------------------
@@ -91,22 +91,37 @@ class SessionModuleTest extends PHPUnit_Framework_TestCase
     {
         foreach ($this->_getApplicationList() as $cApp) {
 
+            /** @var \Gveniver\Kernel\Application $cApp  */
+
+            // Cleaning all.
+            $cApp->session->cleanAll();
+
             // Setting and getting existed value with simple name of attribute.
             $rand1 = rand();
             $sName = 'val'.$rand1;
             $this->assertFalse($cApp->session->contains($sName));
             $cApp->session->set($sName, $rand1);
             $this->assertEquals($rand1, $cApp->session->get($sName));
-            $this->assertEquals($rand1, $cApp->session->get($sName));
             $this->assertTrue($cApp->session->contains($sName));
 
-            // Setting and getting existed value with simple name of attribute.
+            // Setting and getting existed value with complex name of attribute.
             $sName = 'a/b/c'.$rand1;
             $this->assertFalse($cApp->session->contains($sName));
             $cApp->session->set($sName, $rand1);
             $this->assertEquals($rand1, $cApp->session->get($sName));
-            $this->assertEquals($rand1, $cApp->session->get($sName));
             $this->assertTrue($cApp->session->contains($sName));
+
+            $aSubData = $cApp->session->get('a/b');
+            $sSubKey = 'c'.$rand1;
+            $this->assertInternalType('array', $aSubData);
+            $this->assertArrayHasKey($sSubKey, $aSubData);
+            $this->assertEquals($rand1, $aSubData[$sSubKey]);
+
+            $aSubData = $cApp->session->get('/a/b');
+            $sSubKey = 'c'.$rand1;
+            $this->assertInternalType('array', $aSubData);
+            $this->assertArrayHasKey($sSubKey, $aSubData);
+            $this->assertEquals($rand1, $aSubData[$sSubKey]);
 
             // Getting all data.
             $aSession = $cApp->session->getAll();
@@ -152,6 +167,10 @@ class SessionModuleTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($rand, $cApp->session->clean($sName));
             $this->assertNull($cApp->session->get($sName));
             $this->assertEquals($rand, $cApp->session->get($sName, $rand));
+
+            // Cleaning nonexisted value.
+            $sName = 'x/y/z'.$rand;
+            $this->assertNull($cApp->session->clean($sName));
         }
 
     } // End function
