@@ -55,22 +55,6 @@ class RedirectModule extends BaseModule
      */
     private $_sLinkText;
     //-----------------------------------------------------------------------------
-
-    /**
-     * Data from previous page, loaded from session.
-     * 
-     * @var array
-     */
-    private $_aLoadedSessionData = array();
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Data for next page.
-     *
-     * @var array
-     */
-    private $_aNewSessionData = array();
-    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
@@ -86,99 +70,12 @@ class RedirectModule extends BaseModule
         $this->_nRedirectionTime = (int)$this->getApplication()->getConfig()->get('Module/RedirectModule/WaitTime');
         $this->_sRedirectionTemplateName = $this->getApplication()->getConfig()->get('Module/RedirectModule/Template');
 
-        // Session.
-        $this->_loadSessionData();
-
         $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
 
     } // End function
     //-----------------------------------------------------------------------------
 
-    /**
-     * Class destructor.
-     * Saves session data.
-     */
-    public function __destruct()
-    {
-        $this->_saveSessionData();
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Loads saved data from session.
-     *
-     * @return void
-     */
-    private function _loadSessionData()
-    {
-        if (!$this->getApplication()->session->contains(array('Gveniver', __CLASS__, 'Data'))) {
-            $this->getApplication()->trace->addLine('[%s] Session data is not set.', __CLASS__);
-            return;
-        }
-
-        // Loading and cleaning.
-        $aData = $this->getApplication()->session->get(array('Gveniver', __CLASS__, 'Data'));
-        $this->getApplication()->session->clean(array('Gveniver', __CLASS__, 'Data'));
-        var_dump($aData);
-        // Do not save wrong data.
-        if (!is_array($aData)) {
-            $this->getApplication()->trace->addLine('[%s] Wrong session datat.', __CLASS__);
-            return;
-        }
-
-        // Saving.
-        $this->_aLoadedSessionData = $aData;
-        return;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Saves post data to session.
-     *
-     * @return void
-     */
-    private function _saveSessionData()
-    {
-        if (!count($this->_aNewSessionData))
-            return;
-
-        $this->getApplication()->session->set(array('Gveniver', __CLASS__, 'Data'), $this->_aNewSessionData);
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Loads variable from saved in session data.
-     * 
-     * @param string $sName Name of variable for loading.
-     *
-     * @return mixed Returns null if variable if nod specified.
-     */
-    public function getSessionVariable($sName = null)
-    {
-        return isset($this->_aLoadedSessionData[$sName]) ? $this->_aLoadedSessionData[$sName] : null;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Sets data for saving in session.
-     *
-     * @param mixed  $mData The data for saving.
-     * @param string $sName The name of variable for saving.
-     *
-     * @return void
-     */
-    public function setSessionVariable($mData, $sName = null)
-    {
-        $this->_aNewSessionData[$sName] = $mData;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
     /**
      * Outputs redirection link as string.
      *

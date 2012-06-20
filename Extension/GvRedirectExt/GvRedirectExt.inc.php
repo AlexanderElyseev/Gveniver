@@ -37,48 +37,27 @@ class GvRedirectExt extends SimpleExtension
     //-----------------------------------------------------------------------------
 
     /**
-     * Redirect to specified location right now.
-     * If url is not specified or wron, nothing happens.
+     * Redirects to specified location right now.
+     * If url is not specified or wrong, nothing happens.
      *
-     * @param string $sUrl Url for redirection
+     * @param string $sUrl The URL for redirection.
      *
      * @return void
      */
     public function redirect($sUrl = null)
     {
-        // Do nothing, if url is not specified.
+        // Do nothing, if the url is not specified.
         if (!$sUrl) {
             $this->getApplication()->trace->addLine('[%s] Url is not specified.', __CLASS__);
             return;
         }
 
-        // Set redirection url to module and go away.
+        // Set the redirection url to module and go away.
         $this->getApplication()->redirect->setUrl($sUrl);
         $this->getApplication()->redirect->redirect();
         return;
         
     } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Returns saved in session value of variable with specified name.
-     * If nothing is loaded, return specified default value.
-     *
-     * @param string $sName         Name of variable for loading.
-     * @param mixed  $mDefaultValue Default value, returns if nothig is loaded.
-     *
-     * @return mixed
-     */
-    public function getSessionVariable($sName = null, $mDefaultValue = null)
-    {
-        // Do nothing, if variable name is not specified.
-        if (!$sName)
-            return null;
-
-        $sRet = $this->getApplication()->redirect->getSessionVariable($sName);
-        return $sRet ? $sRet : $mDefaultValue;
-
-    }  // End function
     //-----------------------------------------------------------------------------
 
 } // End class

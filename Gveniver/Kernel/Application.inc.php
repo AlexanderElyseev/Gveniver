@@ -26,6 +26,7 @@ namespace Gveniver\Kernel;
  * 
  * @property  \Gveniver\Kernel\Module\CacheModule     $cache
  * @property  \Gveniver\Kernel\Module\CaptchaModule   $captcha
+ * @property  \Gveniver\Kernel\Module\CrosspageModule $crosspage
  * @property  \Gveniver\Kernel\Module\DataModule      $data
  * @property  \Gveniver\Kernel\Module\ExtensionModule $extension
  * @property  \Gveniver\Kernel\Module\InvarModule     $invar
