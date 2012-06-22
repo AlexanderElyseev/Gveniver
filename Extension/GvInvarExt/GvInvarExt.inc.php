@@ -25,12 +25,12 @@ namespace Gveniver\Extension;
 class GvInvarExt extends SimpleExtension
 {
     /**
-     * Return value of input variable by name.
+     * Returns value of input variable by name.
      *
      * @param string  $sInvarName Name of invar for loading value.
      * @param boolean $bFromPost  Load variable from POST.
      *
-     * @return mixed|null
+     * @return mixed|null Returns null if variable with specified name is not defined.
      */
     public function getVariable($sInvarName, $bFromPost = false)
     {
@@ -41,6 +41,32 @@ class GvInvarExt extends SimpleExtension
             ? $this->getApplication()->invar->post($sInvarName)
             : $this->getApplication()->invar->get($sInvarName);
         
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Extended variant of loading input variables by name with filtration.
+     *
+     * @param string  $sInvarName The name of invar for loading value.
+     * @param array   $aFilter    The data for filters.
+     * @param boolean $bFromPost  Load variable from POST.
+     *
+     * @return mixed|null Returns null if variable with specified name is not defined.
+     */
+    public function getVariableEx($sInvarName, array $aFilter, $bFromPost = false)
+    {
+        if (!$sInvarName)
+            return null;
+
+        $mResult = null;
+        $bResult = $bFromPost
+            ? $this->getApplication()->invar->postEx($sInvarName, $aFilter, $mResult)
+            : $this->getApplication()->invar->getEx($sInvarName, $aFilter, $mResult);
+        if (!$bResult)
+            return null;
+
+        return $mResult;
+
     } // End function
     //-----------------------------------------------------------------------------
 

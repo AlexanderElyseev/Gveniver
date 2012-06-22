@@ -99,10 +99,11 @@ class CacheModuleTest extends PHPUnit_Framework_TestCase
      */
     private function _getApplicationList()
     {
-        return array(
-            'With memcached'   => $this->_cAppWithMemcache,
-            'With file-memory' => $this->_cAppWithFileMemoryCache
-        );
+        $aResult = array('With file-memory' => $this->_cAppWithFileMemoryCache);
+        if (extension_loaded('memcache'))
+            $aResult['With memcached'] = $this->_cAppWithMemcache;
+
+        return $aResult;
 
     } // End function
     //-----------------------------------------------------------------------------

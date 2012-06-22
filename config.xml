@@ -46,5 +46,6 @@
     <Profile>
         <CacheScript>0</CacheScript>
         <CacheStyle>0</CacheStyle>
+        <CheckCacheModifyTime>0</CheckCacheModifyTime>
     </Profile>
 </Configuration>

@@ -26,6 +26,7 @@ namespace Gveniver\Kernel;
  * 
  * @property  \Gveniver\Kernel\Module\CacheModule     $cache
  * @property  \Gveniver\Kernel\Module\CaptchaModule   $captcha
+ * @property  \Gveniver\Kernel\Module\CrosspageModule $crosspage
  * @property  \Gveniver\Kernel\Module\DataModule      $data
  * @property  \Gveniver\Kernel\Module\ExtensionModule $extension
  * @property  \Gveniver\Kernel\Module\InvarModule     $invar
@@ -263,7 +264,8 @@ final class Application
                 $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sCorrectedProfileName);
                 $sProfileDir = $sCorrectedProfileName;
                 $sProfileName = basename($sCorrectedProfileName);
-            }
+            } else
+                return null;
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfileName);
             $sProfileDir = \Gveniver\correctPath($this->getConfig()->get('Kernel/ProfilePath'), true).$sProfileName.GV_DS;

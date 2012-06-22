@@ -256,7 +256,7 @@ class SessionModule extends BaseModule
         elseif (is_string($mName))
             return $mName;
         else
-            throw new \Gveniver\Exception\ArgumentException('Name of attribute can onlyb be array or string.');
+            throw new \Gveniver\Exception\ArgumentException('The name of the attribute can only be an array or a string.');
 
     } // End function
     //-----------------------------------------------------------------------------

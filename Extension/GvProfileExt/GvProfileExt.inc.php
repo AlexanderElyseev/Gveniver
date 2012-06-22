@@ -56,6 +56,9 @@ class GvProfileExt extends SimpleExtension
         $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CacheStyle')
         );
+        $this->_aConfig['CheckCacheModifyTime'] = \Gveniver\Kernel\Application::toBoolean(
+            $this->getApplication()->getConfig()->get('Profile/CheckCacheModifyTime')
+        );
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -104,9 +107,7 @@ class GvProfileExt extends SimpleExtension
      */
     public function getConfigVariable($sPath)
     {
-        return $sPath
-            ? $this->getApplication()->getConfig()->get($sPath)
-            : null;
+        return $sPath ? $this->getApplication()->getConfig()->get($sPath) : null;
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -254,7 +255,7 @@ class GvProfileExt extends SimpleExtension
      * Load cached scripts.
      * Returns html code for connecting to cached scripts.
      *
-     * @param array  $aList        List of styles in section.
+     * @param array  $aList        List of scripts in section.
      * @param string $sSectionName Name of current section for load cached scripts.
      * @param string $sActionValue Current value of action.
      *
@@ -269,11 +270,10 @@ class GvProfileExt extends SimpleExtension
         try {
             // Check cache.
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
-            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
-            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aSplittedList)) {
+            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue, $aList);
+            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aSplittedList))
                 return null;
-            }
-            
+
             $sScriptCacheWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb');
             return array(
                 array('WebFileName' => $sScriptCacheWebPath.$sCacheFile)
@@ -304,7 +304,7 @@ class GvProfileExt extends SimpleExtension
 
         try {
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
-            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue);
+            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue, $aList);
             
             $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                 $sCacheAbsPath.$sCacheFile,
@@ -325,14 +325,23 @@ class GvProfileExt extends SimpleExtension
     /**
      * Build file name for cache script file.
      *
+     * Depends on "CheckCacheModifyTime" configuration option, method automatically calculates hash of modify time of
+     * all cached files. If file has been changed, it returns new file name and clients' browser will reload the script from server.
+     *
      * @param string $sSectionName Section name of cache script.
      * @param string $sActionValue Action name of cache script.
+     * @param array  $aList        List of scripts data for cache.
      *
      * @return string
      */
-    private function _buildScriptCacheFileName($sSectionName, $sActionValue)
+    private function _buildScriptCacheFileName($sSectionName, $sActionValue, array $aList)
     {
-        return 'script-'.md5($sSectionName.$sActionValue).'.js';
+        $sTimeHash = '';
+        if ($this->_aConfig['CheckCacheModifyTime'])
+            foreach ($aList as $aData)
+                $sTimeHash .= filemtime($aData['AbsFileName']);
+
+        return 'script-'.md5($sSectionName.$sActionValue.$sTimeHash).'.js';
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -462,7 +471,7 @@ class GvProfileExt extends SimpleExtension
                     $aSplittedList[] = $aStyleData['AbsFileName'];
 
                 // Check cache.
-                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
+                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition, $aSameConditions);
                 if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aSplittedList)) {
                     return null;
                 }
@@ -510,7 +519,7 @@ class GvProfileExt extends SimpleExtension
             // Save each group of styles in separate cache style file.
             foreach ($aVariousConditions as $sCondition => $aSameConditions) {
                 
-                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition);
+                $sCacheFile = $this->_buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition, $aSameConditions);
                 $cCacheSplitter = new \Gveniver\Cache\FileSplitter(
                     $sCacheAbsPath.$sCacheFile,
                     new \Gveniver\Cache\Packer\StylePacker()
@@ -567,15 +576,24 @@ class GvProfileExt extends SimpleExtension
     /**
      * Build file name for cached style.
      *
+     * Depends on "CheckCacheModifyTime" configuration option, method automatically calculates hash of modify time of
+     * all cached files. If file has been changed, it returns new file name and clients' browser will reload the style from server.
+     *
      * @param string $sSectionName Section name of cache style.
      * @param string $sActionValue Action name of cache style.
      * @param string $sCondition   Condition for cache style.
+     * @param array  $aList        List of styles for cache.
      *
      * @return string
      */
-    private function _buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition)
+    private function _buildStyleCacheFileName($sSectionName, $sActionValue, $sCondition, array $aList)
     {
-        return 'style-'.md5($sSectionName.$sActionValue.$sCondition).'.css';
+        $sTimeHash = '';
+        if ($this->_aConfig['CheckCacheModifyTime'])
+            foreach ($aList as $aData)
+                $sTimeHash .= filemtime($aData['AbsFileName']);
+
+        return 'style-'.md5($sSectionName.$sActionValue.$sCondition.$sTimeHash).'.css';
         
     } // End function
     //-----------------------------------------------------------------------------
