@@ -39,6 +39,8 @@ class FileLogProvider extends BaseLogProvider
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      * @param array                        $aConfigData  Configuration data for provider.
+     *
+     * @throws \Gveniver\Exception\BaseException In case of nonexistent log file name.
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication, array $aConfigData)
     {

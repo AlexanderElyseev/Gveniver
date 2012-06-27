@@ -55,22 +55,6 @@ class RedirectModule extends BaseModule
      */
     private $_sLinkText;
     //-----------------------------------------------------------------------------
-
-    /**
-     * Data from previous page, loaded from session.
-     * 
-     * @var array
-     */
-    private $_aLoadedSessionData = array();
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Data for next page.
-     *
-     * @var array
-     */
-    private $_aNewSessionData = array();
-    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
@@ -86,9 +70,6 @@ class RedirectModule extends BaseModule
         $this->_nRedirectionTime = (int)$this->getApplication()->getConfig()->get('Module/RedirectModule/WaitTime');
         $this->_sRedirectionTemplateName = $this->getApplication()->getConfig()->get('Module/RedirectModule/Template');
 
-        // Session.
-        $this->_loadSessionData();
-
         $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
 
@@ -96,98 +77,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Class destructor.
-     * Save session data.
-     */
-    public function __destruct()
-    {
-        $this->_saveSessionData();
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Load saved data from session.
-     *
-     * @return void
-     */
-    private function _loadSessionData()
-    {
-        if (!isset($_SESSION['Gveniver'][__CLASS__]['Data'])) {
-            $this->getApplication()->trace->addLine('[%s] Session data is not set.', __CLASS__);
-            return;
-        }
-
-        // Load.
-        $aData = $_SESSION['Gveniver'][__CLASS__]['Data'];
-
-        // Clean.
-        unset($_SESSION['Gveniver'][__CLASS__]['Data']);
-
-        // Do not save wrong data.
-        if (!is_array($aData)) {
-            $this->getApplication()->trace->addLine('[%s] Wrong session datat.', __CLASS__);
-            return;
-        }
-
-        // Save.
-        $this->_aLoadedSessionData = $aData;
-        return;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Save post data to session.
-     *
-     * @return void
-     */
-    private function _saveSessionData()
-    {
-        if (!count($this->_aNewSessionData))
-            return;
-
-        $_SESSION['Gveniver'][__CLASS__]['Data'] = $this->_aNewSessionData;
-        return;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Load variable from saved in session data.
-     * 
-     * @param string $sName Name of variable for loading.
-     *
-     * @return mixed Returns null if variable if nod specified.
-     */
-    public function getSessionVariable($sName)
-    {
-        return isset($this->_aLoadedSessionData[$sName]) ? $this->_aLoadedSessionData[$sName] : null;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Set data for saving in session.
-     *
-     * @param mixed  $mData Data for save.
-     * @param string $sName Name of variable for saving. If not specified,
-     * replace all session data by specified.
-     *
-     * @return void
-     */
-    public function setSessionVariable($mData, $sName = null)
-    {
-        if (!$sName && is_array($mData))
-            $this->_aNewSessionData = $mData;
-        elseif ($sName)
-            $this->_aNewSessionData[$sName] = $mData;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-    /**
-     * Output redirection link as string.
+     * Outputs redirection link as string.
      *
      * @return string
      */
@@ -216,7 +106,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Set redirection link.
+     * Sets redirection link.
      *
      * @param string  $sUrl     Url to redirect.
      * @param boolean $bReWrite Rewrite current url.
@@ -278,7 +168,7 @@ class RedirectModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Redirect right now.
+     * Redirects right now.
      *
      * @return void
      */

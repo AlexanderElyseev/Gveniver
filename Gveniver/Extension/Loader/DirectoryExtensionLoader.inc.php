@@ -43,8 +43,6 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
      * base kernel extensiosn.
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
-     *
-     * @throws Exception
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
@@ -109,7 +107,7 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
      *
      * @param string $sExtensionName Name of extension for loading.
      *
-     * @return Extension Returns null on error.
+     * @return \Gveniver\Extension\BaseExtension Returns null on error.
      */
     protected function load($sExtensionName)
     {

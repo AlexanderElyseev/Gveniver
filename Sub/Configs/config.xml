@@ -29,12 +29,14 @@
                 <Provider>
                     <ProviderClass>MemcachedCacheProvider</ProviderClass>
                     <ProviderName>third</ProviderName>
-                    <Servers>
-                        <Server>
-                            <Name>localhost</Name>
-                            <Host>127.0.0.1</Host>
-                        </Server>
-                    </Servers>
+                    <Args>
+                        <Servers>
+                            <Server>
+                                <Name>localhost</Name>
+                                <Host>127.0.0.1</Host>
+                            </Server>
+                        </Servers>
+                    </Args>
                 </Provider>
             </Providers>
         </CacheModule>
@@ -98,6 +100,13 @@
                 </Provider>
             </Providers>
         </LogModule>
+        <SessionModule>
+            <StorageClass>NativeSessionStorage</StorageClass>
+            <Args>
+                <CookieHttpOnly>1</CookieHttpOnly>
+                <CookieDomain>example.com</CookieDomain>
+            </Args>
+        </SessionModule>
         <TemplateModule>
             <DelimiterBegin>{</DelimiterBegin>
             <DelimiterEnd>}</DelimiterEnd>

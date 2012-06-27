@@ -151,7 +151,7 @@ class DataModule extends BaseModule
      * @param string $sClassName Class name of data provider.
      * @param array  $aOptions   Options for provider.
      *
-     * @return DataProvider|null
+     * @return \Gveniver\Data\Provider\BaseDataProvider
      */
     private function _loadProvider($sClassName, array $aOptions)
     {

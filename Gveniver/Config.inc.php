@@ -46,7 +46,7 @@ class Config
      *
      * First, trying to load configuration from cache file. If cache is incorrect, parse
      * XML configuration file and save to cache by serialization of loaded data.
-     * 
+     *
      * !!! It is important that first load data and then read cache parameters. !!!
      *
      * @param string $sConfigFile Path configuration XML file.
@@ -69,7 +69,7 @@ class Config
                 // Unserialize the array of configuration and check correctness.
                 $aConfig = unserialize(file_get_contents($sCacheFile));
                 if (is_array($aConfig)) {
-                    $this->_merge($aConfig);
+                    $this->merge($aConfig);
                     return true;
                 }
             }
@@ -77,7 +77,7 @@ class Config
 
         // Load an array of configuration from XML configuration file.
         $aConfig = $this->_buildXmlConfig(simplexml_load_file($sConfigFile));
-        $this->_merge($aConfig);
+        $this->merge($aConfig);
         
         // Save cache if need.
         if ($bCacheEnabled) {
@@ -102,7 +102,7 @@ class Config
      */
     public function mergeConfig(Config $cConfig)
     {
-        $this->_merge($cConfig->_aConfig);
+        $this->merge($cConfig->_aConfig);
         
     } // End function
     //-----------------------------------------------------------------------------
@@ -146,13 +146,13 @@ class Config
     //-----------------------------------------------------------------------------
 
     /**
-     * Merge configuration parameters and invalidate cache.
+     * Merges configuration parameters and invalidates cache.
      *
      * @param array $aData Array with configuration parameters to merge.
      *
      * @return void
      */
-    private function _merge($aData)
+    public function merge(array $aData)
     {
         $this->_aConfig = array_merge_recursive_distinct($this->_aConfig, $aData);
         $this->_aCache = array();

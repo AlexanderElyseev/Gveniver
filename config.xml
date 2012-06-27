@@ -36,6 +36,7 @@
             <Level>255</Level>
             <Providers></Providers>
         </LogModule>
+        <SessionModule></SessionModule>
         <TemplateModule></TemplateModule>
         <RedirectModule>
             <WaitTime>300</WaitTime>
@@ -45,5 +46,6 @@
     <Profile>
         <CacheScript>0</CacheScript>
         <CacheStyle>0</CacheStyle>
+        <CheckCacheModifyTime>0</CheckCacheModifyTime>
     </Profile>
 </Configuration>

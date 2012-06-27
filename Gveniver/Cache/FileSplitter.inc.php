@@ -48,12 +48,14 @@ class FileSplitter
     private $_sOutputFileName;
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
-    
+
     /**
      * Class constructor.
-     * 
+     *
      * @param string                $sOutputFileName Output cache file name.
      * @param Packer\BaseDataPacker $cPacker         Packer for data. Optional.
+     *
+     * @throws \Gveniver\Exception\ArgumentException
      */
     public function __construct($sOutputFileName, Packer\BaseDataPacker $cPacker = null)
     {

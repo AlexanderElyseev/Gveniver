@@ -25,22 +25,48 @@ namespace Gveniver\Kernel\Module;
 class CacheModule extends BaseModule
 {
     /**
-     * Array of {@see BaseCacheProvider} for access to cached data.
+     * Default TTL for cache.
      *
-     * @var array
+     * @var int
      */
-    private $_aProviders = array();
+    const DEFAULT_TTL = 1200;
+    //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
-     * Array of cache providers configurations.
+     * Configuration parameters of module.
      *
      * @var array
      */
-    private $_aConfiguration;
+    private $_aModuleConfiguration;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Configuration parameters of providers.
+     *
+     * @var array
+     */
+    private $_aProvidersConfiguration = array();
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Name of default provider loaded from configuration.
+     *
+     * @var string
+     */
+    private $_sDefaultProviderName;
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Array of {@see BaseCacheProvider} for fast access to cached providers
+     * using provider name as key.
+     *
+     * @var array
+     */
+    private $_aProvidersCache = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
-    
+
     /**
      * Full initialization of module.
      *
@@ -51,7 +77,23 @@ class CacheModule extends BaseModule
         $this->getApplication()->trace->addLine('[%s] Init.', __CLASS__);
 
         // Load configuration of cache providers.
-        $this->_aConfiguration = $this->getApplication()->getConfig()->get('Module/CacheModule/Providers');
+        $this->_aModuleConfiguration = $this->getApplication()->getConfig()->get('Module/CacheModule');
+        if (!is_array($this->_aModuleConfiguration))
+            $this->getApplication()->trace->addLine('[%s] Configuration of cache module is not loaded.', __CLASS__);
+        else
+            $this->getApplication()->trace->addLine('[%s] Configuration of cache module is successfully loaded.', __CLASS__);
+
+        if (!isset($this->_aModuleConfiguration['Providers']))
+            $this->getApplication()->trace->addLine('[%s] Configuration of providers is not loaded.', __CLASS__);
+        else {
+            $this->_aProvidersConfiguration = $this->_aModuleConfiguration['Providers'];
+            $this->getApplication()->trace->addLine('[%s] Configuration of providers is successfully loaded.', __CLASS__);
+        }
+
+        if (isset($this->_aModuleConfiguration['DefaultProvider']) && $this->_aModuleConfiguration['DefaultProvider'] && is_string($this->_aModuleConfiguration['DefaultProvider'])) {
+            $this->_sDefaultProviderName = $this->_aModuleConfiguration['DefaultProvider'];
+            $this->getApplication()->trace->addLine('[%s] Default provider name ("%s") from configuration is successfully loaded.', __CLASS__, $this->_sDefaultProviderName);
+        }
 
         $this->getApplication()->trace->addLine('[%s] Init successful.', __CLASS__);
         return true;
@@ -64,16 +106,14 @@ class CacheModule extends BaseModule
      *
      * @param string $sDataName Unique name of cached data.
      *
+     * @throws \Gveniver\Exception\BaseException
      * @return string
      */
     public function generateId($sDataName)
     {
-        // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
-
-        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+            throw new \Gveniver\Exception\BaseException('Default cache provider is not loaded.');
 
         return $cProvider->generateId($sDataName);
 
@@ -84,82 +124,106 @@ class CacheModule extends BaseModule
      * Returns cache provider by name.
      *
      * @param string $sProviderName Name of cache provider.
-     * If it is not specified, returns default cache provider.
+     *                              If it is not specified, returns default cache provider.
      *
-     * @return CacheProvider
+     * @return \Gveniver\Cache\Provider\BaseCacheProvider
      */
     public function getProvider($sProviderName = null)
     {
-        // Try to load provider from cache.
-        $sCacheIndex = $sProviderName ? $sProviderName : 0;
-        if (array_key_exists($sCacheIndex, $this->_aProviders)) {
-            $this->getApplication()->trace->addLine('[%s] Cache provider ("%s") loaded from cache.', __CLASS__, $sCacheIndex);
-            return $this->_aProviders[$sCacheIndex];
-        }
-
-        // Try to load for existing provider.
+        // Loading provider by name.
         if ($sProviderName) {
-            $this->getApplication()->trace->addLine('[%s] Load provider ("%s").', __CLASS__, $sProviderName);
-
-            // Create new provider by name.
-            foreach ($this->_aConfiguration as $aConnectionData) {
-                // Load provider class name.
-                if (!array_key_exists('ProviderName', $aConnectionData))
-                    continue;
-
-                // Provider class name must be equal to target name.
-                if ($sProviderName != $aConnectionData['ProviderName'])
-                    continue;
-
-                // Load provider class name.
-                if (!array_key_exists('ProviderClass', $aConnectionData)) {
-                    $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
-                    return null;
-                }
-
-                $sProviderClass = $aConnectionData['ProviderClass'];
-                $this->_aProviders[$sProviderName] = $this->_loadProvider($sProviderClass, $aConnectionData);
-                if (!$this->_aProviders[$sProviderName]) {
-                    $this->getApplication()->trace->addLine('[%s] Provider ("%s") not loaded.', __CLASS__, $sProviderName);
-                    return null;
-                }
-
-                return $this->_aProviders[$sProviderName];
-
-            } // End foreach
-
-            $this->getApplication()->trace->addLine('[%s] Provider ("%s") not exists.', __CLASS__, $sProviderName);
-            return null;
-
-        } // End if
-
-        // Load default (first) configuration, without name.
-        $this->getApplication()->trace->addLine('[%s] Load default configuration.', __CLASS__);
-
-        // Create new default connection for first configuration in list.
-        if (!count($this->_aConfiguration)) {
-            $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
-            return null;
-        }
-        
-        // Load provider class name.
-        $aConnectionData = $this->_aConfiguration[0];
-        if (!array_key_exists('ProviderClass', $aConnectionData)) {
-            $this->getApplication()->trace->addLine('[%s] Configurations not loaded.', __CLASS__);
-            return null;
+            $this->getApplication()->trace->addLine('[%s] Loading cache provider by specified name ("%s").', __CLASS__, $sProviderName);
+            $sCacheId = 'name_'.$sProviderName;
+            if (array_key_exists($sCacheId, $this->_aProvidersCache)) {
+                $this->getApplication()->trace->addLine('[%s] Cache provider ("%s") is loaded from cache.', __CLASS__, $sProviderName);
+                return $this->_aProvidersCache[$sCacheId];
+            }
+            return $this->_aProvidersCache[$sCacheId] = $this->_loadProviderByConfiguration($this->_loadProviderConfiguration($sProviderName));
         }
 
-        $this->getApplication()->trace->addLine('[%s] Create provider from first configuration.', __CLASS__);
-
-        $sProviderClass = $aConnectionData['ProviderClass'];
-        $this->_aProviders[0] = $this->_loadProvider($sProviderClass, $aConnectionData);
-        if (!$this->_aProviders[0]) {
-            $this->getApplication()->trace->addLine('[%s] Default configuration not loaded.', __CLASS__);
-            return null;
+        // Loading default provider without name.
+        $sCacheId = 'default';
+        if (array_key_exists($sCacheId, $this->_aProvidersCache)) {
+            $this->getApplication()->trace->addLine('[%s] Default cache provider is loaded from cache.', __CLASS__);
+            return $this->_aProvidersCache[$sCacheId];
         }
 
-        return $this->_aProviders[0];
-        
+        if ($this->_sDefaultProviderName) {
+            $this->getApplication()->trace->addLine('[%s] Loading default cache provider by default name ("%s").', __CLASS__, $this->_sDefaultProviderName);
+            return $this->_aProvidersCache[$sCacheId] = $this->_loadProviderByConfiguration($this->_loadProviderConfiguration($this->_sDefaultProviderName));
+        } elseif (count($this->_aProvidersConfiguration) > 0) {
+            $this->getApplication()->trace->addLine('[%s] Loading default cache provider from the first configuration in the list.', __CLASS__);
+            return $this->_aProvidersCache[$sCacheId] = $this->_loadProviderByConfiguration(reset($this->_aProvidersConfiguration));
+        } else {
+            $this->getApplication()->trace->addLine('[%s] Loading dummy cache provider as default cache provider.', __CLASS__);
+            return $this->_aProvidersCache[$sCacheId] = $this->_loadDummyProvider();
+        }
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method loads provider with specified configuration data.
+     *
+     * @param array $aConnectionData Configuration parameters of provider for creation.
+     *
+     * @return \Gveniver\Cache\Provider\BaseCacheProvider|null Returns null on error.
+     */
+    private function _loadProviderByConfiguration(array $aConnectionData)
+    {
+        if (array_key_exists('ProviderClass', $aConnectionData)) {
+            $sProviderClass = $aConnectionData['ProviderClass'];
+            $aProviderArgs = array_key_exists('Args', $aConnectionData) ? $aConnectionData['Args'] : array();
+            return $this->_loadProviderInstance($sProviderClass, $aProviderArgs);
+        }
+
+        $this->getApplication()->trace->addLine('[%s] Configuration of provider is not loaded or incorrect.', __CLASS__);
+        return null;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method loads dummy cache provider.
+     *
+     * @return \Gveniver\Cache\Provider\BaseCacheProvider|null Returns null on error.
+     */
+    private function _loadDummyProvider()
+    {
+        $cProvider = $this->_loadProviderInstance('DummyCacheProvider', array());
+        if ($cProvider) {
+            $this->getApplication()->trace->addLine('[%s] Dummy cache provider is successfully loaded.', __CLASS__);
+            return $cProvider;
+        }
+
+        $this->getApplication()->trace->addLine('[%s] Dummy cache provider is not loaded.', __CLASS__);
+        return null;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method loads configuration of provider with specified name.
+     *
+     * @param string $sProviderName Name of provider for loading configuration.
+     *
+     * @return array Returns array with configuration of provider or empty array if it is not found.
+     */
+    private function _loadProviderConfiguration($sProviderName)
+    {
+        foreach ($this->_aProvidersConfiguration as $aConnectionData) {
+            if (!array_key_exists('ProviderName', $aConnectionData))
+                continue;
+
+            if ($sProviderName != $aConnectionData['ProviderName'])
+                continue;
+
+            return $aConnectionData;
+        }
+
+        $this->getApplication()->trace->addLine('[%s] Configuration of provider ("%s") is not exists.', __CLASS__, $sProviderName);
+        return array();
+
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -169,22 +233,28 @@ class CacheModule extends BaseModule
      * @param string $sClassName Class name of cache provider.
      * @param array  $aOptions   Options for provider.
      *
-     * @return CacheProvider|null
+     * @return \Gveniver\Cache\Provider\BaseCacheProvider|null
      */
-    private function _loadProvider($sClassName, array $aOptions)
+    private function _loadProviderInstance($sClassName, array $aOptions)
     {
         $sClassName = '\\Gveniver\Cache\\Provider\\'.$sClassName;
-        $cProvider = new $sClassName($this->getApplication(), $aOptions);
-        if (!$cProvider) {
-             $this->getApplication()->trace->addLine(
-                 '[%s] Error in create cache provider ("%s").',
-                 __CLASS__,
-                 $sClassName
-             );
+        if (!class_exists($sClassName)) {
+            $this->getApplication()->trace->addLine('[%s] Cache provider class ("%s") is not exist.', __CLASS__, $sClassName);
             return null;
         }
-        
-        return $cProvider;
+
+        try {
+            $cProvider = new $sClassName($this->getApplication(), $aOptions);
+            if (!$cProvider) {
+                $this->getApplication()->trace->addLine('[%s] Error in creating cache provider ("%s").', __CLASS__, $sClassName);
+                return null;
+            }
+            return $cProvider;
+
+        } catch (\Exception $cEx) {
+            $this->getApplication()->trace->addLine('[%s] Exception in create cache provider ("%s"): "%s".', __CLASS__, $sClassName, $cEx->getMessage());
+            return null;
+        }
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -192,29 +262,25 @@ class CacheModule extends BaseModule
     /**
      * Load data form cache.
      *
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param mixed  &$cRef         Reference variable for loading cached data.
-     * If specified, then the data loads to variable by refernce and returns
-     * result of operation (boolean). Otherwise, returns data.
+     * @param string $sCacheId Identifier of cache.
+     * @param mixed  &$cRef    Reference variable for loading cached data.
+     *                         If specified, then the data loads to variable by refernce and methods returns
+     *                         result of operation (boolean). Otherwise, method returns cached data.
+     *
+     * @throws \Gveniver\Exception\BaseException
      *
      * @return mixed|boolean
      */
-    public function get($sCacheId, $sCacheGroupId = 'Default', &$cRef = null)
+    public function get($sCacheId, &$cRef = null)
     {
-        // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
+            throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
 
-        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
-
-        // Load data from cache by default provider.
         $mData = null;
-        $bResult = $cProvider->get($sCacheId, $sCacheGroupId, $mData);
+        $bResult = $cProvider->get($sCacheId, $mData);
 
-        // Return result by loading type.
-        $bByRef = func_num_args() == 3;
+        $bByRef = func_num_args() == 2;
         if ($bByRef) {
             if ($bResult)
                 $cRef = $mData;
@@ -228,48 +294,90 @@ class CacheModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Save data to cache.
+     * Method saves data to the cache.
      *
-     * @param mixed  $mData         Data to save.
-     * @param string $sCacheId      Identifier of cache.
-     * @param string $sCacheGroupId Identifier of cache group.
-     * @param int    $nTtl          Time to live for cache.
+     * @param mixed        $mData    Data to save.
+     * @param string       $sCacheId Identifier of cache.
+     * @param array|string $mTags    List of tags for this cache.
+     * @param int          $nTtl     Time to live for cache.
      *
+     * @throws \Gveniver\Exception\BaseException     Throws if cache provider is not found.
+     * @throws \Gveniver\Exception\ArgumentException Throws if tag parameter has wrong type.
      * @return boolean True on success.
      */
-    public function set($mData, $sCacheId, $sCacheGroupId = 'Default', $nTtl = 1200)
+    public function set($mData, $sCacheId, $mTags, $nTtl = self::DEFAULT_TTL)
     {
-        // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
+            throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
 
-        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+        if (is_string($mTags))
+            $mTags = array($mTags);
+        elseif (!is_array($mTags))
+            throw new \Gveniver\Exception\ArgumentException('Tags can be string or array of strings only.');
 
-        // Save data to cache by default provider.
-        return $cProvider->set($mData, $sCacheId, $sCacheGroupId, $nTtl);
+        return $cProvider->set($mData, $sCacheId, $mTags, $nTtl);
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Flush cache data.
+     * Method cleans cache data by specified parameters.
      *
-     * @param string $sCacheGroupId Identifier of cache group.
+     * @param string $sCacheId Identifier of cache for cleaning.
      *
+     * @throws \Gveniver\Exception\BaseException Throws if cache provider is not found.
      * @return boolean True on success.
      */
-    public function flush($sCacheGroupId = 'Default')
+    public function clean($sCacheId)
     {
-        // Load default cache provider.
         $cProvider = $this->getProvider();
         if (!$cProvider)
-            throw new \Gveniver\Exception\BaseException('Default cache provider not loaded.');
+            throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
 
-        /** @var $cProvider \Gveniver\Cache\Provider\BaseCacheProvider */
+        return $cProvider->clean($sCacheId);
 
-        // Flush cache data by default provider.
-        return $cProvider->flush($sCacheGroupId);
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method cleans cached data by specified tags.
+     *
+     * @param array|string $mTags List of tags for cleaning cache.
+     *
+     * @throws \Gveniver\Exception\BaseException     Throws if cache provider is not found.
+     * @throws \Gveniver\Exception\ArgumentException Throws if tag parameter has wrong type.
+     * @return boolean True on success.
+     */
+    public function cleanByTags($mTags)
+    {
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
+
+        if (is_string($mTags))
+            $mTags = array($mTags);
+        elseif (!is_array($mTags))
+            throw new \Gveniver\Exception\ArgumentException('Tags can be string or array of strings only.');
+
+        return $cProvider->cleanByTags($mTags);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Method cleans all cache data.
+     *
+     * @throws \Gveniver\Exception\BaseException Throws if cache provider is not found.
+     * @return boolean True on success.
+     */
+    public function cleanAll()
+    {
+        $cProvider = $this->getProvider();
+        if (!$cProvider)
+            throw new \Gveniver\Exception\BaseException('Default cache provider has not been loaded.');
+
+        return $cProvider->cleanAll();
 
     } // End function
     //-----------------------------------------------------------------------------

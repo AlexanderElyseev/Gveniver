@@ -1,2 +1,3 @@
-.idea/
-/cache/
+.idea
+/cache
+/atlassian-ide-plugin.xml

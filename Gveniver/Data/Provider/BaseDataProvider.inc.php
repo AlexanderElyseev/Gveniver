@@ -48,6 +48,8 @@ abstract class BaseDataProvider
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      * @param array                        $aOptions     Options for provider.
+     *
+     * @throws \Gveniver\Exception\BaseException
      */
     public function __construct(\Gveniver\Kernel\Application $cApplication, array $aOptions)
     {

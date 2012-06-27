@@ -53,6 +53,14 @@ class TemplateModule extends BaseModule
         }
         
         $sFactoryClassName = '\\Gveniver\\Template\\Factory\\'.$sFactoryClassName;
+        if (!class_exists($sFactoryClassName)) {
+            $this->getApplication()->trace->addLine(
+                '[%s] Factory class is not exists.',
+                __CLASS__
+            );
+            return false;
+        }
+
         $this->_cFactory = new $sFactoryClassName($this->getApplication());
         if (!$this->_cFactory) {
              $this->getApplication()->trace->addLine(

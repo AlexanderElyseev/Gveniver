@@ -3,7 +3,7 @@
  * File contains base abstract log provider class for saving log data.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Log
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -16,7 +16,7 @@ namespace Gveniver\Log\Provider;
  * Base abstract log provider class for saving log data.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Log
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License

@@ -1,70 +1,59 @@
 <?php
 /**
- * File contains class for data provider over MongoDb.
+ * File contains class of framework base object.
  *
  * @category  Gveniver
- * @package   Template
+ * @package   Kernel
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
 
-namespace Gveniver\Data\Provider;
+namespace Gveniver;
 
 /**
- * Class for data provider over MongoDb.
+ * Class of framework base object.
  *
  * @category  Gveniver
- * @package   Template
+ * @package   Kernel
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-class MongoDbDataProvider extends BaseDataProvider
+abstract class BaseObject
 {
     /**
-     * MongoDB object.
-     * 
-     * @var \Mongo
+     * Current applixation.
+     *
+     * @var Kernel\Application
      */
-    private $_cMongo;
+    private $_cApplication;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
-     * Connect to data source.
+     * Initializes new instance of {@see \Gveniver\BaseObject}.
      *
-     * @return boolean True on success connection.
+     * @param Kernel\Application $cApplication Current application.
      */
-    protected function connect()
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
     {
-        // Check for existing MongoDb PHP extension.
-        if (!class_exists('\\Mongo')) {
-            $this->getApplication()->trace->addLine('[%s] MongoDb PHP extension is not installed.', __CLASS__);
-            return false;
-        }
-
-        // Create new MongoDb instance.
-        $this->_cMongo = new \Mongo();
-        if (!$this->_cMongo)
-            return false;
-
-        return true;
+        $this->_cApplication = $cApplication;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Returns current connection.
+     * Gets current application.
      *
-     * @return mixed
+     * @return Kernel\Application
      */
-    public function getConnection()
+    public function getApplication()
     {
-        return $this->_cMongo;
-        
+        return $this->_cApplication;
+
     } // End function
     //-----------------------------------------------------------------------------
 

@@ -179,10 +179,11 @@ class InvarModule extends BaseModule
     /**
      * Loading value of invar parameter by name from GET reguest.
      *
-     * @param string $sName   Name of invar for loading value.
-     * @param int    $nTarget Target type of loading data.
-     * @param mixed  &$cRef   Reference variable for loading value.
-     * If specified, load result by reference. Return result of operation.
+     * @param string   $sName   Name of invar for loading value.
+     * @param int|null $nTarget Target for loading data.
+     *                          If it is null, using TARGET_FIRST_GET flag.
+     * @param mixed    &$cRef   Reference variable for loading value.
+     *                          If specified, loads result by reference. Returns result of operation.
      *
      * @return bool|mixed If specified reference variable, then returns result of operation.
      * Otherwise, returns value of invar.
@@ -190,10 +191,16 @@ class InvarModule extends BaseModule
      */
     public function get($sName, $nTarget = self::TARGET_FIRST_GET, &$cRef = null)
     {
+        $this->getApplication()->trace->addLine('[%s] Load invar ("%s") from GET.', __CLASS__, $sName);
+
+        // Using the default target if it is undefined.
+        if (!$nTarget)
+            $nTarget = self::TARGET_FIRST_GET;
+
         $bByRef = func_num_args() == 3;
         $mValue = null;
 
-        // First, load from GET, then from request.
+        // At first, load from GET, then from request.
         if ($nTarget == self::TARGET_FIRST_GET) {
             // Load from GET at first, then load from request.
             if ($this->get($sName, self::TARGET_ONLY_GET, $mValue) || $this->get($sName, self::TARGET_ONLY_REQUEST, $mValue)) {
@@ -279,17 +286,22 @@ class InvarModule extends BaseModule
     /**
      * Extended variant of loading value of invar parameter by name from GET reguest.
      *
-     * @param string $sName   Name of invar for loading value.
-     * @param int    $nTarget Target type of loading data.
-     * @param array  $aCheck  Array of parameters for checking.
-     * @param mixed  &$cRef   Reference variable for loading value.
-     * If specified, load result by reference. Return result of operation.
+     * @param string   $sName   Name of invar for loading value.
+     * @param int|null $nTarget Target for loading data.
+     *                          If it is null, using TARGET_FIRST_GET flag.
+     * @param array    $aCheck  Array of parameters for checking.
+     * @param mixed    &$cRef   Reference variable for loading value.
+     *                          If specified, loads result by reference. Returns result of operation.
      *
      * @return bool|mixed
      */
     public function getEx($sName, $nTarget = self::TARGET_FIRST_GET, array $aCheck = array(), &$cRef = null)
     {
         $this->getApplication()->trace->addLine('[%s] Extended load invar ("%s") from request.', __CLASS__, $sName);
+
+        // Using the default target if it is undefined.
+        if (!$nTarget)
+            $nTarget = self::TARGET_FIRST_GET;
 
         $bByRef = func_num_args() == 4;
         $mValue = null;
@@ -330,7 +342,7 @@ class InvarModule extends BaseModule
      *
      * @param string $sName Name of invar for loading value.
      * @param mixed  &$cRef Reference variable for loading value.
-     * If specified, load result by reference. Return result of operation.
+     *                      If specified, loads result by reference. Returns result of operation.
      *
      * @return bool|mixed
      */
@@ -368,7 +380,7 @@ class InvarModule extends BaseModule
      * @param string $sName  Name of invar for loading value.
      * @param array  $aCheck Array of parameters for checking.
      * @param mixed  &$cRef  Reference variable for loading value.
-     * If specified, load result by reference. Return result of operation.
+     *                       If specified, loads result by reference. Returns result of operation.
      *
      * @return bool|mixed
      */
@@ -417,7 +429,6 @@ class InvarModule extends BaseModule
      * Data keys:
      * - "filter"  - Filter name for checking.
      * - "options" - Filter options.
-     * - "cache"   - Is need to save check result into cache.
      *
      * @param mixed &$mValue Value of invar for check.
      * @param array $aCheck  Parameters of invar for check.
@@ -456,10 +467,8 @@ class InvarModule extends BaseModule
 
             $aRebuildedParams[$key] = $v;
 
-        } // End foreach
-
+        }
         ksort($aRebuildedParams);
-
         return $this->_sAbsWebPath.$this->_cLoader->buildRequest($aRebuildedParams);
 
     } // End function

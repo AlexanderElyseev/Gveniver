@@ -78,8 +78,8 @@ class TraceModule extends BaseModule
 
     /**
      * Adding trace string.
-     * Using sprintf syntax is available.
-     * Add data to container only if debug enabled.
+     * Sprintf syntax is available.
+     * Adds data to container only if debug enabled.
      *
      * @param string $sMessage String to add.
      *
@@ -97,7 +97,7 @@ class TraceModule extends BaseModule
             $sMessage = call_user_func_array('sprintf', $aArgs);
         }
 
-        //echo $sMessage."<br/>\n";
+        //echo $sMessage.GV_EOL;
 
         $dMemory = memory_get_usage();
         $dTime = microtime(true);

@@ -9,7 +9,6 @@
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  */
-
 namespace Gveniver;
 
 // @codingStandardsIgnoreStart
@@ -26,9 +25,8 @@ spl_autoload_register(
                 $sAbsoluteFilePath = GV_APPLICATION_PATH_BASE.$sRelativeFilePath;
                 if (!file_exists($sAbsoluteFilePath))
                     return false;
-            } else {
+            } else
                 return false;
-            }
         }
 
         /** @noinspection PhpIncludeInspection */
@@ -46,17 +44,15 @@ define('GV_DS', DIRECTORY_SEPARATOR);                           // Directory sep
 define('GV_PATH_BASE', __DIR__.GV_DS);                          // Gveniver base path.
 
 // System library cache directory path.
-if (!defined('GV_PATH_CACHE'))
-    define('GV_PATH_CACHE', GV_PATH_BASE.'cache'.GV_DS);
+defined('GV_PATH_CACHE') || define('GV_PATH_CACHE', GV_PATH_BASE.'cache'.GV_DS);
 if (!is_dir(GV_PATH_CACHE) && !mkdir(GV_PATH_CACHE, 0777, true))
     throw new \Gveniver\Exception\ArgumentException('Gveniver cache directory error.');
 
-define('GV_DATE_NOW', date('Y-m-d H:i:s'));                     // Current date as string.
-define('GV_TIME_NOW', time());                                  // Current time at integer.
-define('GV_OS_WIN', stripos(PHP_OS, 'win') !== false);          // Is running on Windows?
-define('GV_CLI', stripos(php_sapi_name(), 'cli') !== false);    // Is running on CLI?
-define('GV_EOL', GV_CLI ? "\n" : '<br/>');                      // End of line.
+define('GV_DATE_NOW', date('Y-m-d H:i:s'));                         // Current date as string.
+define('GV_TIME_NOW', time());                                      // Current time at integer.
+define('GV_OS_WIN', stripos(php_uname('s'), 'windows') !== false);  // Is running on Windows?
+define('GV_CLI', stripos(php_sapi_name(), 'cli') !== false);        // Is running on CLI?
+define('GV_EOL', GV_CLI ? "\n" : '<br/>');                          // End of line.
 
 // Base application path.
-if (!defined('GV_APPLICATION_PATH_BASE'))
-    define('GV_APPLICATION_PATH_BASE', null);
+defined('GV_APPLICATION_PATH_BASE') || define('GV_APPLICATION_PATH_BASE', null);

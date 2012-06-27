@@ -24,16 +24,18 @@ namespace Gveniver\Kernel;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  * 
- * @property \Gveniver\Kernel\Module\CacheModule     $cache
- * @property \Gveniver\Kernel\Module\CaptchaModule   $captcha
- * @property \Gveniver\Kernel\Module\DataModule      $data
- * @property \Gveniver\Kernel\Module\ExtensionModule $extension
- * @property \Gveniver\Kernel\Module\InvarModule     $invar
- * @property \Gveniver\Kernel\Module\LogModule       $log
- * @property \Gveniver\Kernel\Module\RedirectModule  $redirect
- * @property \Gveniver\Kernel\Module\SecurityModule  $security
- * @property \Gveniver\Kernel\Module\TemplateModule  $template
- * @property \Gveniver\Kernel\Module\TraceModule     $trace
+ * @property  \Gveniver\Kernel\Module\CacheModule     $cache
+ * @property  \Gveniver\Kernel\Module\CaptchaModule   $captcha
+ * @property  \Gveniver\Kernel\Module\CrosspageModule $crosspage
+ * @property  \Gveniver\Kernel\Module\DataModule      $data
+ * @property  \Gveniver\Kernel\Module\ExtensionModule $extension
+ * @property  \Gveniver\Kernel\Module\InvarModule     $invar
+ * @property  \Gveniver\Kernel\Module\LogModule       $log
+ * @property  \Gveniver\Kernel\Module\RedirectModule  $redirect
+ * @property  \Gveniver\Kernel\Module\SecurityModule  $security
+ * @property  \Gveniver\Kernel\Module\SessionModule   $session
+ * @property  \Gveniver\Kernel\Module\TemplateModule  $template
+ * @property  \Gveniver\Kernel\Module\TraceModule     $trace
  */
 final class Application
 {
@@ -74,18 +76,24 @@ final class Application
      * Constructor of {@see Kernel} class.
      * Initialize new instance of kernel and PHP environment by kernel configuration.
      *
-     * @param string|Profile\BaseProfile $mProfile               Path to profile directory or name of profile, or profile instance.
-     * @param string                     $sApplicationConfigFile Path to XML configuration file for application.
+     * @param string|Profile\BaseProfile $mProfile Path to profile directory or name of profile, or profile instance.
+     * @param string|array               $mConfig  Path to XML configuration file for application or array with configuration parameters.
+     *
+     * @throws \Gveniver\Exception\ArgumentException
      */
-    public function __construct($mProfile, $sApplicationConfigFile = null)
+    public function __construct($mProfile, $mConfig = null)
     {
         // Initialize and load base configuration.
         $this->_cConfig = new \Gveniver\Config();
         $this->_cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
 
         // Append additional application configuration, if specified.
-        if ($sApplicationConfigFile)
-            $this->_cConfig->mergeXmlFile($sApplicationConfigFile);
+        if ($mConfig) {
+            if (is_string($mConfig))
+                $this->_cConfig->mergeXmlFile($mConfig);
+            elseif (is_array($mConfig))
+                $this->_cConfig->merge($mConfig);
+        }
 
         // Initialize profile of application.
         if ($mProfile instanceof Profile\BaseProfile)
@@ -120,13 +128,14 @@ final class Application
      *
      * @param string $sName Parameter name for reading.
      *
-     * @return Module Null on error.
+     * @throws \Gveniver\Exception\BaseException
+     * @return \Gveniver\Kernel\Module\BaseModule|null Returns null on error.
      */
     public function __get($sName)
     {
         $cModule = $this->getModule($sName);
         if (!$cModule)
-            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") not loaded.', $sName));
+            throw new \Gveniver\Exception\BaseException(sprintf('Module ("%s") has not been loaded.', $sName));
 
         return $cModule;
 
@@ -155,7 +164,7 @@ final class Application
         // Start session.
         $bStartSession = self::toBoolean($this->getConfig()->get('Kernel/StartSession'));
         if ($bStartSession) {
-            session_start();
+            $this->session->start();
             $this->trace->addLine('[%s] Session started.', __CLASS__);
         }
 
@@ -249,10 +258,14 @@ final class Application
         }
 
         // Check profile directory.
-        if (is_dir($sProfileName) && \Gveniver\isAbsolutePath($sProfileName)) {
-            $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sProfileName);
-            $sProfileDir = $sProfileName;
-            $sProfileName = basename($sProfileName);
+        if (\Gveniver\isAbsolutePath($sProfileName)) {
+            $sCorrectedProfileName = \Gveniver\correctPath($sProfileName, true);
+            if (is_dir($sCorrectedProfileName)) {
+                $this->trace->addLine('[%s] Load profile by path ("%s").', __CLASS__, $sCorrectedProfileName);
+                $sProfileDir = $sCorrectedProfileName;
+                $sProfileName = basename($sCorrectedProfileName);
+            } else
+                return null;
         } else {
             $this->trace->addLine('[%s] Load profile by name ("%s").', __CLASS__, $sProfileName);
             $sProfileDir = \Gveniver\correctPath($this->getConfig()->get('Kernel/ProfilePath'), true).$sProfileName.GV_DS;
@@ -381,7 +394,7 @@ final class Application
      *
      * @param string $sModuleName Name of module. May be short (ex. trace -> TraceModule).
      *
-     * @return Module|null
+     * @return \Gveniver\Kernel\Module\BaseModule|null Returns null on error.
      */
     public function getModule($sModuleName)
     {
