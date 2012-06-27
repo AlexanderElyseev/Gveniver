@@ -39,6 +39,7 @@ Todo list for project.
 9. Template module.                                                                                 [**]
     9.1. PHP templates.                                                                             [--]
     9.2. Parameters for building factory at separated part.                                         [--]
+    9.3. Template path at module and at profile paths.                                              [--]
 --------------------------------------------------------------------------------------------------------
 
 
