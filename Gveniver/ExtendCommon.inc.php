@@ -247,8 +247,8 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
         $fCropText($cXml);
 
     } // End if
-    
-    $string = html_entity_decode($cDom->saveHTML($cXml), ENT_COMPAT, 'UTF-8');
+
+    $string = html_entity_decode($cDom->saveXml($cXml), ENT_COMPAT, 'UTF-8');
     $string = substr($string, 10, $string - 11);
     return $string;
 
