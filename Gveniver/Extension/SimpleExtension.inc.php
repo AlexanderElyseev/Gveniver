@@ -26,6 +26,30 @@ namespace Gveniver\Extension;
 class SimpleExtension extends BaseExtension
 {
     /**
+     * The name of current class.
+     * Used for building log records without calls of function.
+     *
+     * @var string
+     */
+    protected $sClassName;
+    //-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Class constructor.
+     *
+     * @param \Gveniver\Kernel\Application $cApplication Current application.
+     */
+    public function __construct(\Gveniver\Kernel\Application $cApplication)
+    {
+        $this->sClassName = get_class($this);
+
+        parent::__construct($cApplication);
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
      * Query to extension.
      * Redirect request to public function of current extension with same name.
      *
@@ -41,7 +65,12 @@ class SimpleExtension extends BaseExtension
      */
     public function query($sAction, $aParams = array(), $aOptions = array())
     {
-        $this->getApplication()->trace->addLine('[%s] Executing query: "%s".', __CLASS__, $sAction);
+        $this->getApplication()->trace->addLine(
+            '[%s : %s] Executing query: "%s".',
+            __CLASS__,
+            $this->sClassName,
+            $sAction
+        );
 
         // Load name of method by specified output format.
         $sMethodName = $this->_loadHandlerMethodName(
@@ -56,7 +85,12 @@ class SimpleExtension extends BaseExtension
         if (!$this->_checkQueryHandler($sMethodName, $sAction, $bExteranl))
             return null;
         
-        $this->getApplication()->trace->addLine('[%s] Handler found for query: "%s".', __CLASS__, $sAction);
+        $this->getApplication()->trace->addLine(
+            '[%s : %s] Handler found for query: "%s".',
+            __CLASS__,
+            $this->sClassName,
+            $sAction
+        );
 
         // Executing query.
         return $this->_executeQuery(
@@ -101,8 +135,9 @@ class SimpleExtension extends BaseExtension
 
             if (!$sMethodName) {
                 $this->getApplication()->trace->addLine(
-                    '[%s] Handler for query ("%s") and format ("%s") is not found.',
+                    '[%s : %s] Handler for query ("%s") and format ("%s") is not found.',
                     __CLASS__,
+                    $this->sClassName,
                     $sAction,
                     $sFormat
                 );
@@ -132,7 +167,7 @@ class SimpleExtension extends BaseExtension
     {
         // Check cache before executing query.
         if ($mCache) {
-            $this->getApplication()->trace->addLine('[%s] Using cache for extension query.', __CLASS__);
+            $this->getApplication()->trace->addLine('[%s : %s] Using cache for extension query.', __CLASS__, $this->sClassName);
 
             // Try to load cache module from application.
             // On error execute query.
@@ -147,14 +182,14 @@ class SimpleExtension extends BaseExtension
                 // If data is not loaded, load by extension and save to cache.
                 $sRet = null;
                 if ($cCacheModule->get($sCacheId, self::CACHE_GROUP, $sRet)) {
-                    $this->getApplication()->trace->addLine('[%s] Data loaded from cache.', __CLASS__);
+                    $this->getApplication()->trace->addLine('[%s : %s] Data loaded from cache.', __CLASS__, $this->sClassName);
                 } else {
-                    $this->getApplication()->trace->addLine('[%s] Data is not loaded from cache.', __CLASS__);
+                    $this->getApplication()->trace->addLine('[%s : %s] Data is not loaded from cache.', __CLASS__, $this->sClassName);
                     $sRet = $this->_callQueryHandler($sHandlerMethodName, $aArgs);
                     $cCacheModule->set($sRet, $sCacheId, self::CACHE_GROUP);
                 }
             } else {
-                $this->getApplication()->trace->addLine('[%s] Cache module not found.', __CLASS__);
+                $this->getApplication()->trace->addLine('[%s : %s] Cache module not found.', __CLASS__, $this->sClassName);
                 $sRet = $this->_callQueryHandler($sHandlerMethodName, $aArgs);
             }
         } else {
@@ -205,8 +240,9 @@ class SimpleExtension extends BaseExtension
                         && \Gveniver\Kernel\Application::toBoolean($aAction['External'])
                     ) {
                         $this->getApplication()->trace->addLine(
-                            '[%s] Handler for query ("%s") is for externa queries.',
+                            '[%s : %s] Handler for query ("%s") is for externa queries.',
                             __CLASS__,
+                            $this->sClassName,
                             $sAction
                         );
 
@@ -222,14 +258,16 @@ class SimpleExtension extends BaseExtension
         } // End if
         if (!$bExternalCheck) {
             $this->getApplication()->trace->addLine(
-                '[%s] Handler for query ("%s") is not for externa queries.',
+                '[%s : %s] Handler for query ("%s") is not for externa queries.',
                 __CLASS__,
+                $this->sClassName,
                 $sAction
             );
             $this->getApplication()->log->security(
                 sprintf(
-                    '[%s] Attempt to call exteranl query ("%s") without permissions.',
+                    '[%s : %s] Attempt to call exteranl query ("%s") without permissions.',
                     __CLASS__,
+                    $this->sClassName,
                     $sAction
                 )
             );
@@ -239,14 +277,16 @@ class SimpleExtension extends BaseExtension
         // Check existence of method.
         if (!method_exists($this, $sHandlerMethodName)) {
             $this->getApplication()->trace->addLine(
-                '[%s] Handler for query ("%s") is not found.',
+                '[%s : %s] Handler for query ("%s") is not found.',
                 __CLASS__,
+                $this->sClassName,
                 $sAction
             );
             $this->getApplication()->log->security(
                 sprintf(
-                    '[%s] Attempt to call non-existed function ("%s").',
+                    '[%s : %s] Attempt to call non-existed function ("%s").',
                     __CLASS__,
+                    $this->sClassName,
                     $sAction
                 )
             );
@@ -257,14 +297,16 @@ class SimpleExtension extends BaseExtension
         $cRefl = new \ReflectionMethod($this, $sHandlerMethodName);
         if (!$cRefl->isPublic()) {
             $this->getApplication()->trace->addLine(
-                '[%s] Handler for query ("%s") is not public.',
+                '[%s : %s] Handler for query ("%s") is not public.',
                 __CLASS__,
+                $this->sClassName,
                 $sAction
             );
             $this->getApplication()->log->security(
                 sprintf(
-                    '[%s] Attempt to call non-user function ("%s").',
+                    '[%s : %s] Attempt to call non-user function ("%s").',
                     __CLASS__,
+                    $this->sClassName,
                     $sAction
                 )
             );
@@ -276,14 +318,16 @@ class SimpleExtension extends BaseExtension
             || in_array($sHandlerMethodName, array('getConfig', 'getApplication', 'getResource', 'query'))
         ) {
             $this->getApplication()->trace->addLine(
-                '[%s] Handler for query ("%s") is not correct.',
+                '[%s : %s] Handler for query ("%s") is not correct.',
                 __CLASS__,
+                $this->sClassName,
                 $sAction
             );
             $this->getApplication()->log->security(
                 sprintf(
-                    '[%s] Attempt to call from exteranl query ("%s") non-user functions.',
+                    '[%s : %s] Attempt to call from exteranl query ("%s") non-user functions.',
                     __CLASS__,
+                    $this->sClassName,
                     $sAction
                 )
             );

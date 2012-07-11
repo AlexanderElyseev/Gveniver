@@ -23,54 +23,25 @@ namespace Gveniver\Extension\Loader;
  * @link      http://prof-club.ru
  * @abstract
  */
-abstract class BaseExtensionLoader
+abstract class BaseExtensionLoader extends \Gveniver\BaseObject
 {
     /**
-     * Current application.
+     * The lis of loaded extensiosn.
      *
-     * @var \Gveniver\Kernel\Application
-     */
-    private $_cApplication;
-    //-----------------------------------------------------------------------------
-
-    /**
      * @var array
      */
     private $_aExtensions = array();
     //-----------------------------------------------------------------------------
 
     /**
+     * The list of name hashes.
+     *
      * @var array
      */
     private $_aNameHash = array();
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
-    /**
-     * Base class constructor.
-     * Initialize member fields.
-     *
-     * @param \Gveniver\Kernel\Application $cApplication Current application.
-     */
-    public function __construct(\Gveniver\Kernel\Application $cApplication)
-    {
-        $this->_cApplication = $cApplication;
-                
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Getter for current application.
-     *
-     * @return \Gveniver\Kernel\Application
-     */
-    public function getApplication()
-    {
-        return $this->_cApplication;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-    
     /**
      * Loading extension by name.
      *
