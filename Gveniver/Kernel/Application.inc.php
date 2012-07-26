@@ -302,6 +302,7 @@ final class Application
 
         // Create instance of profile.
         try {
+            /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
             $cProfile = new $sProfileClass($this, $sProfileName, $sProfileDir, $cParentProfile);
         } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->trace->addLine(
@@ -313,8 +314,6 @@ final class Application
             return null;
         }
         $this->trace->addLine('[%s] Profile instance ("%s") successfully created.', __CLASS__, $sProfileClass);
-
-        /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
 
         // Load configuration of profile and append to main configuration.
         $sProfileXmlFile = $sProfileDir.'config.xml';
@@ -407,7 +406,7 @@ final class Application
         if (array_key_exists($sModuleName, $this->_aModules))
             return $this->_aModules[$sModuleName];
 
-        // Mark attemp of loading module as failed by default.
+        // Mark attempt of loading module as failed by default.
         $this->_aModules[$sModuleName] = null;
 
         // Build correct module class name.
