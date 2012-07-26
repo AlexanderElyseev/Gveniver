@@ -37,7 +37,10 @@
 				<MainTemplate>main_enter.tpl</MainTemplate>
                 <Robots>INDEX</Robots>
                 <ScriptList>
-                    <Script><FileName>script1.js</FileName></Script>
+                    <Script>
+                        <FileName>script1.js</FileName>
+                        <NoCache>true</NoCache>
+                    </Script>
                     <Script><FileName>script2.js</FileName></Script>
                 </ScriptList>
                 <StyleList>
