@@ -297,7 +297,7 @@ final class Application
 
         // Create instance of profile.
         try {
-            $cProfile = new $sProfileClass($this, $sProfileDir, $cParentProfile);
+            $cProfile = new $sProfileClass($this, $sProfileName, $sProfileDir, $cParentProfile);
         } catch (\Gveniver\Exception\BaseException $cEx) {
             $this->trace->addLine(
                 '[%s] Exception in profile ("%s") constructor: "%s".',

@@ -82,7 +82,7 @@ class FileSplitter
      * Adding file for caching.
      *
      * @param string   $sAbsoluteFilePath Absolute file path to add.
-     * @param callback $fModifier         Modifier for file.
+     * @param callable $fModifier         Modifier for file.
      *
      * @return boolean
      */

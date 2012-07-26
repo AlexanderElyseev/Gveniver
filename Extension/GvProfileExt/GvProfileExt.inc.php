@@ -101,14 +101,31 @@ class GvProfileExt extends SimpleExtension
     /**
      * Returns configuration parameters.
      *
-     * @param string $sPath Path to configuration parameter.
+     * @param string $sPath        The path to configuration parameter.
+     * @param string $sProfileName The name of profile for loading configuration parameter.
      *
      * @return string|null
      */
-    public function getConfigVariable($sPath)
+    public function getConfigVariable($sPath, $sProfileName = null)
     {
-        return $sPath ? $this->getApplication()->getConfig()->get($sPath) : null;
-        
+        if (!$sPath) {
+            $sText = sprintf('[%s::%s] Configuration path is not specified.', __CLASS__, __METHOD__);
+            $this->getApplication()->log->error($sText);
+            $this->getApplication()->trace->addLine($sText);
+            return null;
+        }
+
+        if ($sProfileName) {
+            foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+                /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
+                if ($cProfile->getName() === $sProfileName)
+                    return $cProfile->getConfig()->get($sPath);
+            }
+        } else
+            return $this->getApplication()->getConfig()->get($sPath);
+
+        return null;
+
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -535,8 +552,7 @@ class GvProfileExt extends SimpleExtension
                     // @codingStandardsIgnoreStart
                     $cCacheSplitter->addFile(
                         $sAbsStyleFileName,
-                        function ($sContent) use ($sStyleName, $sAbsStyleDirName, $sStylesWebPath)
-                        {
+                        function ($sContent) use ($sStyleName, $sAbsStyleDirName, $sStylesWebPath) {
                             $aReplacedEntries = array();
                             preg_match_all('/url\(["|\']?(?!https?|ftp)(.*?)["|\']?\)/', $sContent, $aMatches);
                             foreach ($aMatches[1] as $nIndex => $sUrl) {
