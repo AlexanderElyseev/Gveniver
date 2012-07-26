@@ -60,7 +60,7 @@ class Config
             return false;
 
         // Try to read configuration from cache.
-        $bCacheEnabled = Kernel\Application::toBoolean($this->get('Kernel/EnableCache'));
+        $bCacheEnabled = toBoolean($this->get('Kernel/EnableCache'));
         $sCacheFile = null;
         if ($bCacheEnabled) {
             $sCacheFile = GV_PATH_CACHE.'config-'.md5($sConfigFile).'.dat';

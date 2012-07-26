@@ -157,12 +157,12 @@ final class Application
         $this->trace->addLine('[%s] Error reporting: %d.', __CLASS__, $nErrorReporting);
 
         // Display errors.
-        $bDisplayErrors = self::toBoolean($this->getConfig()->get('Kernel/DisplayErrors'));
+        $bDisplayErrors = \Gveniver\toBoolean($this->getConfig()->get('Kernel/DisplayErrors'));
         ini_set('display_errors', $bDisplayErrors);
         $this->trace->addLine('[%s] Display errors: %s.', __CLASS__, $bDisplayErrors ? 'true' : 'false');
         
         // Start session.
-        $bStartSession = self::toBoolean($this->getConfig()->get('Kernel/StartSession'));
+        $bStartSession = \Gveniver\toBoolean($this->getConfig()->get('Kernel/StartSession'));
         if ($bStartSession) {
             $this->session->start();
             $this->trace->addLine('[%s] Session started.', __CLASS__);
@@ -196,16 +196,16 @@ final class Application
             $this->trace->addLine('[%s] Multibyte encoding is not loaded from configuration.', __CLASS__);
         }
 
-        // Use output buffering.
-        $bUseBuffering = self::toBoolean($this->getConfig()->get('Kernel/UseOutputBuffering'));
+        // Using output buffering.
+        $bUseBuffering = \Gveniver\toBoolean($this->getConfig()->get('Kernel/UseOutputBuffering'));
         if ($bUseBuffering) {
             $this->trace->addLine('[%s] Use output buffering.', __CLASS__);
 
             // Force compression even when client does not report support.
-            $bForceCompression = self::toBoolean($this->getConfig()->get('Kernel/ForceCompression'));
+            $bForceCompression = \Gveniver\toBoolean($this->getConfig()->get('Kernel/ForceCompression'));
 
             // Prefer deflate over gzip when both are supported.
-            $bPreferDeflate = self::toBoolean($this->getConfig()->get('Kernel/PreferDeflate'));
+            $bPreferDeflate = \Gveniver\toBoolean($this->getConfig()->get('Kernel/PreferDeflate'));
 
             // Handle the output stream and set a handler function.
             if(isset($_SERVER['HTTP_ACCEPT_ENCODING']))
@@ -219,20 +219,25 @@ final class Application
                 $bDeflateSupport = $bPreferDeflate;
 
             if ($bDeflateSupport) {
-                // Defalte compression.
                 header('Content-Encoding: deflate');
-                ob_start('Kernel::obHandlerDeflate');
+                ob_start(
+                    function($sBuffer) {
+                        return gzdeflate($sBuffer, 9);
+                    }
+                );
             } elseif ($bGzipSupport) {
-                // Gzip compression.
                 header('Content-Encoding: gzip');
-                ob_start('Kernel::obHandlerGzip');
+                ob_start(
+                    function($sBuffer) {
+                        return gzencode($sBuffer, 9);
+                    }
+                );
             } else
-                // No compression.
                 ob_start();
 
         } // End if
 
-        $this->trace->addLine('[%s] Environement of the kernel successfully initialized.', __CLASS__);
+        $this->trace->addLine('[%s] Environment of the kernel successfully initialized.', __CLASS__);
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -446,67 +451,6 @@ final class Application
     public function getProfile()
     {
         return $this->_cProfile;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Output buffer handler with GZip compression.
-     *
-     * @param string $sBuffer Buffer data.
-     *
-     * @return string
-     */
-    public static function obHandlerGzip($sBuffer)
-    {
-        return gzencode($sBuffer, 9);
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Output buffer handler with deflate compression.
-     *
-     * @param string $sBuffer Buffer data.
-     *
-     * @return string
-     */
-    public static function obHandlerDeflate($sBuffer)
-    {
-        return gzdeflate($sBuffer, 9);
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Convert value to boolean.
-     *
-     * @param mixed $mValue Value to convert.
-     *
-     * @return bool Convert result.
-     * @static
-     */
-    public static function toBoolean($mValue)
-    {
-        if ($mValue === true || $mValue === 1 || $mValue === '1' || $mValue === 'true')
-            return true;
-
-        return false;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-    /**
-     * Convert value to integer, if value is not null.
-     *
-     * @param mixed $mValue Value to convert.
-     *
-     * @return integer|null Converted result.
-     * @static
-     */
-    public static function toIntegerOrNull($mValue)
-    {
-        return is_null($mValue) ? null : intval($mValue);
 
     } // End function
     //-----------------------------------------------------------------------------

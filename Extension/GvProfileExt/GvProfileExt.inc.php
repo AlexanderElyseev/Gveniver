@@ -44,19 +44,19 @@ class GvProfileExt extends SimpleExtension
         parent::__construct($cApplication);
 
         // Configuration parameters.
-        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['UseConfigScript'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Kernel/UseConfigScript')
         );
         $this->_aConfig['ConfigScriptSection'] = $this->getApplication()->getConfig()->get('Kernel/ConfigScriptSection');
         $this->_aConfig['InvarSectionKey'] = $this->getApplication()->getConfig()->get('Kernel/InvarSectionKey');
 
-        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['CacheScripts'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CacheScript')
         );
-        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['CacheStyles'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CacheStyle')
         );
-        $this->_aConfig['CheckCacheModifyTime'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['CheckCacheModifyTime'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CheckCacheModifyTime')
         );
 
@@ -263,7 +263,7 @@ class GvProfileExt extends SimpleExtension
                 $aUniqueScripts[] = $sAbsWebPath;
                 $aScript['WebFileName'] = $sAbsWebPath;
                 $aScript['AbsFileName'] = $sScriptAbsPath.$sFileName;
-                $aScript['NoCache'] = isset($aScript['NoCache']) ? \Gveniver\Kernel\Application::toBoolean($aScript['NoCache']) : false;
+                $aScript['NoCache'] = isset($aScript['NoCache']) ? \Gveniver\toBoolean($aScript['NoCache']) : false;
                 $aScript['Priority'] = isset($aScript['Priority']) ? (int)$aScript['Priority'] : 0;
                 $aScriptNames[$sFileName] = $aScript;
 
@@ -311,7 +311,9 @@ class GvProfileExt extends SimpleExtension
 
             return array_merge(
                 $aNoCache,
-                array(array('WebFileName' => $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb').$sCacheFile))
+                array(
+                    array('WebFileName' => $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb').$sCacheFile)
+                )
             );
 
         } catch (\Gveniver\Exception\BaseException $cEx) {

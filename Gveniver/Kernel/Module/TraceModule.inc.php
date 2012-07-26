@@ -49,7 +49,7 @@ class TraceModule extends BaseModule
     protected function init()
     {
         $this->_aMessages = array();
-        $this->_bDebug = \Gveniver\Kernel\Application::toBoolean(
+        $this->_bDebug = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get(
                 array('Kernel', 'Debug')
             )
