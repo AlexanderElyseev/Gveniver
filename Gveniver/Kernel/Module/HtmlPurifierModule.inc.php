@@ -276,7 +276,6 @@ class HtmlPurifierModule extends BaseModule
                 $cElement->removeChild($cNode);
         };
         $fCropText($cDom->documentElement);
-
         return $cDom->saveHTML();
     }
 }

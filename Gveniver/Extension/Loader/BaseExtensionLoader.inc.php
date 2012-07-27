@@ -1,6 +1,6 @@
 <?php
 /**
- * File contsins base abstract class for loader of extensions.
+ * File contains base abstract class for loader of extensions.
  *
  * @category  Gveniver
  * @package   Kernel

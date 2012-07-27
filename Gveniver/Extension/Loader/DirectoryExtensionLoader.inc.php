@@ -2,12 +2,13 @@
 /**
  * File contains loader class for extensions.
  *
- * @category  Gveniver
- * @package   Kernel
- * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
- * @copyright 2008-2011 Elyseev Alexander
- * @license   http://prof-club.ru/license.txt Prof-Club License
- * @link      http://prof-club.ru
+ * @category   Gveniver
+ * @package    Extension
+ * @subpackage Loader
+ * @author     Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright  2008-2011 Elyseev Alexander
+ * @license    http://prof-club.ru/license.txt Prof-Club License
+ * @link       http://prof-club.ru
  */
 
 namespace Gveniver\Extension\Loader;
@@ -19,12 +20,13 @@ namespace Gveniver\Extension\Loader;
  * By default, load from extension directory and from directory
  * at profile configuration.
  *
- * @category  Gveniver
- * @package   Kernel
- * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
- * @copyright 2008-2011 Elyseev Alexander
- * @license   http://prof-club.ru/license.txt Prof-Club License
- * @link      http://prof-club.ru
+ * @category   Gveniver
+ * @package    Extension
+ * @subpackage Loader
+ * @author     Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright  2008-2011 Elyseev Alexander
+ * @license    http://prof-club.ru/license.txt Prof-Club License
+ * @link       http://prof-club.ru
  */
 class DirectoryExtensionLoader extends BaseExtensionLoader
 {
@@ -34,13 +36,11 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
      * @var string
      */
     private $_aExtensionDirList = array();
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
      * Class constructor.
      * Register directories with extensions: by profile configuration and
-     * base kernel extensiosn.
+     * base kernel extensions.
      *
      * @param \Gveniver\Kernel\Application $cApplication Current application.
      */
@@ -54,9 +54,7 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
 
         // Register extension directory from profile configuration.
         $this->_registerExtDir($this->getApplication()->getConfig()->get('Profile/Path/AbsExtension'));
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Register directory with extensions.
@@ -86,9 +84,7 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
         } else {
             $this->getApplication()->trace->addLine('[%s] Wrong extension directory ("%s").',  __CLASS__, $sDir);
         }
-        
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Template method for direct loading of extension by name.
@@ -136,9 +132,7 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
 
         $this->getApplication()->trace->addLine('[%s] Extension ("%s") not loaded.', __CLASS__, $sExtensionName);
         return null;
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Build extension instance.
@@ -176,11 +170,6 @@ class DirectoryExtensionLoader extends BaseExtensionLoader
         } catch (\Exception $cEx) {
             $this->getApplication()->trace->addLine('[%s] Extension ("%s") not loaded loaded: "%s".', __CLASS__, $sExtensionClassName, $cEx->getMessage());
         }
-
         return null;
-
-    } // End function
-    //-----------------------------------------------------------------------------
-
-} // End class
-//-----------------------------------------------------------------------------
+    }
+}

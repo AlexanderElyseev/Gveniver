@@ -3,7 +3,7 @@
  * File contains class of simple extension.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Extension
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -17,7 +17,7 @@ namespace Gveniver\Extension;
  * Without export data.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Extension
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -32,8 +32,6 @@ class SimpleExtension extends BaseExtension
      * @var string
      */
     protected $sClassName;
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
      * Class constructor.
@@ -45,9 +43,7 @@ class SimpleExtension extends BaseExtension
         $this->sClassName = get_class($this);
 
         parent::__construct($cApplication);
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Query to extension.
@@ -81,8 +77,8 @@ class SimpleExtension extends BaseExtension
             return null;
 
         // Check query handler.
-        $bExteranl = isset($aOptions['external']) && $aOptions['external'];
-        if (!$this->_checkQueryHandler($sMethodName, $sAction, $bExteranl))
+        $bExternal = isset($aOptions['external']) && $aOptions['external'];
+        if (!$this->_checkQueryHandler($sMethodName, $sAction, $bExternal))
             return null;
         
         $this->getApplication()->trace->addLine(
@@ -98,10 +94,8 @@ class SimpleExtension extends BaseExtension
             $aParams,
             isset($aOptions['cache']) && $aOptions['cache']
         );
+    }
 
-    } // End function
-    //-----------------------------------------------------------------------------
-    
     /**
      * Load name of handler method for specified action and target output format.
      * By default, is used action value as handler method name.
@@ -150,9 +144,7 @@ class SimpleExtension extends BaseExtension
 
         // By default, used action value as handler method name.
         return $sAction;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Execute call method with specified arguments and cache parameters.
@@ -197,9 +189,7 @@ class SimpleExtension extends BaseExtension
         }
 
         return $sRet;
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Call query handler.
@@ -212,24 +202,22 @@ class SimpleExtension extends BaseExtension
     private function _callQueryHandler($sHandlerMethodName, array $aParams)
     {
         return call_user_func_array(array($this, $sHandlerMethodName), $aParams);
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Checking of query handler.
      *
      * @param string $sHandlerMethodName Name of handler method.
      * @param string $sAction            Query action.
-     * @param bool   $bExteranl          This is exteranl query.
+     * @param bool   $bExternal          This is exteranl query.
      *
      * @return bool True if handler is correct.
      */
-    private function _checkQueryHandler($sHandlerMethodName, $sAction, $bExteranl)
+    private function _checkQueryHandler($sHandlerMethodName, $sAction, $bExternal)
     {
         // Check permissions of external query.
         $bExternalCheck = true;
-        if ($bExteranl) {
+        if ($bExternal) {
             $bExternalCheck = false;
             $aActList = $this->getConfig()->get('Extension/ActList');
             if (is_array($aActList)) {
@@ -240,7 +228,7 @@ class SimpleExtension extends BaseExtension
                         && \Gveniver\toBoolean($aAction['External'])
                     ) {
                         $this->getApplication()->trace->addLine(
-                            '[%s : %s] Handler for query ("%s") is for externa queries.',
+                            '[%s : %s] Handler for query ("%s") is for external queries.',
                             __CLASS__,
                             $this->sClassName,
                             $sAction
@@ -250,22 +238,20 @@ class SimpleExtension extends BaseExtension
                         break;
                         
                     } // End if
-
                 } // foreach
-                
             } // End if
-
         } // End if
+
         if (!$bExternalCheck) {
             $this->getApplication()->trace->addLine(
-                '[%s : %s] Handler for query ("%s") is not for externa queries.',
+                '[%s : %s] Handler for query ("%s") is not for external queries.',
                 __CLASS__,
                 $this->sClassName,
                 $sAction
             );
             $this->getApplication()->log->security(
                 sprintf(
-                    '[%s : %s] Attempt to call exteranl query ("%s") without permissions.',
+                    '[%s : %s] Attempt to call external query ("%s") without permissions.',
                     __CLASS__,
                     $this->sClassName,
                     $sAction
@@ -294,8 +280,8 @@ class SimpleExtension extends BaseExtension
         }
 
          // Method must be public.
-        $cRefl = new \ReflectionMethod($this, $sHandlerMethodName);
-        if (!$cRefl->isPublic()) {
+        $cReflection = new \ReflectionMethod($this, $sHandlerMethodName);
+        if (!$cReflection->isPublic()) {
             $this->getApplication()->trace->addLine(
                 '[%s : %s] Handler for query ("%s") is not public.',
                 __CLASS__,
@@ -325,7 +311,7 @@ class SimpleExtension extends BaseExtension
             );
             $this->getApplication()->log->security(
                 sprintf(
-                    '[%s : %s] Attempt to call from exteranl query ("%s") non-user functions.',
+                    '[%s : %s] Attempt to call from external query ("%s") non-user functions.',
                     __CLASS__,
                     $this->sClassName,
                     $sAction
@@ -333,11 +319,6 @@ class SimpleExtension extends BaseExtension
             );
             return false;
         }
-
         return true;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-} // End class
-//-----------------------------------------------------------------------------
+    }
+}

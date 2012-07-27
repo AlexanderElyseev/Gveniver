@@ -3,7 +3,7 @@
  * File contains base abstract extension class.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Extension
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -16,7 +16,7 @@ namespace Gveniver\Extension;
  * Base abstract extension class.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Extension
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -31,8 +31,6 @@ abstract class BaseExtension
      * @var string
      */
     const CACHE_GROUP = 'extension';
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
      * Configuration of extension.
@@ -40,7 +38,6 @@ abstract class BaseExtension
      * @var \Gveniver\Config
      */
     private $_cConfig;
-    //-----------------------------------------------------------------------------
 
     /**
      * Current application of extension.
@@ -48,8 +45,6 @@ abstract class BaseExtension
      * @var \Gveniver\Kernel\Application
      */
     private $_cApplication;
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
      * Base extension constructor.
@@ -60,9 +55,7 @@ abstract class BaseExtension
     {
         $this->_cApplication = $cApplication;
         $this->_cConfig = new \Gveniver\Config();
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Getter for current application.
@@ -72,10 +65,8 @@ abstract class BaseExtension
     public function getApplication()
     {
         return $this->_cApplication;
+    }
 
-    } // End function
-    //-----------------------------------------------------------------------------
-    
     /**
      * Query to extension.
      *
@@ -90,7 +81,6 @@ abstract class BaseExtension
      * @abstract
      */
     public abstract function query($sAction, $aParams = array(), $aOptions = array());
-    //-----------------------------------------------------------------------------
 
     /**
      * Getter for extension configuration.
@@ -100,10 +90,8 @@ abstract class BaseExtension
     public function getConfig()
     {
         return $this->_cConfig;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Load resource of extension by name with spwcified locale.
      *
@@ -131,15 +119,9 @@ abstract class BaseExtension
         // Load only with name of resource.
         if ($sResourceName)
             foreach ($aResourceList as $aResource)
-                if (isset($aResource['Value'])
-                    && isset($aResource['Name']) && $aResource['Name'] == $sResourceName
-                )
+                if (isset($aResource['Value']) && isset($aResource['Name']) && $aResource['Name'] == $sResourceName)
                     return $aResource['Value'];
 
         return null;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-
-} // End class
-//-----------------------------------------------------------------------------
+    }
+}
