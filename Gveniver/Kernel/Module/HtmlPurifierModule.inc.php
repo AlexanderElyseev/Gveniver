@@ -185,4 +185,96 @@ class HtmlPurifierModule extends BaseModule
         $cPurifier = new \HTMLPurifier($this->_buildConfig($mConfiguration));
         return $cPurifier->purify($sHtml);
     }
+
+    /**
+     * Formats text for outputting.
+     * Removes all HTML tags.
+     *
+     * @param string $sText      Text to output.
+     * @param int    $nMaxLength Maximal length.
+     * @param string $sCrop      Text for appending (for mark crop point).
+     *
+     * @return string
+     */
+    public function outputText($sText, $nMaxLength = null, $sCrop = '...')
+    {
+        if ($nMaxLength)
+            $sText = $this->_breakText($sText, intval($nMaxLength), $sCrop);
+
+        return strip_tags($sText);
+    }
+
+    /**
+     * Function cuts string with simple text by the specified number of chars.
+     *
+     * @param string $string     Text to cut.
+     * @param int    $nMaxLength Cutting length.
+     * @param string $sCropStr   Text for appending (for mark crop point).
+     *
+     * @return string
+     */
+    private function _breakText($string, $nMaxLength, $sCropStr = '...')
+    {
+        if (mb_strlen($string) > $nMaxLength) {
+            $string = mb_substr($string, 0, $nMaxLength);
+            $pos = mb_strrpos($string, ' ');
+            if ($pos === false)
+                return mb_substr($string, 0, $nMaxLength).$sCropStr;
+
+            return mb_substr($string, 0, $pos).$sCropStr;
+        }
+        return $string;
+    }
+
+    /**
+     * Formats HTML for outputting.
+     *
+     * @param string       $sHtml          Text to output.
+     * @param string|array $mConfiguration The optional name of HtmlPurifier configuration or array with configuration.
+     * @param int          $nMaxLength     Maximal length.
+     * @param string       $sCrop          Text for appending (for mark crop point).
+     *
+     * @return string
+     */
+    function outputHtml($sHtml, $mConfiguration = null, $nMaxLength = null, $sCrop = '...')
+    {
+        $sPureHtml = $this->clean($sHtml, $mConfiguration);
+        if (!$nMaxLength)
+            return $sPureHtml;
+
+        // Recursive walking over DOM tree, while length of text less then specified.
+        // After exceeding the limit of length, deleting all other nodes.
+        $cDom = new \DomDocument();
+        $cDom->loadHTML($sPureHtml);
+        $nLength = 0;
+        $bStop = false;
+        $fCropText = function(\DOMNode &$cElement) use (&$nLength, &$fCropText, &$bStop, $sCrop, $nMaxLength) {
+            $aNodesForDelete = array();
+            foreach ($cElement->childNodes as $cNode) {
+                /** @var $cNode \DOMElement */
+                if ($bStop) {
+                    $aNodesForDelete[] = $cNode;
+                    continue;
+                }
+
+                if ($cNode->nodeType == XML_TEXT_NODE) {
+                    $nStartLength = $nLength;
+                    $nLength += mb_strlen(trim($cNode->textContent));
+                    if ($nLength > $nMaxLength) {
+                        $bStop = true;
+                        $cNode->nodeValue = $this->_breakText($cNode->nodeValue, $nMaxLength - $nStartLength, $sCrop);
+                    }
+                }
+
+                if ($cNode->nodeType == XML_ELEMENT_NODE)
+                    $fCropText($cNode);
+            }
+
+            // Lazy deleting of marked nodes.
+            foreach ($aNodesForDelete as $cNode)
+                $cElement->removeChild($cNode);
+        };
+        $fCropText($cDom->documentElement);
+        return $cDom->saveHTML();
+    }
 }
