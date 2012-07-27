@@ -36,7 +36,7 @@ class NativeSessionStorage extends BaseSessionStorage
         if ($aConfig) {
             if (isset($aConfig['CookieHttpOnly']))
                 $this->getApplication()->trace->addLine('[%s] Using HttpOnly cookies.', __CLASS__);
-                ini_set('session.cookie_httponly', \Gveniver\Kernel\Application::toBoolean($aConfig['CookieHttpOnly']));
+                ini_set('session.cookie_httponly', \Gveniver\toBoolean($aConfig['CookieHttpOnly']));
 
             if (isset($aConfig['CookieDomain']))
                 $this->getApplication()->trace->addLine('[%s] Using "%s" as cookie domain.', __CLASS__, $aConfig['CookieDomain']);

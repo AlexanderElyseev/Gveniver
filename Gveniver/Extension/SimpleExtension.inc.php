@@ -237,7 +237,7 @@ class SimpleExtension extends BaseExtension
                     if (isset($aAction['Name'])
                         && $aAction['Name'] == $sAction
                         && isset($aAction['External'])
-                        && \Gveniver\Kernel\Application::toBoolean($aAction['External'])
+                        && \Gveniver\toBoolean($aAction['External'])
                     ) {
                         $this->getApplication()->trace->addLine(
                             '[%s : %s] Handler for query ("%s") is for externa queries.',

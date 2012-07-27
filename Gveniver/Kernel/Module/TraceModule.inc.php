@@ -49,7 +49,7 @@ class TraceModule extends BaseModule
     protected function init()
     {
         $this->_aMessages = array();
-        $this->_bDebug = \Gveniver\Kernel\Application::toBoolean(
+        $this->_bDebug = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get(
                 array('Kernel', 'Debug')
             )
@@ -77,8 +77,9 @@ class TraceModule extends BaseModule
     //-----------------------------------------------------------------------------
 
     /**
-     * Adding trace string.
-     * Sprintf syntax is available.
+     * Adds trace string.
+     *
+     * Syntax if "Sprintf" is available.
      * Adds data to container only if debug enabled.
      *
      * @param string $sMessage String to add.

@@ -18,9 +18,7 @@ namespace Gveniver;
  *
  * @return array|mixed
  */
-// @codingStandardsIgnoreStart
 function array_merge_recursive_distinct()
-// @codingStandardsIgnoreEnd
 {
     $arrays = func_get_args();
     $base = array_shift($arrays);
@@ -77,9 +75,7 @@ function array_merge_recursive_distinct()
  * 
  * @return array
  */
-// @codingStandardsIgnoreStart
 function explode_ex($delimiter, $string)
-// @codingStandardsIgnoreEnd
 {
     $exploded = explode($delimiter, $string);
     $fixed = array();
@@ -116,9 +112,7 @@ function explode_ex($delimiter, $string)
  * 
  * @return string
  */
-// @codingStandardsIgnoreStart
 function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMaxLength = null, $sCropStr = '...')
-// @codingStandardsIgnoreEnd
 {
     $cTidy = new \Tidy();
     $cTidy->parseString(
@@ -262,9 +256,7 @@ function strip_tags_ex($string, $allowtags = null, $allowattributes = null, $nMa
  *
  * @return string
  */
-// @codingStandardsIgnoreStart
 function html_convert_entities($string)
-// @codingStandardsIgnoreEnd
 {
     return preg_replace_callback(
         '/&([a-zA-Z][a-zA-Z0-9]+);/',
@@ -286,9 +278,7 @@ function html_convert_entities($string)
  * @link http://inanimatt.com/php-convert-entities.html
  * @return string
  */
-// @codingStandardsIgnoreStart
 function convert_entity($matches)
-// @codingStandardsIgnoreEnd
 {
     static $table = array(
         'quot' => '&#34;',
@@ -558,9 +548,7 @@ function convert_entity($matches)
  * 
  * @return array
  */
-// @codingStandardsIgnoreStart
 function array_shift_ex(&$arr)
-// @codingStandardsIgnoreEnd
 {
     list($k) = array_keys($arr);
     unset($arr[$k]);
@@ -578,9 +566,7 @@ function array_shift_ex(&$arr)
  *
  * @return string
  */
-// @codingStandardsIgnoreStart
 function str_break_text($string, $nMaxLength, $sCropStr = '...')
-// @codingStandardsIgnoreEnd
 { 
     if (mb_strlen($string) > $nMaxLength) {
         $string = mb_substr($string, 0, $nMaxLength);
@@ -605,9 +591,7 @@ function str_break_text($string, $nMaxLength, $sCropStr = '...')
  *
  * @return string
  */
-// @codingStandardsIgnoreStart
 function output_text($sText, $nMaxLength = null)
-// @codingStandardsIgnoreEnd
 {
     if ($nMaxLength)
         $sText = str_break_text($sText, $nMaxLength);
@@ -627,9 +611,7 @@ function output_text($sText, $nMaxLength = null)
  *
  * @return string
  */
-// @codingStandardsIgnoreStart
 function output_html($sText, $nMaxLength = null, $sAllowedTags = null, $sAllowedAttributes = null)
-// @codingStandardsIgnoreEnd
 {
     return strip_tags_ex($sText, $sAllowedTags, $sAllowedAttributes, $nMaxLength);
 
@@ -643,9 +625,7 @@ function output_html($sText, $nMaxLength = null, $sAllowedTags = null, $sAllowed
  *
  * @return boolean True if correct.
  */
-// @codingStandardsIgnoreStart
 function is_correct_url($sUrl)
-// @codingStandardsIgnoreEnd
 {
     $sPattern = '{
         (?:
@@ -690,9 +670,7 @@ function cdata($sContent)
  *
  * @return bool True on success
  */
-// @codingStandardsIgnoreStart
 function mail($sFrom, $sTo, $sSubject, $sText)
-// @codingStandardsIgnoreEnd
 {
     // Build e-mail headers.
     $sHeaders = sprintf("From: %s\r\n", $sFrom);
@@ -718,9 +696,7 @@ function mail($sFrom, $sTo, $sSubject, $sText)
  *
  * @return string
  */
-// @codingStandardsIgnoreStart
 function realurl($sAddress)
-// @codingStandardsIgnoreEnd
 {
     $address = explode('/', $sAddress);
     $keys = array_keys($address, '..');
@@ -781,7 +757,7 @@ function correctPath($sFileName, $bAddDirSeparator = false)
 //-----------------------------------------------------------------------------
 
 /**
- * Method deletes specified dirrectory with all subdurrectories and files.
+ * Method deletes specified directory with all subdirectories and files.
  *
  * @param string $sDirectoryPath Path to directory for removing.
  *
@@ -803,6 +779,37 @@ function rrmdir($sDirectoryPath)
             break;
     }
     return $bResult && rmdir($sDirectoryPath);
+
+} // End function
+//-----------------------------------------------------------------------------
+
+/**
+ * Converts value to boolean.
+ *
+ * @param mixed $mValue The value to convert.
+ *
+ * @return bool Convert result.
+ */
+function toBoolean($mValue)
+{
+    if ($mValue === true || $mValue === 1 || $mValue === '1' || $mValue === 'true')
+        return true;
+
+    return false;
+
+} // End function
+//-----------------------------------------------------------------------------
+
+/**
+ * Convert specified value to integer, if value is not null.
+ *
+ * @param mixed $mValue The value to convert.
+ *
+ * @return integer|null Converted result.
+ */
+function toIntegerOrNull($mValue)
+{
+    return is_null($mValue) ? null : intval($mValue);
 
 } // End function
 //-----------------------------------------------------------------------------

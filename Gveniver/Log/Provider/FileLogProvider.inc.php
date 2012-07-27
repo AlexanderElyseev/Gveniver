@@ -51,7 +51,7 @@ class FileLogProvider extends BaseLogProvider
             throw new \Gveniver\Exception\BaseException('Log file name must be specified.');
 
         $bRelativeByProfile = isset($aConfigData['RelativeByProfile'])
-            && \Gveniver\Kernel\Application::toBoolean($aConfigData['RelativeByProfile']);
+            && \Gveniver\toBoolean($aConfigData['RelativeByProfile']);
     
         $this->_sFileName = $aConfigData['FileName'];
 

@@ -44,19 +44,19 @@ class GvProfileExt extends SimpleExtension
         parent::__construct($cApplication);
 
         // Configuration parameters.
-        $this->_aConfig['UseConfigScript'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['UseConfigScript'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Kernel/UseConfigScript')
         );
         $this->_aConfig['ConfigScriptSection'] = $this->getApplication()->getConfig()->get('Kernel/ConfigScriptSection');
         $this->_aConfig['InvarSectionKey'] = $this->getApplication()->getConfig()->get('Kernel/InvarSectionKey');
 
-        $this->_aConfig['CacheScripts'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['CacheScripts'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CacheScript')
         );
-        $this->_aConfig['CacheStyles'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['CacheStyles'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CacheStyle')
         );
-        $this->_aConfig['CheckCacheModifyTime'] = \Gveniver\Kernel\Application::toBoolean(
+        $this->_aConfig['CheckCacheModifyTime'] = \Gveniver\toBoolean(
             $this->getApplication()->getConfig()->get('Profile/CheckCacheModifyTime')
         );
 
@@ -101,14 +101,31 @@ class GvProfileExt extends SimpleExtension
     /**
      * Returns configuration parameters.
      *
-     * @param string $sPath Path to configuration parameter.
+     * @param string $sPath        The path to configuration parameter.
+     * @param string $sProfileName The name of profile for loading configuration parameter.
      *
      * @return string|null
      */
-    public function getConfigVariable($sPath)
+    public function getConfigVariable($sPath, $sProfileName = null)
     {
-        return $sPath ? $this->getApplication()->getConfig()->get($sPath) : null;
-        
+        if (!$sPath) {
+            $sText = sprintf('[%s::%s] Configuration path is not specified.', __CLASS__, __METHOD__);
+            $this->getApplication()->log->error($sText);
+            $this->getApplication()->trace->addLine($sText);
+            return null;
+        }
+
+        if ($sProfileName) {
+            foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
+                /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
+                if ($cProfile->getName() === $sProfileName)
+                    return $cProfile->getConfig()->get($sPath);
+            }
+        } else
+            return $this->getApplication()->getConfig()->get($sPath);
+
+        return null;
+
     } // End function
     //-----------------------------------------------------------------------------
 
@@ -172,8 +189,8 @@ class GvProfileExt extends SimpleExtension
         // Load scripts from cache.
         if ($this->_aConfig['CacheScripts']) {
 
-            // First, try to load scripts from cache.
-            $aCacheScripts = $this->_getCacheScripts(
+            // Firstly, try to load scripts from cache.
+            $aCacheScripts = $this->_getScripts(
                 $this->_buildScriptList($sSectionName, $sActionValue),
                 $sSectionName,
                 $sActionValue
@@ -188,7 +205,7 @@ class GvProfileExt extends SimpleExtension
                 $sSectionName,
                 $sActionValue
             );
-            $aCacheScripts = $this->_getCacheScripts(
+            $aCacheScripts = $this->_getScripts(
                 $this->_buildScriptList($sSectionName, $sActionValue),
                 $sSectionName,
                 $sActionValue
@@ -231,16 +248,24 @@ class GvProfileExt extends SimpleExtension
             $sScriptAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsScript');
             $sScriptWebPath = $cProfile->getConfig()->get('Profile/Path/AbsScriptWeb');
             foreach ($aScriptDataList as $aScript) {
-                
+
+                if (!isset($aScript['FileName'])) {
+                    // TODO: screams!
+                    continue;
+                }
+                $sFileName = $aScript['FileName'];
+
                 // Check duplicate styles by absolute web path.
-                $sAbsWebPath = $sScriptWebPath.$aScript['FileName'];
+                $sAbsWebPath = $sScriptWebPath.$sFileName;
                 if (in_array($sAbsWebPath, $aUniqueScripts))
                     continue;
 
                 $aUniqueScripts[] = $sAbsWebPath;
                 $aScript['WebFileName'] = $sAbsWebPath;
-                $aScript['AbsFileName'] = $sScriptAbsPath.$aScript['FileName'];
-                $aScriptNames[$aScript['FileName']] = $aScript;
+                $aScript['AbsFileName'] = $sScriptAbsPath.$sFileName;
+                $aScript['NoCache'] = isset($aScript['NoCache']) ? \Gveniver\toBoolean($aScript['NoCache']) : false;
+                $aScript['Priority'] = isset($aScript['Priority']) ? (int)$aScript['Priority'] : 0;
+                $aScriptNames[$sFileName] = $aScript;
 
             } // End foreach
 
@@ -252,31 +277,43 @@ class GvProfileExt extends SimpleExtension
     //-----------------------------------------------------------------------------
 
     /**
-     * Load cached scripts.
-     * Returns html code for connecting to cached scripts.
+     * Loads scripts.
+     * Returns list of scripts for current section and action.
      *
-     * @param array  $aList        List of scripts in section.
-     * @param string $sSectionName Name of current section for load cached scripts.
-     * @param string $sActionValue Current value of action.
+     * @param array  $aScripts     The list of scripts in section.
+     * @param string $sSectionName The name of current section for script cache.
+     * @param string $sActionValue Current action value.
      *
-     * @return array|null List of cached scripts for this section and action or null on error.
+     * @return array|null The list of scripts for this section and action or null on error.
      */
-    private function _getCacheScripts(array $aList, $sSectionName, $sActionValue)
+    private function _getScripts(array $aScripts, $sSectionName, $sActionValue)
     {
-        $aSplittedList = array();
-        foreach ($aList as $aScriptData)
-            $aSplittedList[] = $aScriptData['AbsFileName'];
+        // TODO: sorting by priority and previous position.
+        /*usort($aList, function($a, $b) {
+
+        });*/
+
+        $aCache = array();
+        $aNoCache = array();
+        foreach ($aScripts as $aScriptData) {
+            if ($aScriptData['NoCache'])
+                $aNoCache[] = $aScriptData;
+            else
+                $aCache[] = $aScriptData['AbsFileName'];
+        }
 
         try {
             // Check cache.
             $sCacheAbsPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCache');
-            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue, $aList);
-            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aSplittedList))
+            $sCacheFile = $this->_buildScriptCacheFileName($sSectionName, $sActionValue, $aScripts);
+            if (!\Gveniver\Cache\FileSplitter::isCorrectCache($sCacheAbsPath.$sCacheFile, $aCache))
                 return null;
 
-            $sScriptCacheWebPath = $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb');
-            return array(
-                array('WebFileName' => $sScriptCacheWebPath.$sCacheFile)
+            return array_merge(
+                $aNoCache,
+                array(
+                    array('WebFileName' => $this->getApplication()->getConfig()->get('Profile/Path/AbsCacheWeb').$sCacheFile)
+                )
             );
 
         } catch (\Gveniver\Exception\BaseException $cEx) {
@@ -535,8 +572,7 @@ class GvProfileExt extends SimpleExtension
                     // @codingStandardsIgnoreStart
                     $cCacheSplitter->addFile(
                         $sAbsStyleFileName,
-                        function ($sContent) use ($sStyleName, $sAbsStyleDirName, $sStylesWebPath)
-                        {
+                        function ($sContent) use ($sStyleName, $sAbsStyleDirName, $sStylesWebPath) {
                             $aReplacedEntries = array();
                             preg_match_all('/url\(["|\']?(?!https?|ftp)(.*?)["|\']?\)/', $sContent, $aMatches);
                             foreach ($aMatches[1] as $nIndex => $sUrl) {

@@ -26,7 +26,7 @@ namespace Gveniver\Kernel\Profile;
  * @license    http://prof-club.ru/license.txt Prof-Club License
  * @link       http://prof-club.ru
  */
-class BaseProfile
+class BaseProfile extends \Gveniver\BaseObject
 {
     /**
      * Configuration of current profile.
@@ -46,19 +46,19 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
-     * Path to directory with profile.
+     * The name of profile.
      *
      * @var string
      */
-    private $_sProfilePath;
+    private $_sName;
     //-----------------------------------------------------------------------------
 
     /**
-     * Reference to current kernel.
+     * The path to directory with profile.
      *
-     * @var \Gveniver\Kernel\Application
+     * @var string
      */
-    private $_cApplication;
+    private $_sDir;
     //-----------------------------------------------------------------------------
 
     /**
@@ -66,30 +66,33 @@ class BaseProfile
      *
      * @var BaseProfile
      */
-    private $_cParentProfile;
+    private $_cParent;
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
     /**
-     * Constructor of {@see Profile} class.
+     * Class constructor.
      * Initialize new instance of application profile.
      *
-     * @param \Gveniver\Kernel\Application $cApplication   Application, which start profile.
-     * @param string                       $sProfileDir    Path to directory with profile.
-     * @param BaseProfile                  $cParentProfile Parent profile for current.
+     * @param \Gveniver\Kernel\Application $cApplication The application, taht starts profile.
+     * @param string                       $sName        The name of profile.
+     * @param string                       $sDir         Path to directory with profile.
+     * @param BaseProfile                  $cParent      Parent profile for current.
      */
-    public function __construct(\Gveniver\Kernel\Application $cApplication, $sProfileDir, BaseProfile $cParentProfile = null)
+    public function __construct(\Gveniver\Kernel\Application $cApplication, $sName, $sDir, BaseProfile $cParent = null)
     {
+        parent::__construct($cApplication);
+        
         $this->_cConfig = new \Gveniver\Config();
-        $this->_cApplication = $cApplication;
-        $this->_sProfilePath = $sProfileDir;
-        $this->_cParentProfile = $cParentProfile;
+        $this->_sName = $sName;
+        $this->_sDir = $sDir;
+        $this->_cParent = $cParent;
 
     } // End function
     //-----------------------------------------------------------------------------
 
     /**
-     * Getter for configuration of profile.
+     * Getter for the configuration of the profile.
      *
      * @return \Gveniver\Config
      */
@@ -101,13 +104,13 @@ class BaseProfile
     //-----------------------------------------------------------------------------
 
     /**
-     * Getter for current appliction of profile.
+     * Getter for the name of the profile.
      *
-     * @return \Gveniver\Kernel\Application
+     * @return string
      */
-    public function getApplication()
+    public function getName()
     {
-        return $this->_cApplication;
+        return $this->_sName;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -119,7 +122,7 @@ class BaseProfile
      */
     public function getPath()
     {
-        return $this->_sProfilePath;
+        return $this->_sDir;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -131,7 +134,7 @@ class BaseProfile
      */
     public function getParentProfile()
     {
-        return $this->_cParentProfile;
+        return $this->_cParent;
 
     } // End function
     //-----------------------------------------------------------------------------
@@ -162,24 +165,24 @@ class BaseProfile
      */
     public function start()
     {
-        $this->_cApplication->trace->addLine('[%s] Start.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] Start.', __CLASS__);
 
         $sContentType = $this->getContentType(
             $this->getCurrentSectionName(),
             $this->getCurrentAction()
         );
         if ($sContentType) {
-            $this->_cApplication->trace->addLine('[%s] Using "%s" as content-type.', __CLASS__, $sContentType);
+            $this->getApplication()->trace->addLine('[%s] Using "%s" as content-type.', __CLASS__, $sContentType);
             header('Content-type: '.$sContentType);
         }
         
-        $sResult = $this->_cApplication->template->parseTemplate(
+        $sResult = $this->getApplication()->template->parseTemplate(
             $this->getMainTemplate(
                 $this->getCurrentSectionName(),
                 $this->getCurrentAction()
             )
         );
-        $this->_cApplication->trace->addLine('[%s] End.', __CLASS__);
+        $this->getApplication()->trace->addLine('[%s] End.', __CLASS__);
         return $sResult;
 
     } // End function
@@ -192,8 +195,8 @@ class BaseProfile
      */
     public function getCurrentSectionName()
     {
-        return $this->_cApplication->invar->get(
-            $this->_cApplication->getConfig()->get('Module/InvarModule/SectionKeyName')
+        return $this->getApplication()->invar->get(
+            $this->getApplication()->getConfig()->get('Module/InvarModule/SectionKeyName')
         );
 
     } // End function
@@ -206,8 +209,8 @@ class BaseProfile
      */
     public function getCurrentAction()
     {
-        return $this->_cApplication->invar->get(
-            $this->_cApplication->getConfig()->get('Module/InvarModule/ActionKeyName')
+        return $this->getApplication()->invar->get(
+            $this->getApplication()->getConfig()->get('Module/InvarModule/ActionKeyName')
         );
 
     } // End function
@@ -226,7 +229,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -237,14 +240,14 @@ class BaseProfile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ContentType']))
                         return $aSection['ContentType'];
 
         // Load for default section.
         $sContentType = '';
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/ContentType', $sContentType))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/ContentType', $sContentType))
             return $sContentType;
 
         return null;
@@ -280,7 +283,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -291,14 +294,14 @@ class BaseProfile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Author']))
                         return $aSection['Author'];
 
         // Load for default section.
         $sAuthor = '';
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Author', $sAuthor))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/Author', $sAuthor))
             return $sAuthor;
 
         return null;
@@ -334,7 +337,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -345,14 +348,14 @@ class BaseProfile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Robots']))
                         return $aSection['Robots'];
 
         // Load for default section.
         $sRobots = '';
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Robots', $sRobots))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/Robots', $sRobots))
             if (is_string($sRobots))
                 return $sRobots;
 
@@ -391,7 +394,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -402,14 +405,14 @@ class BaseProfile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['Keywords']))
                         $sResult = ($sResult) ? ','.$aSection['Keywords'] : $aSection['Keywords'];
 
         // Load for default section.
         $sKeywords = '';
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Keywords', $sKeywords))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/Keywords', $sKeywords))
             $sResult .= ($sResult) ? ','.$sKeywords : $sKeywords;
 
         return $sResult;
@@ -508,7 +511,7 @@ class BaseProfile
         // Load by section and action.
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']))
                         foreach ($aSection['ActList'] as $aAction)
@@ -518,14 +521,14 @@ class BaseProfile
         // Load for section and default action.
         $aSectionList = array();
         if ($sSectionName && !$sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['ActList']['Default']['FileName']))
                         return $aSection['ActList']['Default']['FileName'];
 
         // Load for default section and action.
         $aDefaultSection = array();
-        $this->_cApplication->getConfig()->get('Profile/SectionList/Default', $aDefaultSection);
+        $this->getApplication()->getConfig()->get('Profile/SectionList/Default', $aDefaultSection);
         if (!$sSectionName && $sAct)
             if (isset($aDefaultSection['ActList']))
                 foreach ($aDefaultSection['ActList'] as $aAction)
@@ -534,7 +537,7 @@ class BaseProfile
 
         // Load for default section and default action.
         $sTpl = '';
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/ActList/Default/FileName', $sTpl))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/ActList/Default/FileName', $sTpl))
             return $sTpl;
 
         return null;
@@ -555,7 +558,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = array();
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -566,14 +569,14 @@ class BaseProfile
         // Load for section.
         $aSectionList = array();
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if ($aSection['Name'] == $sSectionName && isset($aSection['MainTemplate']))
                         return $aSection['MainTemplate'];
 
         // Load for default section.
         $sTpl = '';
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/MainTemplate', $sTpl))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/MainTemplate', $sTpl))
             return $sTpl;
 
         return null;
@@ -686,7 +689,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -696,13 +699,13 @@ class BaseProfile
 
         // Load for section.
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName && isset($aSection['Title']))
                         return $aSection['Title'];
 
         // Load for default section.
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/Title', $sTitle))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/Title', $sTitle))
             return $sTitle;
 
         return null;
@@ -772,7 +775,7 @@ class BaseProfile
         // Load for section and action.
         $aSectionList = null;
         if ($sSectionName && $sAct)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName)
                         if (isset($aSection['ActList']))
@@ -782,13 +785,13 @@ class BaseProfile
 
         // Load for section.
         if ($sSectionName)
-            if ($this->_cApplication->getConfig()->get('Profile/SectionList/List', $aSectionList))
+            if ($this->getApplication()->getConfig()->get('Profile/SectionList/List', $aSectionList))
                 foreach ($aSectionList as $aSection)
                     if (isset($aSection['Name']) && $aSection['Name'] == $sSectionName && isset($aSection['SubTitle']))
                         return $aSection['SubTitle'];
 
         // Load for default section.
-        if ($this->_cApplication->getConfig()->get('Profile/SectionList/Default/SubTitle', $sSubTitle))
+        if ($this->getApplication()->getConfig()->get('Profile/SectionList/Default/SubTitle', $sSubTitle))
             return $sSubTitle;
 
         return null;
