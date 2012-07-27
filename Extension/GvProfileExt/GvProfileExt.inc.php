@@ -297,7 +297,7 @@ class GvProfileExt extends SimpleExtension
         $aNoCache = array();
         foreach ($aScripts as $aScriptData) {
             if ($aScriptData['NoCache'])
-                $aNoCache[] = $aScriptData['AbsFileName'];
+                $aNoCache[] = $aScriptData;
             else
                 $aCache[] = $aScriptData['AbsFileName'];
         }
