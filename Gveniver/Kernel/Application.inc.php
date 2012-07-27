@@ -24,18 +24,19 @@ namespace Gveniver\Kernel;
  * @license   http://prof-club.ru/license.txt Prof-Club License
  * @link      http://prof-club.ru
  * 
- * @property  \Gveniver\Kernel\Module\CacheModule     $cache
- * @property  \Gveniver\Kernel\Module\CaptchaModule   $captcha
- * @property  \Gveniver\Kernel\Module\CrosspageModule $crosspage
- * @property  \Gveniver\Kernel\Module\DataModule      $data
- * @property  \Gveniver\Kernel\Module\ExtensionModule $extension
- * @property  \Gveniver\Kernel\Module\InvarModule     $invar
- * @property  \Gveniver\Kernel\Module\LogModule       $log
- * @property  \Gveniver\Kernel\Module\RedirectModule  $redirect
- * @property  \Gveniver\Kernel\Module\SecurityModule  $security
- * @property  \Gveniver\Kernel\Module\SessionModule   $session
- * @property  \Gveniver\Kernel\Module\TemplateModule  $template
- * @property  \Gveniver\Kernel\Module\TraceModule     $trace
+ * @property  \Gveniver\Kernel\Module\CacheModule        $cache
+ * @property  \Gveniver\Kernel\Module\CaptchaModule      $captcha
+ * @property  \Gveniver\Kernel\Module\CrosspageModule    $crosspage
+ * @property  \Gveniver\Kernel\Module\DataModule         $data
+ * @property  \Gveniver\Kernel\Module\ExtensionModule    $extension
+ * @property  \Gveniver\Kernel\Module\HtmlPurifierModule $htmlPurifier
+ * @property  \Gveniver\Kernel\Module\InvarModule        $invar
+ * @property  \Gveniver\Kernel\Module\LogModule          $log
+ * @property  \Gveniver\Kernel\Module\RedirectModule     $redirect
+ * @property  \Gveniver\Kernel\Module\SecurityModule     $security
+ * @property  \Gveniver\Kernel\Module\SessionModule      $session
+ * @property  \Gveniver\Kernel\Module\TemplateModule     $template
+ * @property  \Gveniver\Kernel\Module\TraceModule        $trace
  */
 final class Application
 {
@@ -83,6 +84,9 @@ final class Application
      */
     public function __construct($mProfile, $mConfig = null)
     {
+        // Registering modules.
+        $this->registerModuleAlias('htmlPurifier', 'HtmlPurifierModule');
+
         // Initialize and load base configuration.
         $this->_cConfig = new \Gveniver\Config();
         $this->_cConfig->mergeXmlFile(GV_PATH_BASE.'config.xml');
@@ -118,6 +122,27 @@ final class Application
     public function getConfig()
     {
         return $this->_cConfig;
+
+    } // End function
+    //-----------------------------------------------------------------------------
+
+    /**
+     * Registers an alias for module for quick access from Application object.
+     *
+     * @param string $sAlias     The alias for module.
+     * @param string $sClassName The name of module class.
+     *
+     * @return void
+     *
+     * @throws \Gveniver\Exception\BaseException Throws, if another class is already registered with same alias.
+     */
+    public function registerModuleAlias($sAlias, $sClassName)
+    {
+        if (array_key_exists($sAlias, $this->_aModuleAliasList)) {
+            if ($this->_aModuleAliasList[$sAlias] !== $sClassName)
+                throw new \Gveniver\Exception\BaseException("Another module with alias \"$sAlias\" is already registered.");
+        } else
+            $this->_aModuleAliasList[$sAlias] = $sClassName;
 
     } // End function
     //-----------------------------------------------------------------------------
