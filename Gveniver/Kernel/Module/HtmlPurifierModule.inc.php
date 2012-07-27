@@ -246,7 +246,7 @@ class HtmlPurifierModule extends BaseModule
         // Recursive walking over DOM tree, while length of text less then specified.
         // After exceeding the limit of length, deleting all other nodes.
         $cDom = new \DomDocument();
-        $cDom->loadHTML($sPureHtml);
+        $cDom->loadHTML(mb_convert_encoding($sPureHtml, 'HTML-ENTITIES', 'UTF-8'));
         $nLength = 0;
         $bStop = false;
         $fCropText = function(\DOMNode &$cElement) use (&$nLength, &$fCropText, &$bStop, $sCrop, $nMaxLength) {
@@ -276,6 +276,7 @@ class HtmlPurifierModule extends BaseModule
                 $cElement->removeChild($cNode);
         };
         $fCropText($cDom->documentElement);
+
         return $cDom->saveHTML();
     }
 }
