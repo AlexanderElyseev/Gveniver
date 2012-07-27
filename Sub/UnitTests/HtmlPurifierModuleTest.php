@@ -30,8 +30,6 @@ class HtmlPurifierModuleTest extends PHPUnit_Framework_TestCase
      * @var Gveniver\Kernel\Application
      */
     private $_cApp;
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
      * Initializes class instance.
@@ -40,9 +38,7 @@ class HtmlPurifierModuleTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         $this->_cApp = getApplication(array('Kernel' => array('StartSession' => false)));
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Tests correct initialization of HtmlPurifier module.
@@ -53,9 +49,7 @@ class HtmlPurifierModuleTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNotNull($this->_cApp);
         $this->assertNotNull($this->_cApp->htmlPurifier);
-
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Tests cleaning HTML with configuration from Dummy profile.
@@ -67,9 +61,16 @@ class HtmlPurifierModuleTest extends PHPUnit_Framework_TestCase
         $sHtml = '<a href="#">Hi!</a><script type="text/javascript">alert(document)</script><p>Ololo';
         $sHtmlWithoutScript = '<a href="#">Hi!</a><p>Ololo</p>';
         $this->assertEquals($sHtmlWithoutScript, $this->_cApp->htmlPurifier->clean($sHtml, 'Document'));
+    }
 
-    } // End function
-    //-----------------------------------------------------------------------------
-
-} // End class
-//-----------------------------------------------------------------------------
+    /**
+     * Tests output text.
+     *
+     * @return void
+     */
+    public function testOutputText()
+    {
+        $sHtml = '<a href="#">Hi!</a><script type="text/javascript">alert(document)</script><p>Ololo';
+        $this->assertEquals('Hi!...', $this->_cApp->htmlPurifier->outputText($sHtml, 3));
+    }
+}

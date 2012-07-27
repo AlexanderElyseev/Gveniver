@@ -198,10 +198,11 @@ class HtmlPurifierModule extends BaseModule
      */
     public function outputText($sText, $nMaxLength = null, $sCrop = '...')
     {
+        $sText = strip_tags($sText);
         if ($nMaxLength)
             $sText = $this->_breakText($sText, intval($nMaxLength), $sCrop);
 
-        return strip_tags($sText);
+        return $sText;
     }
 
     /**
