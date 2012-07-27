@@ -68,21 +68,38 @@ class HtmlPurifierModule extends BaseModule
      * Builds configuration object {@see \HTMLPurifier_Config}.
      * Loads additional configuration with specified name.
      *
-     * @param string $sConfigurationName The name of additional configuration.
+     * @param string|array|null $mConfiguration The name of additional configuration.
      *
      * @return \HTMLPurifier_Config
+     *
+     * @throws \Gveniver\Exception\ArgumentException Throws if parameter has wrong type.
      */
-    private function _buildConfig($sConfigurationName)
+    private function _buildConfig($mConfiguration)
     {
+        if ($mConfiguration) {
+            if (is_string($mConfiguration)) {
+                $sConfigurationName = 'name_'.$mConfiguration;
+                $aConfiguration = array();
+                if ($sConfigurationName && isset($this->_aModuleConfiguration['Configuration'][$mConfiguration]))
+                    $aConfiguration = $this->_aModuleConfiguration['Configuration'][$mConfiguration];
+            } elseif (is_array($mConfiguration)) {
+                $sConfigurationName = 'data_'.md5(serialize($mConfiguration));
+                $aConfiguration = $mConfiguration;
+            } else
+                throw new \Gveniver\Exception\ArgumentException('Parameter $mConfiguration can be array or sting.');
+        } else {
+            $sConfigurationName = 'empty';
+            $aConfiguration = array();
+        }
+
         if (array_key_exists($sConfigurationName, $this->_aConfigurationCache))
             return $this->_aConfigurationCache[$sConfigurationName];
 
         /** @var $cConfig \HTMLPurifier_Config */
         $cConfig = \HTMLPurifier_Config::createDefault();
-        $aConfiguration = array();
-        if ($sConfigurationName && isset($this->_aModuleConfiguration['Configuration'][$sConfigurationName])) {
-            $aConfiguration = $this->_aModuleConfiguration['Configuration'][$sConfigurationName];
-        }
+
+        // TODO: caching.
+        $cConfig->set('Cache.DefinitionImpl', null);
 
         $this->_loadArrayConfig('HTML.AllowedElements', $aConfiguration, $cConfig);
         $this->_loadArrayConfig('HTML.AllowedAttributes', $aConfiguration, $cConfig);
@@ -115,7 +132,7 @@ class HtmlPurifierModule extends BaseModule
             $aData = explode(',', $this->_aModuleConfiguration[$sKey]);
         if (isset($aConfiguration[$sKey]))
             $aData = array_merge($aData, explode(',', $aConfiguration[$sKey]));
-        if ($aData)
+        if (count($aData) > 0)
             $cConfig->set($sKey, $aData);
     }
 
@@ -158,14 +175,14 @@ class HtmlPurifierModule extends BaseModule
     /**
      * Cleans specified HTML data.
      *
-     * @param string $sHtml              The data for cleaning.
-     * @param string $sConfigurationName The optional name of HtmlPurifier configuration.
+     * @param string       $sHtml          The data for cleaning.
+     * @param string|array $mConfiguration The optional name of HtmlPurifier configuration or array with configuration.
      *
      * @return string Purified HTML.
      */
-    public function clean($sHtml, $sConfigurationName = null)
+    public function clean($sHtml, $mConfiguration = null)
     {
-        $cPurifier = new \HTMLPurifier($this->_buildConfig($sConfigurationName));
+        $cPurifier = new \HTMLPurifier($this->_buildConfig($mConfiguration));
         return $cPurifier->purify($sHtml);
     }
 }

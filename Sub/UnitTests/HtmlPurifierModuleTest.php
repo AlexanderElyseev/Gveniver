@@ -58,13 +58,15 @@ class HtmlPurifierModuleTest extends PHPUnit_Framework_TestCase
     //-----------------------------------------------------------------------------
 
     /**
-     * Tests cleaning HTML.
+     * Tests cleaning HTML with configuration from Dummy profile.
      *
      * @return void
      */
-    public function testCleaning()
+    public function testCleaningWithProfileConfig()
     {
-
+        $sHtml = '<a href="#">Hi!</a><script type="text/javascript">alert(document)</script><p>Ololo';
+        $sHtmlWithoutScript = '<a href="#">Hi!</a><p>Ololo</p>';
+        $this->assertEquals($sHtmlWithoutScript, $this->_cApp->htmlPurifier->clean($sHtml, 'Document'));
 
     } // End function
     //-----------------------------------------------------------------------------
