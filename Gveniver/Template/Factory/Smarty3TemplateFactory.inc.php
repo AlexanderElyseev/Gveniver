@@ -96,8 +96,8 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         // Modifiers and functions.
         $this->_cSmarty->registerPlugin('function', 'gv', array($this, 'extension'));
         $this->_cSmarty->registerPlugin('function', 'gv_ext', array($this, 'extension'));
-        $this->_cSmarty->registerPlugin('modifier', 'gv_output_html', array($this->getApplication()->htmlPurifier, 'outputText'));
-        $this->_cSmarty->registerPlugin('modifier', 'gv_output_text', array($this->getApplication()->htmlPurifier, 'outputHtml'));
+        $this->_cSmarty->registerPlugin('modifier', 'gv_output_html', array($this->getApplication()->htmlPurifier, 'outputHtml'));
+        $this->_cSmarty->registerPlugin('modifier', 'gv_output_text', array($this->getApplication()->htmlPurifier, 'outputText'));
 
         $this->_cSmarty->registerPlugin('modifier', 'upper', 'mb_strtoupper');
         $this->_cSmarty->registerPlugin('modifier', 'lower', 'mb_strtolower');
