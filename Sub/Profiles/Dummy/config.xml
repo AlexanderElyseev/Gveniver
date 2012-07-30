@@ -7,6 +7,13 @@
             <SmartyDirCompile>/var/www/gv/eas/sub/Profiles/Dummy/templates_c/</SmartyDirCompile>
             <SmartyDirConfig>/var/www/gv/eas/sub/Profiles/Dummy/</SmartyDirConfig>
 		</TemplateModule>
+        <HtmlPurifierModule>
+            <Configuration>
+                <Document>
+                    <HTML.AllowedElements>a,p</HTML.AllowedElements>
+                </Document>
+            </Configuration>
+        </HtmlPurifierModule>
     </Module>
     <Profile>
         <Path>

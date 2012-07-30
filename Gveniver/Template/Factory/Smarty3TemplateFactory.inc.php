@@ -86,18 +86,18 @@ class Smarty3TemplateFactory extends FileTemplateFactory
             return false;
         $this->_cSmarty->config_dir = $sDirConfig;
 
-        // Smarty template delemiters.
-        $sConfigBeginDelemiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterBegin');
-        $this->_cSmarty->left_delimiter = $sConfigBeginDelemiter ? $sConfigBeginDelemiter : '{';
+        // Smarty template delimiters.
+        $sConfigBeginDelimiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterBegin');
+        $this->_cSmarty->left_delimiter = $sConfigBeginDelimiter ? $sConfigBeginDelimiter : '{';
 
-        $sConfigEndDelemiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterEnd');
-        $this->_cSmarty->right_delimiter = $sConfigEndDelemiter ? $sConfigEndDelemiter : '}';
+        $sConfigEndDelimiter = $this->getApplication()->getConfig()->get('Module/TemplateModule/DelimiterEnd');
+        $this->_cSmarty->right_delimiter = $sConfigEndDelimiter ? $sConfigEndDelimiter : '}';
 
         // Modifiers and functions.
         $this->_cSmarty->registerPlugin('function', 'gv', array($this, 'extension'));
         $this->_cSmarty->registerPlugin('function', 'gv_ext', array($this, 'extension'));
-        $this->_cSmarty->registerPlugin('modifier', 'gv_output_html', '\\Gveniver\\output_html');
-        $this->_cSmarty->registerPlugin('modifier', 'gv_output_text', '\\Gveniver\\output_text');
+        $this->_cSmarty->registerPlugin('modifier', 'gv_output_html', array($this->getApplication()->htmlPurifier, 'outputHtml'));
+        $this->_cSmarty->registerPlugin('modifier', 'gv_output_text', array($this->getApplication()->htmlPurifier, 'outputText'));
 
         $this->_cSmarty->registerPlugin('modifier', 'upper', 'mb_strtoupper');
         $this->_cSmarty->registerPlugin('modifier', 'lower', 'mb_strtolower');
@@ -122,12 +122,8 @@ class Smarty3TemplateFactory extends FileTemplateFactory
         if (!$sPath)
             return false;
 
-        if (file_exists($sPath)) {
-            if (is_dir($sPath))
-                return true;
-            else
-                return false;
-        }
+        if (file_exists($sPath))
+            return is_dir($sPath);
 
         return mkdir($sPath, 0777, true);
         

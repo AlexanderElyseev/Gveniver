@@ -1,5 +1,25 @@
 <?php
+/**
+ * File with test case class for invar module.
+ *
+ * @category  Gveniver
+ * @package   UnitTest
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 
+/**
+ * Unit test case class for invar module.
+ *
+ * @category  Gveniver
+ * @package   UnitTest
+ * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
+ * @copyright 2008-2011 Elyseev Alexander
+ * @license   http://prof-club.ru/license.txt Prof-Club License
+ * @link      http://prof-club.ru
+ */
 class InvarModuleTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -183,7 +203,7 @@ class InvarModuleTest extends PHPUnit_Framework_TestCase
             $this->assertNull($cExt->query('getVariable', array('var_post_int', false)));
             $this->assertNull($cExt->query('getVariable', array('var_post_int')));
 
-            // Loading variables with filtrations.
+            // Loading variables with filter.
             // TODO:
 
             // Building links.

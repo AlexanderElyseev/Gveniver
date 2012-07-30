@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains class of module for redirections.
+ * File contains class of module for redirection.
  *
  * @category  Gveniver
  * @package   Kernel
@@ -13,7 +13,7 @@
 namespace Gveniver\Kernel\Module;
 
 /**
- * Class of module for redirections.
+ * Class of module for redirection.
  *
  * @category  Gveniver
  * @package   Kernel

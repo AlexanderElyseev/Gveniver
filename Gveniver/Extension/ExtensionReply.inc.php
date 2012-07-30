@@ -3,7 +3,7 @@
  * File contains abstraction class for complex reply of extension to some query.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Extension
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -16,7 +16,7 @@ namespace Gveniver\Extension;
  * Abstraction class for complex reply of extension to some query.
  *
  * @category  Gveniver
- * @package   Kernel
+ * @package   Extension
  * @author    Elyseev Alexander <alexander.elyseev@gmail.com>
  * @copyright 2008-2011 Elyseev Alexander
  * @license   http://prof-club.ru/license.txt Prof-Club License
@@ -31,7 +31,6 @@ class ExtensionReply
      * @var mixed
      */
     private $_mReply;
-    //-----------------------------------------------------------------------------
 
     /**
      * Result status of query.
@@ -40,7 +39,6 @@ class ExtensionReply
      * @var bool
      */
     private $_bStatus;
-    //-----------------------------------------------------------------------------
 
     /**
      * Message for users.
@@ -48,7 +46,6 @@ class ExtensionReply
      * @var string
      */
     private $_sMessage;
-    //-----------------------------------------------------------------------------
 
     /**
      * Result code of query.
@@ -56,8 +53,6 @@ class ExtensionReply
      * @var int
      */
     private $_nCode;
-    //-----------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------
 
     /**
      * Class constructor.
@@ -73,9 +68,7 @@ class ExtensionReply
         $this->_bStatus = $bStatus;
         $this->_sMessage = $sMessage;
         $this->_nCode = $nCode;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
+    }
 
     /**
      * Converter current instance to string.
@@ -85,10 +78,8 @@ class ExtensionReply
     public function __toString()
     {
         return $this->getReply();
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Getter for result reply of query.
      *
@@ -97,10 +88,8 @@ class ExtensionReply
     public function getReply()
     {
         return $this->_mReply;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Setter for reply of extension.
      * 
@@ -111,10 +100,8 @@ class ExtensionReply
     public function setReply($mReply)
     {
         $this->_mReply = $mReply;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Getter for result status of query.
      * True seems that query was executed.
@@ -124,25 +111,21 @@ class ExtensionReply
     public function getStatus()
     {
         return $this->_bStatus;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Setter for result status of query.
      * True seems that query was executed.
      * 
-     * @param boolean $bStatus Tesult status of query to set.
+     * @param boolean $bStatus Result status of query to set.
      * 
      * @return void
      */
     public function setStatus($bStatus)
     {
         $this->_bStatus = (boolean)$bStatus;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Getter for message to users.
      *
@@ -151,10 +134,8 @@ class ExtensionReply
     public function getMessage()
     {
         return $this->_sMessage;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Setter for message to users.
      *
@@ -165,10 +146,8 @@ class ExtensionReply
     public function setMessage($sMessage)
     {
         $this->_sMessage = $sMessage;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Getter for result code of query.
      * 
@@ -177,10 +156,8 @@ class ExtensionReply
     public function getCode()
     {
         return $this->_nCode;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
+    }
+
     /**
      * Setter for result code of query.
      * 
@@ -191,9 +168,5 @@ class ExtensionReply
     public function setCode($nCode)
     {
         $this->_nCode = $nCode;
-        
-    } // End function
-    //-----------------------------------------------------------------------------
-    
-} // End class
-//-----------------------------------------------------------------------------
+    }
+}
