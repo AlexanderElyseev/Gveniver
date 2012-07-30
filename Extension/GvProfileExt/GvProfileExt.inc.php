@@ -71,6 +71,7 @@ class GvProfileExt extends SimpleExtension
      * @return null|string
      */
     public function getImage($sImageName)
+
     {
         if (!$sImageName) {
             $sText = sprintf('[%s::%s] Image name not specified.', __CLASS__, __METHOD__);
@@ -80,9 +81,7 @@ class GvProfileExt extends SimpleExtension
         }
 
         foreach ($this->getApplication()->getProfile()->getParentProfileList() as $cProfile) {
-
             /** @var $cProfile \Gveniver\Kernel\Profile\BaseProfile */
-            
             $sImageAbsPath = $cProfile->getConfig()->get('Profile/Path/AbsImage');
             $sImageWebPath = $cProfile->getConfig()->get('Profile/Path/AbsImageWeb');
             $sImageFilePath = \Gveniver\correctPath($sImageAbsPath.$sImageName);
