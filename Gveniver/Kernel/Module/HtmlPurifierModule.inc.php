@@ -199,36 +199,14 @@ class HtmlPurifierModule extends BaseModule
     public function outputText($sText, $nMaxLength = null, $sCrop = '...')
     {
         $sText = strip_tags($sText);
-        if ($nMaxLength)
-            $sText = $this->_breakText($sText, intval($nMaxLength), $sCrop);
+        if (!$nMaxLength)
+            return $sText;
 
-        return $sText;
+        return $this->_breakText($sText, $nMaxLength, $sCrop);
     }
-
-    /**
-     * Function cuts string with simple text by the specified number of chars.
-     *
-     * @param string $string     Text to cut.
-     * @param int    $nMaxLength Cutting length.
-     * @param string $sCropStr   Text for appending (for mark crop point).
-     *
-     * @return string
-     */
-    private function _breakText($string, $nMaxLength, $sCropStr = '...')
-    {
-        if (mb_strlen($string) > $nMaxLength) {
-            $string = mb_substr($string, 0, $nMaxLength);
-            $pos = mb_strrpos($string, ' ');
-            if ($pos === false)
-                return mb_substr($string, 0, $nMaxLength).$sCropStr;
-
-            return mb_substr($string, 0, $pos).$sCropStr;
-        }
-        return $string;
-    }
-
     /**
      * Formats HTML for outputting.
+     * Cleans HTML with specified configuration.
      *
      * @param string       $sHtml          Text to output.
      * @param string|array $mConfiguration The optional name of HtmlPurifier configuration or array with configuration.
@@ -237,45 +215,92 @@ class HtmlPurifierModule extends BaseModule
      *
      * @return string
      */
-    function outputHtml($sHtml, $mConfiguration = null, $nMaxLength = null, $sCrop = '...')
+    public function outputHtml($sHtml, $mConfiguration = null, $nMaxLength = null, $sCrop = '...')
     {
         $sPureHtml = $this->clean($sHtml, $mConfiguration);
         if (!$nMaxLength)
             return $sPureHtml;
 
-        // Recursive walking over DOM tree, while length of text less then specified.
-        // After exceeding the limit of length, deleting all other nodes.
+        return $this->_breakHtml($sPureHtml, $nMaxLength, $sCrop);
+    }
+
+    /**
+     * Function cuts string with simple text by the specified number of chars.
+     *
+     * @param string $sText      Text to cut.
+     * @param int    $nMaxLength Cutting length.
+     * @param string $sCropStr   Text for appending (for marking crop point).
+     *
+     * @return string
+     */
+    private function _breakText($sText, $nMaxLength, $sCropStr)
+    {
+        if (mb_strlen($sText) > $nMaxLength) {
+            $sText = mb_substr($sText, 0, $nMaxLength);
+            $pos = mb_strrpos($sText, ' ');
+            if ($pos === false)
+                return mb_substr($sText, 0, $nMaxLength).$sCropStr;
+
+            return mb_substr($sText, 0, $pos).$sCropStr;
+        }
+        return $sText;
+    }
+
+    /**
+     * Function cuts string with HTML by the specified number of chars.
+     *
+     * @param string $sHtml      Html to cut.
+     * @param int    $nMaxLength Cutting length.
+     * @param string $sCrop      Text for appending (for marking crop point).
+     *
+     * @return string
+     */
+    private function _breakHtml($sHtml, $nMaxLength, $sCrop)
+    {
         $cDom = new \DomDocument();
-        $cDom->loadHTML(mb_convert_encoding($sPureHtml, 'HTML-ENTITIES', 'UTF-8'));
-        $nLength = 0;
-        $bStop = false;
-        $fCropText = function(\DOMNode &$cElement) use (&$nLength, &$fCropText, &$bStop, $sCrop, $nMaxLength) {
-            $aNodesForDelete = array();
-            foreach ($cElement->childNodes as $cNode) {
-                /** @var $cNode \DOMElement */
-                if ($bStop) {
-                    $aNodesForDelete[] = $cNode;
-                    continue;
-                }
+        $cDom->loadHTML(mb_convert_encoding($sHtml, 'HTML-ENTITIES', 'UTF-8'));
+        $this->_breakHtmlRecursive($cDom->documentElement, $nMaxLength, $sCrop);
+        return $cDom->saveHTML();
+    }
 
-                if ($cNode->nodeType == XML_TEXT_NODE) {
-                    $nStartLength = $nLength;
-                    $nLength += mb_strlen(trim($cNode->textContent));
-                    if ($nLength > $nMaxLength) {
-                        $bStop = true;
-                        $cNode->nodeValue = $this->_breakText($cNode->nodeValue, $nMaxLength - $nStartLength, $sCrop);
-                    }
-                }
 
-                if ($cNode->nodeType == XML_ELEMENT_NODE)
-                    $fCropText($cNode);
+    /**
+     * Recursive walking over DOM tree, while length of text less then specified.
+     * After exceeding the limit of length, deleting all other nodes.
+     *
+     * @param \DOMNode $cElement   Element of DOM for parsing.
+     * @param int      $nMaxLength Maximal length.
+     * @param string   $sCrop      Crop text.
+     * @param int      &$nLength   Current parsed length.
+     * @param boolean  &$bStop     Flag of stop.
+     *
+     * @return void
+     */
+    private function _breakHtmlRecursive(\DOMNode $cElement, $nMaxLength, $sCrop, &$nLength = 0, &$bStop = false)
+    {
+        $aNodesForDelete = array();
+        foreach ($cElement->childNodes as $cNode) {
+            /** @var $cNode \DOMElement */
+            if ($bStop) {
+                $aNodesForDelete[] = $cNode;
+                continue;
             }
 
-            // Lazy deleting of marked nodes.
-            foreach ($aNodesForDelete as $cNode)
-                $cElement->removeChild($cNode);
-        };
-        $fCropText($cDom->documentElement);
-        return $cDom->saveHTML();
+            if ($cNode->nodeType == XML_TEXT_NODE) {
+                $nStartLength = $nLength;
+                $nLength += mb_strlen(trim($cNode->textContent));
+                if ($nLength > $nMaxLength) {
+                    $bStop = true;
+                    $cNode->nodeValue = $this->_breakText($cNode->nodeValue, $nMaxLength - $nStartLength, $sCrop);
+                }
+            }
+
+            if ($cNode->nodeType == XML_ELEMENT_NODE)
+                $this->_breakHtmlRecursive($cNode, $nMaxLength, $sCrop, $nLength, $bStop);
+        }
+
+        // Lazy deleting of marked nodes.
+        foreach ($aNodesForDelete as $cNode)
+            $cElement->removeChild($cNode);
     }
 }
